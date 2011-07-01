@@ -85,7 +85,7 @@ enyo.kind({ name: "recorded",
 			{name: "recordedPane", kind: "Pane", flex: 1, transitionKind: "enyo.transitions.Simple", onSelectView: "viewSelected", components: [
 			
 				{name: "slidingPane", kind: "SlidingPane", flex: 1, multiViewMinWidth: 500, onSlideComplete: "slidingResize", onSelectView: "slidingSelected", components: [
-					{name: "left", kind2: "Sliding", className: "left", dragAnywhere: false, width: "33%", components: [
+					{name: "left", className: "left", dragAnywhere: false, width: "33%", components: [
 						{name: "leftVFlexBox", kind: "VFlexBox", flex: 1, components: [
 							{name: "leftHeader", kind: "Toolbar", layoutKind: "HFlexLayout", onclick: "leftRevealTop", components: [
 								{name: "leftHeaderTitle", kind: "Control", className: "headerTitle", content: $L("Recorded"), flex2: 1},
@@ -117,7 +117,7 @@ enyo.kind({ name: "recorded",
 							]},
 						]},
 					]},
-					{name: "middle", kind2: "Sliding", className: "middle", dragAnywhere: false, width: "33%", components: [
+					{name: "middle", className: "middle", dragAnywhere: false, width: "33%", components: [
 						{name: "middleVFlexBox", kind: "VFlexBox", flex: 1, components: [
 							
 							{name: "middleHeader", kind: "Toolbar", layoutKind: "VFlexLayout", onclick: "middleRevealTop", components: [
@@ -163,7 +163,7 @@ enyo.kind({ name: "recorded",
 							]},
 						]},
 					]},
-					{name: "right", kind2: "Sliding", className: "right", dragAnywhere: false, width: "340px", flex: 1, components: [
+					{name: "right", className: "right", dragAnywhere: false, width: "340px", flex: 1, components: [
 						{name: "rightVFlexBox", kind: "VFlexBox", flex: 1, components: [
 							{name: "rightHeader", kind: "Toolbar", layoutKind: "HFlexLayout", onclick: "rightRevealTop", components: [
 								{name: "rightHeaderTitle", kind: "Control", className: "headerTitle", content: $L("Details"), flex2: 1},
@@ -924,8 +924,7 @@ enyo.kind({ name: "recorded",
 	
 				this.doRemoteCommand("play",cmd);
 				
-				//this.doSelectMode("remote");
-				var countdown = setTimeout(enyo.bind(this, "doSelectMode", "remote"), 1000);
+				if(WebMyth.prefsCookie.playJumpRemote) var countdown = setTimeout(enyo.bind(this, "doSelectMode", "remote"), 1000);
 			
 			}
 	
@@ -1197,7 +1196,7 @@ enyo.kind({ name: "recorded",
 		
 		if(debug) this.log("requestUrl: "+requestUrl);
 		
-		if(debug) window.open(requestUrl);
+		//if(debug) window.open(requestUrl);
 		
 		this.$.getRecordedService.setUrl(requestUrl);
 		this.$.getRecordedService.call();
@@ -1804,7 +1803,7 @@ enyo.kind({ name: "recorded",
 		var row = this.detailsProgram;
 		
 		if(row.filesize.length > 0) {
-			this.getJobqueue();
+			setTimeout(enyo.bind(this,"getJobqueue"),200);
 		} else {
 			this.jobqueueFailure(); 
 		}

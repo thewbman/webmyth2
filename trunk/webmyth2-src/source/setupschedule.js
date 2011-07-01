@@ -90,7 +90,7 @@ enyo.kind({ name: "setupschedule",
 		
 			{name: "setupscheduleScroller", kind: "Scroller", autoHorizontal: false, horizontal: false, autoVertical: true, flex: 1, components: [
 			
-				{name: "typeDrawer", kind: "DividerDrawer", caption: "Rule Type", components: [
+				{name: "typeDrawer", kind: "DividerDrawer", caption: "Rule Type", open: true, animate: false, components: [
 					{kind: "Item", className: "enyo-single", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
 						{name: "type", kind: "ListSelector", label: "", flex: 1, items: [
 							//this.ruleTypes
@@ -98,7 +98,7 @@ enyo.kind({ name: "setupschedule",
 					]},
 				]},
 				
-				{name: "programDrawer", kind: "DividerDrawer", caption: "Program", components: [
+				{name: "programDrawer", kind: "DividerDrawer", caption: "Program", open: true, animate: false, components: [
 					{name: "titleItem", kind: "Item", className: "enyo-first", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
 						{name: "title", flex: 1},
 						{content: "title", className: "label"},
@@ -122,7 +122,7 @@ enyo.kind({ name: "setupschedule",
 					
 				]},
 				
-				{name: "programdetailsDrawer", kind: "DividerDrawer", caption: "Program Details", components: [
+				{name: "programdetailsDrawer", kind: "DividerDrawer", caption: "Program Details", open: false, animate: false, components: [
 					{name: "descriptionItem", kind: "Item", className: "enyo-first", align: "center", tapHighlight: false, components: [
 						{name: "description", className: "description"},
 					]},
@@ -148,7 +148,7 @@ enyo.kind({ name: "setupschedule",
 					]},			
 				]},
 				
-				{name: "recordingDrawer", kind: "DividerDrawer", caption: "Recording Options", components: [
+				{name: "recordingDrawer", kind: "DividerDrawer", caption: "Recording Options", open: false, animate: false, components: [
 					{name: "recpriorityItem", kind: "Item", className: "enyo-first", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
 						{name: "recpriority", kind: "IntegerPicker", min: -100, max: 100, label: ""},
 						{kind: "Spacer"},
@@ -194,7 +194,7 @@ enyo.kind({ name: "setupschedule",
 					]},
 				]},
 				
-				{name: "jobDrawer", kind: "DividerDrawer", caption: "Job Options", components: [
+				{name: "jobDrawer", kind: "DividerDrawer", caption: "Job Options", open: false, animate: false, components: [
 					{name: "autocommflagItem", kind: "Item", className: "enyo-first", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
 						{className: "checkBoxLeftSpacer"},
 						{name: "autocommflag", kind: "CheckBox"},

@@ -26,7 +26,7 @@ enyo.kind({
 	pluginIsReady: false,
 		
 	components: [
-		{kind: "ApplicationEvents", onLoad: "appLoaded", onUnload: "appUnloaded", onError: "appError", onWindowActivated: "windowActivated", onWindowDeactivated: "windowDeactivated", onkeypress2: "keypressHandler2", onBack: "backHandler"},
+		{kind: "ApplicationEvents", onLoad: "appLoaded", onUnload: "appUnloaded", onError: "appError", onWindowActivated: "windowActivated", onWindowDeactivated: "windowDeactivated", onKeyup: "keypressHandler", onKeydown: "keypressHandler", onKeypress: "keypressHandler", onBack: "backHandler"},
 		
 		{name: "plugin", kind: "enyo.Hybrid", executable: "webmyth_service", onPluginReady: "pluginReady", onPluginConnected: "pluginConnected", onPluginDisconnected: "pluginDisconnected"},
 		
@@ -37,6 +37,14 @@ enyo.kind({
 		{kind: "AppMenu", components: [
 			{caption: "Preferences", onclick: "openPreferences"},
 			{caption: "Help", onclick: "openHelp"},
+		]},
+		
+		{name: "firstUsePopup", kind: "Popup", scrim: true, onBeforeOpen: "beforefirstUseOpen", components: [
+			{content: "This app requires an existing MythTV system to connect to.", style: "text-align: center;"},
+			{content: "If you aren't sure what that means this app is probably not for you.", style: "text-align: center;"},
+			{kind: "Button", caption: "Backend Search", onclick:"openFindbackends"},
+			{kind: "Button", caption: "Manual Setup", onclick:"openPreferences"},
+			{kind: "Button", caption: "Help", onclick:"openHelp"},
 		]},
 		
 		{name: "messagePopup", kind: "Popup", scrim: true, onBeforeOpen: "beforeMessageOpen", components: [
@@ -55,10 +63,10 @@ enyo.kind({
 			{name: "moreMenu", content: $L("More"), value: "more", flex: 1, className: "topMenuItem", onclick: "moreClick"},
 		]},
 		
-		{name: "bottomContent", className: "bottomContent", kind: "VFlexBox", onkeypress: "keypressHandler", flex: 1, components: [
+		{name: "bottomContent", className: "bottomContent", kind: "VFlexBox", onkeypress2: "keypressHandler", flex: 1, components: [
 		
 			{name: "mainPane", kind: "Pane", flex: 1, className: "mainPane", transitionKind1: "enyo.transitions.LeftRightFlyin", transitionKind: "enyo.transitions.Simple", onSelectView: "viewSelected", onCreateView: "viewCreated", components: [
-				{kind: "welcome", onBannerMessage: "bannerMessage", onSelectMode: "changeMode", onSavePreferences: "savePreferences", onHaveImageView: "gotImageView", onMysqlPluginCommand: "mysqlPluginCommand", onMysqlPluginExecute: "mysqlPluginExecute"},
+				{kind: "welcome", onBannerMessage: "bannerMessage", onFirstUse: "openFirstUse", onSelectMode: "changeMode", onSavePreferences: "savePreferences", onHaveImageView: "gotImageView", onMysqlPluginCommand: "mysqlPluginCommand", onMysqlPluginExecute: "mysqlPluginExecute"},
 				{kind: "remote", onBannerMessage: "bannerMessage", onGetPreviousPane: "getPreviousPane", onSelectMode: "changeMode", onSavePreferences: "savePreferences", onPersonSelected: "personSelected", onOpenWeb: "openWeb", onSetupSchedule: "setupSchedule", onProgramGuide: "programGuide", onTitleSearch: "titleSearch", onDownloadFile: "downloadFile", onRemoteCommand: "remoteCommand", onMysqlPluginCommand: "mysqlPluginCommand", onMysqlPluginExecute: "mysqlPluginExecute", onMythprotocolPluginCommand: "mythprotocolPluginCommand", onRemotePluginCommand: "remotePluginCommand", onRemotePluginClose: "remotePluginClose"},
 				{kind: "recorded", onBannerMessage: "bannerMessage", onSelectMode: "changeMode", onSavePreferences: "savePreferences", onPersonSelected: "personSelected", onOpenWeb: "openWeb", onSetupSchedule: "setupSchedule", onProgramGuide: "programGuide", onTitleSearch: "titleSearch", onDownloadFile: "downloadFile", onRemoteCommand: "remoteCommand", onMysqlPluginCommand: "mysqlPluginCommand", onMysqlPluginExecute: "mysqlPluginExecute"},
 				{kind: "upcoming", onBannerMessage: "bannerMessage", onSelectMode: "changeMode", onSavePreferences: "savePreferences", onPersonSelected: "personSelected", onOpenWeb: "openWeb", onSetupSchedule: "setupSchedule", onProgramGuide: "programGuide", onTitleSearch: "titleSearch", onDownloadFile: "downloadFile", onRemoteCommand: "remoteCommand", onMysqlPluginCommand: "mysqlPluginCommand", onMysqlPluginExecute: "mysqlPluginExecute", onMythprotocolBackgroundPluginCommand: "mythprotocolBackgroundPluginCommand"},
@@ -76,6 +84,8 @@ enyo.kind({
 				
 				{kind: "exhibition", onBannerMessage: "bannerMessage", onGetPreviousPane: "getPreviousPane", onSelectMode: "changeMode", onSavePreferences: "savePreferences", onPersonSelected: "personSelected", onOpenWeb: "openWeb", onSetupSchedule: "setupSchedule", onProgramGuide: "programGuide", onTitleSearch: "titleSearch", onDownloadFile: "downloadFile", onMysqlPluginCommand: "mysqlPluginCommand", onMysqlPluginExecute: "mysqlPluginExecute", onMythprotocolBackgroundPluginCommand: "mythprotocolBackgroundPluginCommand"},
 				
+				{kind: "findbackends", onBannerMessage: "bannerMessage", onGetPreviousPane: "getPreviousPane", onSelectMode: "changeMode", onSavePreferences: "savePreferences", onPersonSelected: "personSelected", onOpenWeb: "openWeb", onSetupSchedule: "setupSchedule", onProgramGuide: "programGuide", onTitleSearch: "titleSearch", onDownloadFile: "downloadFile", onMysqlPluginCommand: "mysqlPluginCommand", onMysqlPluginExecute: "mysqlPluginExecute", onMythprotocolBackgroundPluginCommand: "mythprotocolBackgroundPluginCommand"},
+				
 				{name: "mainImageView", onBannerMessage: "bannerMessage", kind: "ImageView", flex: 1, className: "imageView", onclick: "getPreviousPane"},
 					
 			]},
@@ -89,16 +99,17 @@ enyo.kind({
 				{name: "searchTitleMenu", caption: "Program Title"},
 			]},
 			{name: "mediaPopupMenu", kind: "PopupSelect", className: "mediaPopupMenu", onSelect: "mediaClickSelect", onClose: "mediaClickClosed", components: [
-				{name: "musicMenu", caption: "Music"},
 				{name: "videoMenu", caption: "Video"},
+				{name: "musicMenu", caption: "Music"},
 			]},
 			{name: "backendPopupMenu", kind: "PopupSelect", className: "backendPopupMenu", onSelect: "backendClickSelect", onClose: "backendClickClosed", components: [
-				{name: "backendlogMenu", caption: "Log"},
 				{name: "backendstatusMenu", caption: "Status"},
+				{name: "backendlogMenu", caption: "Log"},
 			]},
 			{name: "morePopupMenu", kind: "PopupSelect", className: "morePopupMenu", onSelect: "moreClickSelect", onClose: "moreClickClosed", components: [
 				{name: "preferencesMenu", caption: "Preferences"},
 				{name: "helpMenu", caption: "Help"},
+				{name: "findbackendsMenu", caption: "Find Backends"},
 				{name: "exhibitionMenu", caption: "Exhibition"},
 			]},
 		
@@ -112,10 +123,14 @@ enyo.kind({
 		if((WebMyth.prefsCookieString)&&(true)) {
 			if(debug) this.log("we have cookie");
 			WebMyth.prefsCookie = enyo.json.parse(WebMyth.prefsCookieString);
+			
+			if(WebMyth.prefsCookie.allowMetrix) setTimeout(enyo.bind(this,"submitMetrix"),500);
+			
 		} else {
 			if(debug) this.log("we don't have cookie");
 			WebMyth.prefsCookie = defaultCookie();
 			
+			/*
 			//for development
 			WebMyth.prefsCookie.webserverName = "thewbman.homedns.org";
 			WebMyth.prefsCookie.masterBackendIp = "thewbman.homedns.org";
@@ -124,8 +139,12 @@ enyo.kind({
 			WebMyth.prefsCookie.useScript = 2;
 			WebMyth.prefsCookie.debug = true;
 			//
+			*/
 			
 			enyo.setCookie("webmyth2-prefs", enyo.json.stringify(WebMyth.prefsCookie));
+			
+			//setTimeout(enyo.bind(this,"openFirstUse"),500);
+			
 		}
 		
 		if(WebMyth.prefsCookie.useScript == 2) {
@@ -168,14 +187,35 @@ enyo.kind({
 	
 	
 	//Internal functions
+	openFirstUse: function() {
+		if(debug) this.log("openFirstUse");
+		
+		this.$.firstUsePopup.openAtCenter();
+	},
 	openPreferences: function() {
 		if(debug) this.log("openPreferences");
+		
 		this.$.mainPane.selectViewByName("preferences");
+		
+		this.$.firstUsePopup.close();
 	},
 	openHelp: function() {
 		if(debug) this.log("openHelp");
 		
 		this.$.mainPane.selectViewByName("help");
+		
+		this.$.firstUsePopup.close();
+	},
+	openFindbackends: function() {
+		if(debug) this.log("openFindbackends");
+		
+		this.$.mainPane.selectViewByName("findbackends");
+		
+		this.$.firstUsePopup.close();
+	},
+	submitMetrix: function() {
+		if(debug) this.log("submitMetrix");
+		
 	},
 	selectMenuButton: function(inSender) {
 		if(debug) this.log("selectMenuButton with "+inSender.getName());
@@ -268,11 +308,14 @@ enyo.kind({
 			case "Preferences": 
 				this.$.mainPane.selectViewByName("preferences");
 				break;
-			case "Exhibition": 
-				this.$.mainPane.selectViewByName("exhibition");
-				break;
 			case "Help": 
 				this.$.mainPane.selectViewByName("help");
+				break;
+			case "Find Backends": 
+				this.$.mainPane.selectViewByName("findbackends");
+				break;
+			case "Exhibition": 
+				this.$.mainPane.selectViewByName("exhibition");
 				break;
 		}
 	},
@@ -568,6 +611,10 @@ enyo.kind({
 				this.$.help.activate(this.viewMode);
 				this.$.topMenu.setValue("more");
 			  break;
+			case 'findbackends':
+				this.$.findbackends.activate(this.viewMode);
+				this.$.topMenu.setValue("more");
+			  break;
 			case 'exhibition':
 				this.$.exhibition.activate(this.viewMode);
 				this.$.topMenu.hide();
@@ -618,6 +665,9 @@ enyo.kind({
 			  break;
 			case 'help':
 				this.$.help.deactivate();
+			  break;
+			case 'findbackends':
+				this.$.findbackends.deactivate();
 			  break;
 			case 'exhibition':
 				this.$.exhibition.deactivate();
@@ -675,10 +725,7 @@ enyo.kind({
 		
 		this.$[this.currentPane].deactivate(this.viewMode);
 		
-		if(this.appMode == "exhibition") window.close();
-	},
-	keypressHandler2: function() {
-		if(debug) this.log("keypressHandler2");
+		//if(this.appMode == "exhibition") window.close();
 	},
 	backHandler: function(inSender, e) {
 		if(debug) this.log("backHandler");
@@ -739,6 +786,10 @@ enyo.kind({
 				this.$.setupschedule.gotBack();
 				break;
 			case 'help':
+				e.preventDefault();
+				this.getPreviousPane();
+				break;
+			case 'findbackends':
 				e.preventDefault();
 				this.getPreviousPane();
 				break;
@@ -841,13 +892,16 @@ enyo.kind({
 			case 'help':
 				this.$.help.resize(this.viewMode);
 				break;
+			case 'findbackends':
+				this.$.findbackends.resize(this.viewMode);
+				break;
 			case 'exhibition':
 				this.$.topMenu.hide();
 				this.$.exhibition.resize(this.viewMode);
 				break;
 		};
 	},
-	keypress2Handler: function(inSender, inEvent) {
+	keypressHandler: function(inSender, inEvent) {
 		if(debug) this.log("keypressHandler: "+inEvent.keyCode);
 		
 		var key = "";
@@ -872,6 +926,8 @@ enyo.kind({
 				specialKey = "capslock"; break;
 			case 27:
 				specialKey = "escape"; break;
+			case 32:
+				specialKey = "space"; break;
 			case 33:
 				specialKey = "pageup"; break;
 			case 34:

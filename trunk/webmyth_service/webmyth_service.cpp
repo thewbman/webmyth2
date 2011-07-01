@@ -273,6 +273,9 @@ void backgroundFrontendSocketResponse(){
 void cleanProtocolVersion(int protoVer){
 	
 	switch(protoVer) {
+		case 66:
+			mpSendMsgSize = sprintf(mpSendBuffer, "%s", "MYTH_PROTO_VERSION 66 0C0FFEE0");
+		  break;
 		case 65:
 			mpSendMsgSize = sprintf(mpSendBuffer, "%s", "MYTH_PROTO_VERSION 65 D2BB94C2");
 		  break;

@@ -976,7 +976,7 @@ enyo.kind({ name: "guide",
 			
 			this.doRemoteCommand("channel",this.detailsProgram.chanid);
 			
-			//this.doSelectMode("remote");
+			if(WebMyth.prefsCookie.livetvJumpRemote) var countdown = setTimeout(enyo.bind(this, "doSelectMode", "remote"), 1000);
 		
 		}
 		

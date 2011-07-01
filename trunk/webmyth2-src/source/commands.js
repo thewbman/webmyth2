@@ -24,7 +24,7 @@ function defaultCookie() {
 		webserverName: '-',
 		webserverUsername: '',	
 		webserverPassword: '',	
-		useScript: 2,	
+		useScript: 0,	
 		mythwebXml: false,	
 		MythXML_key: "DefaultKey",
 		webmythPythonFile: "/cgi-bin/webmyth.py",
@@ -35,7 +35,7 @@ function defaultCookie() {
 		showVideoDetailsImage: true,
 		forceScriptScreenshots: false,
 		
-		remoteHeader: "Pause",
+		remoteHeader: "Nothing",
 		remoteVibrate: false,
 		remoteFullscreen: false,
 		playJumpRemote: true,
@@ -83,6 +83,8 @@ function defaultCookie() {
 		UserJobDesc2: "UserJob2",
 		UserJobDesc3: "UserJob3",
 		UserJobDesc4: "UserJob4",
+		
+		allowMetrix: true, 
 		
 		debug: false
 		

@@ -50,19 +50,19 @@ enyo.kind({ name: "help",
 		
 			{name: "helpScroller", kind: "Scroller", autoHorizontal: false, horizontal: false, autoVertical: true, flex: 1, components: [
 		
-				{name: "faqsDrawer", kind: "DividerDrawer", caption: "FAQs", components: [
+				{name: "faqsDrawer", kind: "DividerDrawer", caption: "FAQs", open: false, animate: false, components: [
 					
 					{name: "faqsContent", allowHtml: true, className: "smallerFont faqsContent"},
 					
 				]},
 				
-				{name: "tipsDrawer", kind: "DividerDrawer", caption: "Tips", components: [
+				{name: "tipsDrawer", kind: "DividerDrawer", caption: "Tips", open: false, animate: false, components: [
 					
 					{name: "tipsContent", allowHtml: true, className: "smallerFont tipsContent"},
 					
 				]},
 				
-				{name: "changelogDrawer", kind: "DividerDrawer", caption: "Changelog", components: [
+				{name: "changelogDrawer", kind: "DividerDrawer", caption: "Changelog", open: false, animate: false, components: [
 					
 					{name: "changelogContent", allowHtml: true, className: "smallerFont changelogContent"},
 					

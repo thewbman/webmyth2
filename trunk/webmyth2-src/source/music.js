@@ -932,9 +932,9 @@ enyo.kind({ name: "music",
 					else if(this.webType == $L("Song")) this.doOpenWeb("Wikipedia", this.selectedSong.name);
 					break;
 				case "Google":
-					if(this.webType == $L("Artist")) this.doOpenWeb("Wikipedia", this.selectedSong.artist_name);
-					else if(this.webType == $L("Album")) this.doOpenWeb("Wikipedia", this.selectedSong.album_name);
-					else if(this.webType == $L("Song")) this.doOpenWeb("Wikipedia", this.selectedSong.name);
+					if(this.webType == $L("Artist")) this.doOpenWeb("Google", this.selectedSong.artist_name);
+					else if(this.webType == $L("Album")) this.doOpenWeb("Google", this.selectedSong.album_name);
+					else if(this.webType == $L("Song")) this.doOpenWeb("Google", this.selectedSong.name);
 					break;
 				default:
 					this.webType = inEvent.value;

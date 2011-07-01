@@ -46,6 +46,9 @@ enyo.kind({ name: "preferences",
 				{name: "orientationMenu", kind: "HFlexBox", align: "center", pack: "center", className: "menuItem", flex: 1, onclick: "selectMenuButton", components: [
 					{content: $L("Orientation")},
 				]},
+				{name: "metrixMenu", kind: "HFlexBox", align: "center", pack: "center", className: "menuItem", flex: 1, onclick: "selectMenuButton", components: [
+					{content: $L("Metrix")},
+				]},
 				{name: "debugMenu", kind: "HFlexBox", align: "center", pack: "center", className: "menuItem", flex: 1, onclick: "selectMenuButton", components: [
 					{content: $L("Debug")},
 				]},
@@ -150,17 +153,6 @@ enyo.kind({ name: "preferences",
 							]},
 						]},
 					]},
-					{name: "orientationRowGroup", kind: "RowGroup", caption: "Orientation", components: [
-						{kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
-							{name: "allowedOrientation", kind: "ListSelector", label: "Orientation", flex: 1, items: [
-								{caption: "Up", value: "up"},
-								{caption: "Left", value: "left"},
-								//caption: "Down", value: "down"},
-								//caption: "Right", value: "right"},
-								{caption: "Free", value: "free"},
-							]},
-						]},	
-					]},	
 					{name: "imagesRowGroup", kind: "RowGroup", caption: "Images", components: [
 						{kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
 							{content: "Show Channel Icons", flex: 1},
@@ -187,11 +179,11 @@ enyo.kind({ name: "preferences",
 								{caption: "Nothing", value: "Nothing"},
 							]},
 						]},	
-						{kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+						{kind: "Item", showing: false, align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
 							{content: "Remote Vibrate", flex: 1},
 							{name: "remoteVibrate", kind: "ToggleButton"},
 						]},
-						{kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+						{kind: "Item", showing: false, align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
 							{content: "Remote Fullscreen", flex: 1},
 							{name: "remoteFullscreen", kind: "ToggleButton"},
 						]},
@@ -203,9 +195,26 @@ enyo.kind({ name: "preferences",
 							{content: "Start remote after LiveTV start", flex: 1},
 							{name: "livetvJumpRemote", kind: "ToggleButton"},
 						]},
-						{kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+						{kind: "Item", showing: false, align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
 							{content: "Dashboard Remote", flex: 1},
 							{name: "remoteDashboard", kind: "ToggleButton"},
+						]},
+					]},
+					{name: "orientationRowGroup", kind: "RowGroup", caption: "Orientation", components: [
+						{kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+							{name: "allowedOrientation", kind: "ListSelector", label: "Orientation", flex: 1, items: [
+								{caption: "Up", value: "up"},
+								{caption: "Left", value: "left"},
+								//caption: "Down", value: "down"},
+								//caption: "Right", value: "right"},
+								{caption: "Free", value: "free"},
+							]},
+						]},	
+					]},	
+					{name: "metrixRowGroup", kind: "RowGroup", caption: "Metrix", components: [
+						{kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+							{content: 'Allow annoymous submissions to <a href="http://metrix.webosroundup.com/privacy">Metrix</a>', allowHtml: true, flex: 1},
+							{name: "allowMetrix", kind: "ToggleButton", onChange: "metrixToggle"},
 						]},
 					]},
 					{name: "debugRowGroup", kind: "RowGroup", caption: "Debug Mode", components: [
@@ -221,10 +230,10 @@ enyo.kind({ name: "preferences",
 				]},
 				
 				{kind: "Toolbar", components: [
-							{kind: "Spacer"},
-							{content: 'Save', onclick: "savePreferences"},
-							{kind: "Spacer"},
-						]},
+					{kind: "Spacer"},
+					{content: 'Save', onclick: "savePreferences"},
+					{kind: "Spacer"},
+				]},
 		
 			//]},
 		//]},
@@ -248,17 +257,19 @@ enyo.kind({ name: "preferences",
 		this.$.backendMenu.removeClass("selected");
 		this.$.mysqlMenu.removeClass("selected");
 		this.$.webserverMenu.removeClass("selected");
-		this.$.orientationMenu.removeClass("selected");
 		this.$.imagesMenu.removeClass("selected");
 		this.$.remoteMenu.removeClass("selected");
+		this.$.orientationMenu.removeClass("selected");
+		this.$.metrixMenu.removeClass("selected");
 		this.$.debugMenu.removeClass("selected");
 		
 		this.$.backendRowGroup.show();
 		this.$.databaseRowGroup.show();
 		this.$.webserverRowGroup.show();
-		this.$.orientationRowGroup.show();
 		this.$.imagesRowGroup.show();
 		this.$.remoteRowGroup.show();
+		this.$.orientationRowGroup.show();
+		this.$.metrixRowGroup.show();
 		this.$.debugRowGroup.show();
 	
 		//this.$.manualMasterBackend.setState(WebMyth.prefsCookie.manualMasterBackend);
@@ -282,8 +293,6 @@ enyo.kind({ name: "preferences",
 		this.$.webmythPythonFile.setValue(WebMyth.prefsCookie.webmythPythonFile);
 		this.$.allowDownloads.setState(WebMyth.prefsCookie.allowDownloads);
 		
-		this.$.allowedOrientation.setValue(WebMyth.prefsCookie.allowedOrientation);
-		
 		this.$.showChannelIcons.setState(WebMyth.prefsCookie.showChannelIcons);
 		this.$.showVideoListImages.setState(WebMyth.prefsCookie.showVideoListImages);
 		this.$.showVideoDetailsImage.setState(WebMyth.prefsCookie.showVideoDetailsImage);
@@ -295,6 +304,10 @@ enyo.kind({ name: "preferences",
 		this.$.playJumpRemote.setState(WebMyth.prefsCookie.playJumpRemote);
 		this.$.livetvJumpRemote.setState(WebMyth.prefsCookie.livetvJumpRemote);
 		this.$.remoteDashboard.setState(WebMyth.prefsCookie.remoteDashboard);
+		
+		this.$.allowedOrientation.setValue(WebMyth.prefsCookie.allowedOrientation);
+		
+		this.$.allowMetrix.setState(WebMyth.prefsCookie.allowMetrix);
 		
 		this.$.debug.setState(WebMyth.prefsCookie.debug);
 		
@@ -362,17 +375,19 @@ enyo.kind({ name: "preferences",
 		this.$.backendMenu.removeClass("selected");
 		this.$.mysqlMenu.removeClass("selected");
 		this.$.webserverMenu.removeClass("selected");
-		this.$.orientationMenu.removeClass("selected");
 		this.$.imagesMenu.removeClass("selected");
 		this.$.remoteMenu.removeClass("selected");
+		this.$.orientationMenu.removeClass("selected");
+		this.$.metrixMenu.removeClass("selected");
 		this.$.debugMenu.removeClass("selected");
 		
 		this.$.backendRowGroup.hide();
 		this.$.databaseRowGroup.hide();
 		this.$.webserverRowGroup.hide();
-		this.$.orientationRowGroup.hide();
 		this.$.imagesRowGroup.hide();
 		this.$.remoteRowGroup.hide();
+		this.$.orientationRowGroup.hide();
+		this.$.metrixRowGroup.hide();
 		this.$.debugRowGroup.hide();
 		
 		switch(newMode) {
@@ -380,12 +395,13 @@ enyo.kind({ name: "preferences",
 			
 				this.$.allMenu.addClass("selected");
 					
-				this.$.orientationRowGroup.show();
 				this.$.backendRowGroup.show();
 				this.$.databaseRowGroup.show();
 				this.$.webserverRowGroup.show();
 				this.$.imagesRowGroup.show();
 				this.$.remoteRowGroup.show();
+				this.$.orientationRowGroup.show();
+				this.$.metrixRowGroup.show();
 				this.$.debugRowGroup.show();
 				
 				break;
@@ -404,11 +420,6 @@ enyo.kind({ name: "preferences",
 				
 				this.$.webserverRowGroup.show();
 				break;
-			case "orientation":
-				this.$.orientationMenu.addClass("selected");
-				
-				this.$.orientationRowGroup.show();
-				break;
 			case "images":
 				this.$.imagesMenu.addClass("selected");
 				
@@ -418,6 +429,16 @@ enyo.kind({ name: "preferences",
 				this.$.remoteMenu.addClass("selected");
 				
 				this.$.remoteRowGroup.show();
+				break;
+			case "orientation":
+				this.$.orientationMenu.addClass("selected");
+				
+				this.$.orientationRowGroup.show();
+				break;
+			case "metrix":
+				this.$.metrixMenu.addClass("selected");
+				
+				this.$.metrixRowGroup.show();
 				break;
 			case "debug":
 				this.$.debugMenu.addClass("selected");
@@ -485,6 +506,11 @@ enyo.kind({ name: "preferences",
 			this.$.MythXML_keyItem.hide();
 		}
 	},
+	metrixToggle: function(inSender, inState) {
+		if(debug) this.log("metrixToggle to state: "+inState);
+		
+		this.bannerMessage("The app does not yet submit any data to Metrix, but it will do so in a future release.");
+	},
 	debugToggle: function(inSender, inState) {
 		if(debug) this.log("debugToggle to state: "+inState);
 		
@@ -517,8 +543,6 @@ enyo.kind({ name: "preferences",
 		WebMyth.prefsCookie.webmythPythonFile = this.$.webmythPythonFile.getValue();
 		WebMyth.prefsCookie.allowDownloads = this.$.allowDownloads.getState();
 		
-		WebMyth.prefsCookie.allowedOrientation = this.$.allowedOrientation.getValue();
-		
 		WebMyth.prefsCookie.showChannelIcons = this.$.showChannelIcons.getState();
 		WebMyth.prefsCookie.showVideoListImages = this.$.showVideoListImages.getState();
 		WebMyth.prefsCookie.showVideoDetailsImage = this.$.showVideoDetailsImage.getState();
@@ -530,6 +554,8 @@ enyo.kind({ name: "preferences",
 		WebMyth.prefsCookie.playJumpRemote = this.$.playJumpRemote.getState();
 		WebMyth.prefsCookie.livetvJumpRemote = this.$.livetvJumpRemote.getState();
 		WebMyth.prefsCookie.remoteDashboard = this.$.remoteDashboard.getState();
+		
+		WebMyth.prefsCookie.allowMetrix = this.$.allowMetrix.getState();
 		
 		WebMyth.prefsCookie.debug = this.$.debug.getState();
 		
