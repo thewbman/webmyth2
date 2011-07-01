@@ -16,18 +16,6 @@ enyo.kind({ name: "preferences",
 	},
 	
 	components: [
-		//{kind: "HFlexBox", components: [
-			//{kind: "Spacer"},
-			//{kind: "ButtonHeader", content: "Preferences", width: "320px", flex: 1, onclick: "revealTop"},
-			//{kind: "Spacer"},
-		//]},
-		//{kind: "VFlexBox", width: "320px", components: [
-			//{kind: "ButtonHeader", content: "Preferences", onclick: "revealTop"},
-			
-			{name: "messagePopup", kind: "Popup", scrim: true, dismissWithClick: true, dismissWithEscape: true, onclick: "messagePopupClick", components: [
-				{name: "messagePopupText", style: "text-align: center;"},
-				{content: "(Click anywhere to close this message)", style: "text-align: center;"},
-			]},
 		
 		{name: "header", kind: "Toolbar", layoutKind: "HFlexLayout", onclick: "revealTop", components: [
 			{name: "headerTitle", kind: "Control", className: "headerTitle", content: $L("Preferences"), flex: 1},
@@ -357,15 +345,6 @@ enyo.kind({ name: "preferences",
 		if(debug) this.log("bannerMessage: "+message);
 		
 		this.doBannerMessage(message);
-		
-		//this.$.messagePopupText.setContent(message);
-		//this.$.messagePopup.openAtCenter();
-		
-	},
-	messagePopupClick: function() {
-		if(debug) this.log("messagePopupClick");
-		
-		this.$.messagePopup.close();
 		
 	},
 	

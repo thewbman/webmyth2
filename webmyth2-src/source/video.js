@@ -69,10 +69,6 @@ enyo.kind({ name: "video",
 				]},
 				{content: "Loading...", style: "text-align: center;"},
 			]},
-			{name: "messagePopup", kind: "Popup", scrim: true, dismissWithClick: true, dismissWithEscape: true, onclick: "messagePopupClick", components: [
-				{name: "messagePopupText", style: "text-align: center;"},
-				{content: "(Click anywhere to close this message)", style: "text-align: center;"},
-			]},
 			
 			{name: "videoPane", kind: "Pane", flex: 1, transitionKind: "enyo.transitions.Simple", onSelectView: "viewSelected", components: [
 			
@@ -429,15 +425,6 @@ enyo.kind({ name: "video",
 		if(debug) this.log("bannerMessage: "+message);
 		
 		this.doBannerMessage(message);
-		
-		//this.$.messagePopupText.setContent(message);
-		//this.$.messagePopup.openAtCenter();
-		
-	},
-	messagePopupClick: function() {
-		if(debug) this.log("messagePopupClick");
-		
-		this.$.messagePopup.close();
 		
 	},
 	

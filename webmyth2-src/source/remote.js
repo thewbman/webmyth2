@@ -67,10 +67,7 @@ enyo.kind({ name: "remote",
 				]},
 				{content: "Loading...", style: "text-align: center;"},
 			]},
-			{name: "messagePopup", kind: "Popup", scrim: true, dismissWithClick: true, dismissWithEscape: true, onclick: "messagePopupClick", components: [
-				{name: "messagePopupText", style: "text-align: center;"},
-				{content: "(Click anywhere to close this message)", style: "text-align: center;"},
-			]},
+			
 			{name: "searchHostsPopup", kind: "Popup", className: "searchHostsPopup", scrim: true, dismissWithClick: true, dismissWithEscape: true, components: [
 				{name: "searchHostsVirtualRepeater", kind: "VirtualRepeater", onSetupRow: "getSearchHostsItem", onclick: "searchHostsSelect", components: [
 					{name: "searchHostsItem", kind: "Item", className: "frontendItem", components: [
@@ -510,15 +507,6 @@ enyo.kind({ name: "remote",
 		if(debug) this.log("bannerMessage: "+message);
 		
 		this.doBannerMessage(message);
-		
-		//this.$.messagePopupText.setContent(message);
-		//this.$.messagePopup.openAtCenter();
-		
-	},
-	messagePopupClick: function() {
-		if(debug) this.log("messagePopupClick");
-		
-		this.$.messagePopup.close();
 		
 	},
 	externalCommand: function(inType, inCommand) {

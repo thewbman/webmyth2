@@ -81,10 +81,6 @@ enyo.kind({ name: "recorded",
 				]},
 				{content: $L("Loading")+"...", style: "text-align: center;"},
 			]},
-			{name: "messagePopup", kind: "Popup", scrim: true, dismissWithClick: true, dismissWithEscape: true, onclick: "messagePopupClick", components: [
-				{name: "messagePopupText", style: "text-align: center;"},
-				{content: $L("(Click anywhere to close this message)"), style: "text-align: center; font-size: smaller;"},
-			]},
 			
 			{name: "recordedPane", kind: "Pane", flex: 1, transitionKind: "enyo.transitions.Simple", onSelectView: "viewSelected", components: [
 			
@@ -504,15 +500,6 @@ enyo.kind({ name: "recorded",
 		if(debug) this.log("bannerMessage: "+message);
 		
 		this.doBannerMessage(message);
-		
-		//this.$.messagePopupText.setContent(message);
-		//this.$.messagePopup.openAtCenter();
-		
-	},
-	messagePopupClick: function() {
-		if(debug) this.log("messagePopupClick");
-		
-		this.$.messagePopup.close();
 		
 	},
 	
@@ -950,34 +937,36 @@ enyo.kind({ name: "recorded",
 	moreClick: function(inSender, inEvent) {
 		if(debug) this.log("moreClick");
 		
-		this.$.morePopupMenu.setItems([{caption: $L("Web"), components: [
-									{name: "MythWeb", caption: "MythWeb"},
-									{name: "Wikipedia", caption: "Wikipedia"},
-									{name: "themoviedb", caption: "themoviedb"},
-									{name: "IMDB", caption: "IMDB"},
-									{name: "TheTVDB", caption: "TheTVDB"},
-									{name: "TV.com", caption: "TV.com"},
-									{name: "Google", caption: "Google"},
-								]},
-								{name: "deleteMenuButton", showing: this.showDeleteMenuButton, caption: "Delete", components: [
-									{caption: $L("Confirm Delete")},
-								]},
-								{name: "undeleteMenuButton", showing: this.showUndeleteMenuButton, caption: "Undelete", components: [
-									{caption: $L("Confirm Undelete")},
-								]},
-								{caption: $L("Queue a job"), components: [
-									{name: "transcode", caption: $L("Transcode")},
-									{name: "flagCommercials", caption: $L("Flag Commercials")},
-									{name: "userjob1", caption: WebMyth.prefsCookie.UserJobDesc1},
-									{name: "userjob2", caption: WebMyth.prefsCookie.UserJobDesc2},
-									{name: "userjob3", caption: WebMyth.prefsCookie.UserJobDesc3},
-									{name: "userjob4", caption: WebMyth.prefsCookie.UserJobDesc4},
-								]},
-								{caption: $L("Setup Schedule")},
-								{caption: $L("Guide"), components: [
-									{caption: $L("Time")},
-									{caption: $L("Title Search")},
-								]}]);
+		this.$.morePopupMenu.setItems([
+			{caption: $L("Web"), components: [
+				{name: "MythWeb", caption: "MythWeb"},
+				{name: "Wikipedia", caption: "Wikipedia"},
+				{name: "themoviedb", caption: "themoviedb"},
+				{name: "IMDB", caption: "IMDB"},
+				{name: "TheTVDB", caption: "TheTVDB"},
+				{name: "TV.com", caption: "TV.com"},
+				{name: "Google", caption: "Google"},
+			]},
+			{name: "deleteMenuButton", showing: this.showDeleteMenuButton, caption: "Delete", components: [
+				{caption: $L("Confirm Delete")},
+			]},
+			{name: "undeleteMenuButton", showing: this.showUndeleteMenuButton, caption: "Undelete", components: [
+				{caption: $L("Confirm Undelete")},
+			]},
+			{caption: $L("Queue a job"), components: [
+				{name: "transcode", caption: $L("Transcode")},
+				{name: "flagCommercials", caption: $L("Flag Commercials")},
+				{name: "userjob1", caption: WebMyth.prefsCookie.UserJobDesc1},
+				{name: "userjob2", caption: WebMyth.prefsCookie.UserJobDesc2},
+				{name: "userjob3", caption: WebMyth.prefsCookie.UserJobDesc3},
+				{name: "userjob4", caption: WebMyth.prefsCookie.UserJobDesc4},
+			]},
+			{caption: $L("Setup Schedule")},
+			{caption: $L("Guide"), components: [
+				{caption: $L("Time")},
+				{caption: $L("Title Search")},
+			]}
+		]);
 								
 		this.$.morePopupMenu.openAroundControl(this.$.moreCommandButton);
 	},
@@ -1207,6 +1196,8 @@ enyo.kind({ name: "recorded",
 		}
 		
 		if(debug) this.log("requestUrl: "+requestUrl);
+		
+		if(debug) window.open(requestUrl);
 		
 		this.$.getRecordedService.setUrl(requestUrl);
 		this.$.getRecordedService.call();

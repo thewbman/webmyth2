@@ -1309,7 +1309,7 @@ enyo.kind({
 	remotePluginClose: function() {
 		if(debug) this.log("remotePluginClose");
 		
-		this.$.plugin.callPluginMethodDeferred(enyo.nop,"closeSocket");
+		this.$.plugin.callPluginMethodDeferred(enyo.bind(this,this.mysqlPluginDelayedResponse),"closeSocket");
 	},
 	mysqlPluginDelayedResponse: function(inResponse) {
 		if(debug) this.log("mysqlPluginDelayedResponse: "+inResponse);
