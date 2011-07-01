@@ -27,7 +27,7 @@ function defaultCookie() {
 		useScript: 2,	
 		mythwebXml: false,	
 		MythXML_key: "DefaultKey",
-		webmythPythonFile: '/cgi-bin/webmyth.py',
+		webmythPythonFile: "/cgi-bin/webmyth.py",
 		allowDownloads: false,
 		
 		showChannelIcons: true,
@@ -35,7 +35,7 @@ function defaultCookie() {
 		showVideoDetailsImage: true,
 		forceScriptScreenshots: false,
 		
-		remoteHeader: 'Pause',
+		remoteHeader: "Pause",
 		remoteVibrate: false,
 		remoteFullscreen: false,
 		playJumpRemote: true,

@@ -1,7 +1,7 @@
 {
 	"title": "WebMyth2",
 	"id": "com.thewbman.webmyth2",
-	"version": "0.4.6",
+	"version": "0.4.7",
 	"vendor": "thewbman",
 	"vendor_email": "webmyth.help@gmail.com",
 	"vendor_url": "http://code.google.com/p/webmyth2/",
@@ -9,7 +9,7 @@
 	"main": "device.html",
 	"icon": "webmyth2-48x48-2.png",
 	"removable": "true",
-	"dockMode": true,
+	"dockMode": "true",
 	"uiRevision": 2,
-	"plug-ins": true
+	"plug-ins": "true"
 }
