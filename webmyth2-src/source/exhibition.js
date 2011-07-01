@@ -510,7 +510,7 @@ enyo.kind({ name: "exhibition",
 			this.$.programTitle.setContent(row.title);
 			
 			this.$.row1.setContent(row.subtitle);
-			this.$.row2.setContent(row.starttime.replace("T"," "));
+			this.$.row2.setContent(row.recstartts.replace("T"," "));
 			this.$.row3.setContent(row.category);
 			
 			if(row.recstatus == -1) {

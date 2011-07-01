@@ -993,7 +993,7 @@ enyo.kind({ name: "recorded",
 					this.doOpenWeb("Google", this.detailsProgram.title);
 					break;
 				case "MythWeb":
-					var dateJS = new Date(isoToJS(this.detailsProgram.starttime.replace(" ","T")));
+					var dateJS = new Date(isoToJS(this.detailsProgram.recstartts.replace(" ","T")));
 					var dateUTC = dateJS.getTime()/1000;
 					
 					this.doOpenWeb("MythWeb", "/"+this.detailsProgram.chanid+"/"+dateUTC);

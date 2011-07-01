@@ -808,7 +808,8 @@ enyo.kind({ name: "setupschedule",
 		this.$.savingPopup.openAtCenter();
 		this.$.savingSpinnerLarge.show();
 		
-		this.schedulerRule = -1;
+		//this.schedulerRule = -1;
+		this.schedulerRule = this.newRule.recordid;
 		
 		var query = "DELETE FROM `record` ";
 		query += " WHERE `recordid` = "+this.newRule.recordid+" LIMIT 1;";
@@ -1272,8 +1273,18 @@ enyo.kind({ name: "setupschedule",
 		return newRule;
 	
 	},
-	saveRuleResponse: function(inSender, inResponse) {
-		if(debug) this.log("saveRuleResponse: "+inResponse);
+	saveRuleResponse: function(inSender, inResponse, inInsertId) {
+		if(debug) this.log("saveRuleResponse: "+inResponse+"  "+inInsertId);
+		
+		if(inResponse.indexOf("Finished running SQL with insert_id") >= 0) {
+			if(debug) this.log("insert_id: "+parseInt(inResponse.substring(37)));
+			if(parseInt(inResponse.substring(37)) > 0) this.schedulerRule = parseInt(inResponse.substring(37));
+		} else if(inInsertId) {
+			if(debug) this.log("inInsertId: "+parseInt(inInsertId));
+			if(parseInt(inInsertId) > 0) this.schedulerRule = parseInt(inInsertId);
+		} else {
+			if(debug) this.log("Did not get inInsertId or insert_id");
+		}
 		
 		if(WebMyth.useScript) {
 			

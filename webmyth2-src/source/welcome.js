@@ -22,6 +22,8 @@ enyo.kind({ name: "welcome",
 		{name: "getConnectionInfoService", kind: "WebService", handleAs: "xml", onSuccess: "connectionInfoResponse", onFailure: "connectionInfoFailure"},
 		{name: "getSettingsService", kind: "WebService", handleAs: "json", onSuccess: "settingsResponse", onFailure: "settingsFailure"},
 			
+			{kind: "NetworkAlerts", onTap: "networkAlertsTapHandler"},
+			
 			{name: "header", kind: "Toolbar", components: [
 				{kind: "Image", src: "webmyth2-28x28.png", onclick: "headerIconClick", style: "padding-right: 4px"},
 				{kind: "VFlexBox", flex: 1, components: [
@@ -155,6 +157,8 @@ enyo.kind({ name: "welcome",
 			
 			this.$.getConnectionInfoService.call();
 		}
+		
+		this.$.networkAlerts.push({type: "Data"});
 	},
 	deactivate: function() {
 		if(debug) this.log("deactivate");
@@ -192,6 +196,9 @@ enyo.kind({ name: "welcome",
 		
 		//this.doHaveImageView("webmyth2-icon2.png");
 		this.doFirstUse();
+	},
+	networkAlertsTapHandler: function(inSender, inResponse){
+		if(debug) this.log("networkAlertsTapHandler: "+enyo.json.stringify(inResponse));
 	},
 	
 	//Welcome functions

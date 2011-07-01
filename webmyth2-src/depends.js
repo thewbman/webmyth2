@@ -27,6 +27,10 @@ enyo.depends(
 	
 	"source/IndexedVirtualList.js",
 	
-	"stylesheets/webmyth2.css"
+	"source/libraries/Metrix/metrix.js",
+	
+	"stylesheets/webmyth2.css",
+	
+	"$enyo-lib/networkalerts/"
 	
 );
