@@ -1306,7 +1306,7 @@ enyo.kind({ name: "searchTitle",
 							s.sourceId = programChildNode.getAttributeNode("sourceId").nodeValue;
 							s.chanid = programChildNode.getAttributeNode("chanId").nodeValue;
 							s.channum = programChildNode.getAttributeNode("chanNum").nodeValue;
-							//s.callsign = programChildNode.getAttributeNode("callSign").nodeValue;
+							s.callsign = programChildNode.getAttributeNode("callSign").nodeValue;
 						}
 						
 										

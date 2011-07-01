@@ -581,6 +581,7 @@ enyo.kind({ name: "setupschedule",
 			this.newRule.type = 7;
 			
 			this.schedulerRule = -1;
+			//this.schedulerRule = this.newRule.recordid;
 			
 			var query = 'INSERT INTO `record` SET `type` = "'+this.newRule.type+'", `title` = "'+this.newRule.title+'", `subtitle` = "'+this.newRule.subtitle;
 			query += '", startdate = "'+this.newRule.startdate+'", starttime = "'+this.newRule.starttime+'", station = "'+this.newRule.station;
@@ -640,6 +641,7 @@ enyo.kind({ name: "setupschedule",
 			this.newRule.type = 8;
 			
 			this.schedulerRule = -1;
+			//this.schedulerRule = this.newRule.recordid;
 			
 			var query = 'INSERT INTO `record` SET `type` = "'+this.newRule.type+'", `title` = "'+this.newRule.title+'", `subtitle` = "'+this.newRule.subtitle;
 			query += '", startdate = "'+this.newRule.startdate+'", starttime = "'+this.newRule.starttime+'", station = "'+this.newRule.station;
@@ -1244,11 +1246,15 @@ enyo.kind({ name: "setupschedule",
 		newRule.autouserjob3 = boolToInt(this.$.autouserjob3.getChecked());
 		
 		newRule.autouserjob4 = boolToInt(this.$.autouserjob4.getChecked());
-		newRule.findday = dateDayAdjust(myDate.getDay());						//only use next 3 if override rule
+		newRule.findday = dateDayAdjust(myDate.getDay()+1);						//only use next 3 if override rule
+		if(newRule.findday > 6) newRule.findday = newRule.findday - 7;
 		newRule.findtime = this.detailsProgram.starttime.substring(11,19);
 		//newRule.findid = parseInt(myDate.getTime()/86400000+719464);			//(UNIX_TIMESTAMP(program.starttime)/60/60/24)+719528 - off by 74?
-		newRule.findid = parseInt(myDate.getTime()/86400000+719495);			//(UNIX_TIMESTAMP(program.starttime)/60/60/24)+719528 - off by 43?
+		//newRule.findid = parseInt(parseInt(myDate.getTime()/86400000)+719495);			//(UNIX_TIMESTAMP(program.starttime)/60/60/24)+719528 - off by 43?
+		newRule.findid = parseInt(parseInt(myDate.getTime()/86400000)+719090);			//(UNIX_TIMESTAMP(program.starttime)/60/60/24)+719528 - off by 438?
 		newRule.inactive = boolToInt(this.$.inactive.getChecked());
+		
+		//734641 app, 734236 mythweb = 405
 		
 		newRule.parentid = this.ruleObject.parentid;
 		newRule.transcoder = this.ruleObject.transcoder;
