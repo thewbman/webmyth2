@@ -60,7 +60,7 @@ enyo.kind({ name: "searchPeople",
 			{name: "getProgramDetailsService", kind: "WebService", handleAs: "xml", onSuccess: "getProgramDetailsResponse", onFailure: "getProgramDetailsFailure"},
 			{name: "getPeopleService", kind: "WebService", handleAs: "json", onSuccess: "peopleResponse", onFailure: "peopleFailure"},
 			
-			{name: "newSearchPopup", kind: "Popup", scrim: true, dismissWithClick: true, dismissWithEscape: true, components: [
+			{name: "newSearchPopup", kind: "Popup", onOpen: "newSearchPopupOpen", scrim: true, dismissWithClick: true, dismissWithEscape: true, showKeyboardWhenOpening: true, components: [
 				{name: "searchTextInput", kind: "Input", className: "searchText", onkeypress: "searchKeypress"},
 				{kind: "Button", caption: "People Search", onclick: "submitSearch"},
 			]},
@@ -71,10 +71,6 @@ enyo.kind({ name: "searchPeople",
 					{kind: "Spacer"},
 				]},
 				{content: $L("Searching")+"...", style: "text-align: center;"},
-			]},
-			{name: "messagePopup", kind: "Popup", scrim: true, dismissWithClick: true, dismissWithEscape: true, onclick: "messagePopupClick", components: [
-				{name: "messagePopupText", style: "text-align: center;"},
-				{content: $L("(Click anywhere to close this message)"), style: "text-align: center;"},
 			]},
 			
 			{name: "searchPeoplePane", kind: "Pane", flex: 1, transitionKind: "enyo.transitions.Simple", onSelectView: "viewSelected", components: [
@@ -468,15 +464,6 @@ enyo.kind({ name: "searchPeople",
 		
 		this.doBannerMessage(message);
 		
-		//this.$.messagePopupText.setContent(message);
-		//this.$.messagePopup.openAtCenter();
-		
-	},
-	messagePopupClick: function() {
-		if(debug) this.log("messagePopupClick");
-		
-		this.$.messagePopup.close();
-		
 	},
 	externalPerson: function(personObject, inViewMode) {
 		if(debug) this.log("externalPerson: "+enyo.json.stringify(personObject));
@@ -614,6 +601,11 @@ enyo.kind({ name: "searchPeople",
 		//Palm?
 		if(inEvent.keyCode == 10) this.submitSearch();
 		
+	},
+	newSearchPopupOpen: function() {
+		if(debug) this.log("newSearchPopupOpen");
+		
+		this.$.searchTextInput.forceFocusEnableKeyboard();
 	},
 	submitSearch: function() {
 		if(debug) this.log("submitSearch: "+this.$.searchTextInput.getValue());

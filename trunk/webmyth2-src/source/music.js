@@ -72,10 +72,7 @@ enyo.kind({ name: "music",
 				{content: $L("Loading")+"...", style: "text-align: center;"},
 				{content: $L("(This may take a long time)"), style: "text-align: center;"},
 			]},
-			{name: "messagePopup", kind: "Popup", scrim: true, dismissWithClick: true, dismissWithEscape: true, onclick: "messagePopupClick", components: [
-				{name: "messagePopupText", style: "text-align: center;"},
-				{content: $L("(Click anywhere to close this message)"), style: "text-align: center; font-size: smaller;"},
-			]},
+			
 			{name: "musicDetailsPopup", kind: "Popup", scrim: true, dismissWithClick: true, dismissWithEscape: true, className: "musicDetailsPopup", components: [
 				{name: "detailsAlbumArtItem", kind: "Item", layoutKind: "HFlexLayout", className: "detailsAlbumArtItem", onclick: "musicDetailsPopupClick", components: [
 					{kind: "Spacer"},
@@ -224,8 +221,8 @@ enyo.kind({ name: "music",
 							]},
 							
 							{name: "playPopupMenu", kind: "PopupSelect", className: "playPopupMenu", onSelect: "playSelect", onClose: "playClosed", components: [
-								{name: "Download", caption: "Download", onclick: "streamOrDownload"},
-								{name: "Stream", caption: "Stream", onclick: "streamOrDownload"},
+								{name: "Download", caption: "Download"},
+								{name: "Stream", caption: "Stream"},
 							]},
 							{name: "webPopupMenu", kind: "PopupSelect", className: "webPopupMenu", onSelect: "webSelect", onClose: "webClosed", components: [
 								{caption: $L("Artist"), components: [
@@ -437,15 +434,6 @@ enyo.kind({ name: "music",
 		if(debug) this.log("bannerMessage: "+message);
 		
 		this.doBannerMessage(message);
-		
-		//this.$.messagePopupText.setContent(message);
-		//this.$.messagePopup.openAtCenter();
-		
-	},
-	messagePopupClick: function() {
-		if(debug) this.log("messagePopupClick");
-		
-		this.$.messagePopup.close();
 		
 	},
 	
@@ -880,6 +868,54 @@ enyo.kind({ name: "music",
 		
 		this.$.playPopupMenu.openAroundControl(this.$.playCommandButton);
 	},
+	playSelect: function(inSender, inEvent) {
+		if((debug)&&(inEvent)) {
+			this.log("playSelect: "+inEvent.value);
+			
+			var row = this.selectedSong;
+			
+			var songUrl = "";
+				
+			if((WebMyth.prefsCookie.mythwebXml)&&(true)) {	
+				//doesn't work for music?
+			
+				//songUrl += "http://"+WebMyth.prefsCookie.webserverName+"/mythweb/mythxml/GetMusic?MythXMLKey=";
+				//songUrl += WebMyth.prefsCookie.MythXML_key;
+				//songUrl += "&Id=";
+				//songUrl += row.song_id;
+				
+				songUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":6544/Myth/GetMusic?Id=";
+				songUrl += row.song_id;
+					
+			} else {
+				
+				songUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":6544/Myth/GetMusic?Id=";
+				songUrl += row.song_id;
+				
+			}
+			
+			if(inEvent.value == "Stream") {
+			
+				if(window.PalmSystem) {
+					this.$.streamSongService.call({id: "com.palm.app.streamingmusicplayer", target: songUrl, params: {target: songUrl}});
+				} else {
+					window.open(songUrl);
+				}
+				
+			} else {
+					
+				var u = row.filename.split("/");
+				var songFilename = u[u.length - 1];
+				
+				var songDirectory = "/media/internal/music/"+row.artist_name+"/"+row.album_name+"/";
+				
+				this.doDownloadFile(songUrl, songFilename, songDirectory, "com.palm.app.musicplayer");
+			
+			}
+			
+			//this.$.musicDetailsPopup.close();
+		}
+	},
 	webClick: function(inSender, inEvent) {
 		if(debug) this.log("webClick");
 		
@@ -927,53 +963,6 @@ enyo.kind({ name: "music",
 		}
 		
 		this.$.musicDetailsPopup.close();
-	},
-	streamOrDownload: function(inSender) {
-		if(debug) this.log("streamOrDownload: "+inSender.getName());
-		
-		var row = this.selectedSong;
-		
-		var songUrl = "";
-			
-		if((WebMyth.prefsCookie.mythwebXml)&&(true)) {	
-			//doesn't work for music?
-		
-			//songUrl += "http://"+WebMyth.prefsCookie.webserverName+"/mythweb/mythxml/GetMusic?MythXMLKey=";
-			//songUrl += WebMyth.prefsCookie.MythXML_key;
-			//songUrl += "&Id=";
-			//songUrl += row.song_id;
-			
-			songUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":6544/Myth/GetMusic?Id=";
-			songUrl += row.song_id;
-				
-		} else {
-			
-			songUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":6544/Myth/GetMusic?Id=";
-			songUrl += row.song_id;
-			
-		}
-		
-		if(inSender.getName() == "Stream") {
-		
-			if(window.PalmSystem) {
-				this.$.streamSongService.call({id: "com.palm.app.streamingmusicplayer", target: songUrl, params: {target: songUrl}});
-			} else {
-				window.open(songUrl);
-			}
-			
-		} else {
-				
-			var u = row.filename.split("/");
-			var songFilename = u[u.length - 1];
-			
-			var songDirectory = "/media/internal/music/"+row.artist_name+"/"+row.album_name+"/";
-			
-			this.doDownloadFile(songUrl, songFilename, songDirectory, "com.palm.app.musicplayer");
-		
-		}
-		
-		//this.$.musicDetailsPopup.close();
-		
 	},
 	showSlidingPane: function() {
 		if(debug)	this.log("showSlidingPane");

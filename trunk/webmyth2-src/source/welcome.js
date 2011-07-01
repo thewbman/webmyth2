@@ -9,6 +9,7 @@ enyo.kind({ name: "welcome",
 		viewMode: "tablet",
 	},
 	events: {
+		onBannerMessage: "", 
 		onSelectMode: "",
 		onHaveImageView: "",
 		onSavePreferences: "",
@@ -19,11 +20,6 @@ enyo.kind({ name: "welcome",
 	
 		{name: "getConnectionInfoService", kind: "WebService", handleAs: "xml", onSuccess: "connectionInfoResponse", onFailure: "connectionInfoFailure"},
 		{name: "getSettingsService", kind: "WebService", handleAs: "json", onSuccess: "settingsResponse", onFailure: "settingsFailure"},
-		
-		{name: "messagePopup", kind: "Popup", scrim: true, dismissWithClick: true, dismissWithEscape: true, onclick: "messagePopupClick", components: [
-			{name: "messagePopupText", style: "text-align: center;"},
-			{content: "(Click anywhere to close this message)", style: "text-align: center;"},
-		]},
 			
 		//{kind: "VFlexBox", flex: 1, components: [
 			{name: "header", kind: "Toolbar", components: [
@@ -179,14 +175,7 @@ enyo.kind({ name: "welcome",
 	bannerMessage: function(message) {
 		if(debug) this.log("bannerMessage: "+message);
 		
-		this.$.messagePopupText.setContent(message);
-		this.$.messagePopup.openAtCenter();
-		
-	},
-	messagePopupClick: function() {
-		if(debug) this.log("messagePopupClick");
-		
-		this.$.messagePopup.close();
+		this.doBannerMessage(message);
 		
 	},
 	

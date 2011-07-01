@@ -61,10 +61,6 @@ enyo.kind({ name: "setupschedule",
 			]},
 			{content: "Saving...", style: "text-align: center;"},
 		]},
-		{name: "messagePopup", kind: "Popup", scrim: true, dismissWithClick: true, dismissWithEscape: true, onclick: "messagePopupClick", components: [
-			{name: "messagePopupText", style: "text-align: center;"},
-			{content: "(Click anywhere to close this message)", style: "text-align: center;"},
-		]},
 			
 		{name: "header", kind: "Toolbar", layoutKind: "HFlexLayout", onclick: "revealTop", components: [
 			{name: "leftHeaderTitle", kind: "Control", className: "headerTitle", content: $L("Setup Schedule"), flex2: 1},
@@ -353,15 +349,6 @@ enyo.kind({ name: "setupschedule",
 		if(debug) this.log("bannerMessage: "+message);
 		
 		this.doBannerMessage(message);
-		
-		//this.$.messagePopupText.setContent(message);
-		//this.$.messagePopup.openAtCenter();
-		
-	},
-	messagePopupClick: function() {
-		if(debug) this.log("messagePopupClick");
-		
-		this.$.messagePopup.close();
 		
 	},
 	externalProgram: function(inProgram, inViewMode) {
