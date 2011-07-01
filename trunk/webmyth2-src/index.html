@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+<head>
+	<title>WebMyth2</title>
+	
+	<!--<script src="../../../enyo/0.9/framework/enyo.js" type="text/javascript"></script>-->
+	<script src="../../../enyo/0.10/framework/enyo.js" type="text/javascript"></script>
+
+</head>
+<body>
+<script type="text/javascript">
+	
+	if((false)||(window.PalmSystem && enyo.windowParams && enyo.windowParams.windowType == "dockModeWindow" && enyo.windowParams.dockMode == true)){
+		enyo.create({kind: "webmyth2", appMode: "exhibition"}).renderInto(document.body);
+	}
+	else {
+		enyo.create({kind: "webmyth2", appMode: "standard"}).renderInto(document.body);
+	};
+	
+</script>
+</body>
+</html>

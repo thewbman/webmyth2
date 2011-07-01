@@ -1,0 +1,14 @@
+Todo:
+ - searchtitle/people carousels
+ - videos directory
+ - music playlist
+ - music carousel
+ - help
+ - skip the/a/an sort
+ - sort lists
+ - search guide
+ - guide recent/favorite channels
+ - searchPeople video match - do sort/details
+ - master backend search
+ - more g11n formating date/time?
+ 
