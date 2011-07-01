@@ -877,8 +877,8 @@ enyo.kind({ name: "recorded",
 		this.$.playPopupMenu.openAroundControl(this.$.playCommandButton);
 	},
 	playSelect: function(inSender, inEvent) {
-		if((debug)&&(inEvent)) {
-			this.log("playSelect: "+inEvent.value);
+		if(inEvent) {
+			if(debug) this.log("playSelect: "+inEvent.value);
 			
 			var row = this.detailsProgram;
 			
@@ -971,8 +971,8 @@ enyo.kind({ name: "recorded",
 		this.$.morePopupMenu.openAroundControl(this.$.moreCommandButton);
 	},
 	moreSelect: function(inSender, inEvent) {
-		if((debug)&&(inEvent)) {
-			this.log("moreSelect: "+inEvent.value);
+		if(inEvent) {
+			if(debug) this.log("moreSelect: "+inEvent.value);
 			
 			switch(inEvent.value) {
 				case "Wikipedia":

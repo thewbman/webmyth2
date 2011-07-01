@@ -16,10 +16,7 @@ enyo.depends(
 	"source/backendlog.js",
 	"source/setupschedule.js",
 	"source/preferences.js",
-		"source/tips.js",
-		"source/help.js",
-	"source/changelog.js",
-		"source/faqs.js",
+	"source/help.js",
 		
 	"source/exhibition.js",
 	

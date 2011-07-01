@@ -34,8 +34,9 @@ enyo.kind({ name: "backendstatus",
 			{content: "Loading...", style: "text-align: center;"},
 		]},
 			
-		{name: "header", kind: "Toolbar", layoutKind: "HFlexLayout", onclick: "revealTop", components: [
-			{name: "leftHeaderTitle", kind: "Control", className: "headerTitle", content: $L("Status"), flex: 1},
+		{name: "header", kind: "Toolbar", layoutKind: "VFlexLayout", onclick: "revealTop", components: [
+			{name: "leftHeaderTitle", kind: "Control", className: "headerTitle", content: $L("Status")},
+			{name: "leftHeaderSubtitle", content: "Master Backend", kind: "Control", className: "headerSubtitle"},
 		]},
 		
 		{kind: "HFlexBox", flex: 1, components: [
@@ -65,110 +66,110 @@ enyo.kind({ name: "backendstatus",
 		
 			{name: "statusScroller", kind: "Scroller", autoHorizontal: false, horizontal: false, autoVertical: true, flex: 1, components: [
 		
-			{name: "encodersDrawer", kind: "DividerDrawer", open: false, caption: "Encoders", components: [
-				{name: "encodersVirtualRepeater", kind: "VirtualRepeater", onSetupRow: "getEncodersItem", onclick: "encodersSelect", components: [
-					{name: "encodersItem", kind: "Item", className: "encodersItem", components: [
-						{name: "encodersDescription", className: "encodersDescription"},
-						{name: "encodersProgram", allowHtml: true, className: "encodersProgram"},
-					]}
-				]},
-			]},
-			
-			{name: "scheduledDrawer", kind: "DividerDrawer", open: false, caption: "Scheduled", components: [
-				{name: "scheduledVirtualRepeater", kind: "VirtualRepeater", onSetupRow: "getScheduledItem", onclick: "scheduledSelect", components: [
-					{name: "scheduledItem", kind: "Item", className: "scheduledItem", components: [
-						{name: "scheduledTitle", className: "scheduledTitle"},
-						{name: "scheduledSubtitle", className: "scheduledSubtitle"},
-						{name: "scheduledRecstartts", className: "scheduledRecstartts"},
-						{name: "scheduledEncoder", className: "scheduledEncoder"},
-					]}
-				]},
-			]},
-			
-			{name: "jobqueueDrawer", kind: "DividerDrawer", caption: "Job Queue", components: [
-				{name: "jobqueueVirtualRepeater", kind: "VirtualRepeater", onSetupRow: "getJobqueueItem", onclick: "jobqueueSelect", components: [
-					{name: "jobqueueItem", kind: "Item", className: "jobqueueItem", components: [
-						{name: "jobqueueTitle", className: "jobqueueTitle"},
-						{name: "jobqueueStarttime", className: "jobqueueStarttime"},
-						{name: "jobqueueType", className: "jobqueueType"},
-						{name: "jobqueueStatus", className: "jobqueueStatus"},
-						{name: "jobqueueComments", className: "jobqueueComments"},
-					]}
-				]},
-				{content: "No recent or current jobs", name: "nojobs"},
-			]},
-			
-			{name: "storageDrawer", kind: "DividerDrawer", caption: "Storage Locations", components: [
-				{name: "storageVirtualRepeater", kind: "VirtualRepeater", onSetupRow: "getStorageItem", onclick: "storageSelect", components: [
-					{name: "storageItem", kind: "Item", className: "storageItem", components: [
-						{name: "storageName", className: "storageName"},
-						{name: "storageFree", className: "storageFree"},
-						{name: "storageUsed", className: "storageUsed"},
-						{name: "storageTotal", className: "storageTotal"},
-					]}
-				]},
-			]},
-			
-			{name: "guideDrawer", kind: "DividerDrawer", caption: "Guide Information", components: [
-				
-				{name: "guideStartItem", kind: "Item", className: "enyo-first", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
-					{name: "guideStart", flex: 1},
-					{content: "Last Run", className: "label"},
-				]},
-				{name: "guideStatusItem", kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
-					{name: "guideStatus", flex: 1},
-					{content: "Last Run", className: "label"},
-				]},
-				{name: "guideThruItem", kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
-					{name: "guideThru", flex: 1},
-					{content: "Data Until", className: "label"},
-				]},
-				{name: "guideDaysItem", kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
-					{name: "guideDays", flex: 1},
-					{content: "Days", className: "label"},
-				]},
-				{name: "guideNextItem", kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
-					{name: "guideNext", flex: 1},
-					{content: "Next Run", className: "label"},
-				]},
-				{name: "guideCommentsItem", kind: "Item", className: "enyo-last", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
-					{name: "guideComments", flex: 1},
-					{content: "Comments", className: "label"},
+				{name: "encodersDrawer", kind: "DividerDrawer", open: false, caption: "Encoders", components: [
+					{name: "encodersVirtualRepeater", kind: "VirtualRepeater", onSetupRow: "getEncodersItem", onclick: "encodersSelect", components: [
+						{name: "encodersItem", kind: "Item", className: "encodersItem", components: [
+							{name: "encodersDescription", className: "encodersDescription"},
+							{name: "encodersProgram", allowHtml: true, className: "encodersProgram"},
+						]}
+					]},
 				]},
 				
-			]},
-			
-			{name: "otherDrawer", kind: "DividerDrawer", caption: "Other Information", components: [
-				
-				{name: "masterBackendItem", kind: "Item", className: "enyo-first", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
-					{name: "masterBackend", flex: 1},
-					{content: "Master Backend", className: "label"},
-				]},
-				{name: "protoVerItem", kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
-					{name: "protoVer", flex: 1},
-					{content: "Protocol Version", className: "label"},
-				]},
-				{name: "statusVersionItem", kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
-					{name: "statusVersion", flex: 1},
-					{content: "MythTV Version", className: "label"},
-				]},
-				{name: "statusDateItem", kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
-					{name: "statusDate", flex: 1},
-					{content: "Current Date", className: "label"},
-				]},
-				{name: "statusTimeItem", kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
-					{name: "statusTime", flex: 1},
-					{content: "Current Time", className: "label"},
-				]},
-				{name: "allLoadsItem", kind: "Item", className: "enyo-last", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
-					{name: "allLoads", flex: 1},
-					{content: "Load Avg", className: "label"},
+				{name: "scheduledDrawer", kind: "DividerDrawer", open: false, caption: "Scheduled", components: [
+					{name: "scheduledVirtualRepeater", kind: "VirtualRepeater", onSetupRow: "getScheduledItem", onclick: "scheduledSelect", components: [
+						{name: "scheduledItem", kind: "Item", className: "scheduledItem", components: [
+							{name: "scheduledTitle", className: "scheduledTitle"},
+							{name: "scheduledSubtitle", className: "scheduledSubtitle"},
+							{name: "scheduledRecstartts", className: "scheduledRecstartts"},
+							{name: "scheduledEncoder", className: "scheduledEncoder"},
+						]}
+					]},
 				]},
 				
+				{name: "jobqueueDrawer", kind: "DividerDrawer", caption: "Job Queue", components: [
+					{name: "jobqueueVirtualRepeater", kind: "VirtualRepeater", onSetupRow: "getJobqueueItem", onclick: "jobqueueSelect", components: [
+						{name: "jobqueueItem", kind: "Item", className: "jobqueueItem", components: [
+							{name: "jobqueueTitle", className: "jobqueueTitle"},
+							{name: "jobqueueStarttime", className: "jobqueueStarttime"},
+							{name: "jobqueueType", className: "jobqueueType"},
+							{name: "jobqueueStatus", className: "jobqueueStatus"},
+							{name: "jobqueueComments", className: "jobqueueComments"},
+						]}
+					]},
+					{content: "No recent or current jobs", name: "nojobs"},
+				]},
+				
+				{name: "storageDrawer", kind: "DividerDrawer", caption: "Storage Locations", components: [
+					{name: "storageVirtualRepeater", kind: "VirtualRepeater", onSetupRow: "getStorageItem", onclick: "storageSelect", components: [
+						{name: "storageItem", kind: "Item", className: "storageItem", components: [
+							{name: "storageName", className: "storageName"},
+							{name: "storageFree", className: "storageFree"},
+							{name: "storageUsed", className: "storageUsed"},
+							{name: "storageTotal", className: "storageTotal"},
+						]}
+					]},
+				]},
+				
+				{name: "guideDrawer", kind: "DividerDrawer", caption: "Guide Information", components: [
+					
+					{name: "guideStartItem", kind: "Item", className: "enyo-first", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+						{name: "guideStart", flex: 1},
+						{content: "Last Run", className: "label"},
+					]},
+					{name: "guideStatusItem", kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+						{name: "guideStatus", flex: 1},
+						{content: "Last Run", className: "label"},
+					]},
+					{name: "guideThruItem", kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+						{name: "guideThru", flex: 1},
+						{content: "Data Until", className: "label"},
+					]},
+					{name: "guideDaysItem", kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+						{name: "guideDays", flex: 1},
+						{content: "Days", className: "label"},
+					]},
+					{name: "guideNextItem", kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+						{name: "guideNext", flex: 1},
+						{content: "Next Run", className: "label"},
+					]},
+					{name: "guideCommentsItem", kind: "Item", className: "enyo-last", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+						{name: "guideComments", flex: 1},
+						{content: "Comments", className: "label"},
+					]},
+					
+				]},
+				
+				{name: "otherDrawer", kind: "DividerDrawer", caption: "Other Information", components: [
+					
+					{name: "masterBackendItem", kind: "Item", className: "enyo-first", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+						{name: "masterBackend", flex: 1},
+						{content: "Master Backend", className: "label"},
+					]},
+					{name: "protoVerItem", kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+						{name: "protoVer", flex: 1},
+						{content: "Protocol Version", className: "label"},
+					]},
+					{name: "statusVersionItem", kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+						{name: "statusVersion", flex: 1},
+						{content: "MythTV Version", className: "label"},
+					]},
+					{name: "statusDateItem", kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+						{name: "statusDate", flex: 1},
+						{content: "Current Date", className: "label"},
+					]},
+					{name: "statusTimeItem", kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+						{name: "statusTime", flex: 1},
+						{content: "Current Time", className: "label"},
+					]},
+					{name: "allLoadsItem", kind: "Item", className: "enyo-last", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+						{name: "allLoads", flex: 1},
+						{content: "Load Avg", className: "label"},
+					]},
+					
+				]},
+				
+				{name: "errorMessage", content: "&nbsp;"},
 			]},
-			
-			{name: "errorMessage", content: "&nbsp;"},
-		]},
 		
 		]},
 		
@@ -211,6 +212,8 @@ enyo.kind({ name: "backendstatus",
 		//this.render();
 		
 		this.resize(inViewMode);
+		
+		this.$.leftHeaderSubtitle.setContent(WebMyth.prefsCookie.masterBackendIp);
 		
 		this.$.allMenu.addClass("selected");
 		this.$.encodersMenu.removeClass("selected");

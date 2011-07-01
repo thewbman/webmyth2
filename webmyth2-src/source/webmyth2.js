@@ -36,7 +36,7 @@ enyo.kind({
 		
 		{kind: "AppMenu", components: [
 			{caption: "Preferences", onclick: "openPreferences"},
-			{caption: "Changelog", onclick: "openChangelog"},
+			{caption: "Help", onclick: "openHelp"},
 		]},
 		
 		{name: "messagePopup", kind: "Popup", scrim: true, onBeforeOpen: "beforeMessageOpen", components: [
@@ -71,10 +71,8 @@ enyo.kind({
 				{kind: "backendlog", onBannerMessage: "bannerMessage", onSelectMode: "changeMode", onMysqlPluginCommand: "mysqlPluginCommand", onMysqlPluginExecute: "mysqlPluginExecute"},
 				{kind: "preferences", onBannerMessage: "bannerMessage", onSelectMode: "changeMode", onGetPreviousPane: "getPreviousPane", onMysqlPluginCommand: "mysqlPluginCommand", onMysqlPluginExecute: "mysqlPluginExecute"},
 				{kind: "setupschedule", onBannerMessage: "bannerMessage", onGetPreviousPane: "getPreviousPane", onSelectMode: "changeMode", onSavePreferences: "savePreferences", onPersonSelected: "personSelected", onOpenWeb: "openWeb", onSetupSchedule: "setupSchedule", onProgramGuide: "programGuide", onTitleSearch: "titleSearch", onDownloadFile: "downloadFile", onMysqlPluginCommand: "mysqlPluginCommand", onMysqlPluginExecute: "mysqlPluginExecute", onMythprotocolPluginCommand: "mythprotocolPluginCommand"},
-				//kind: "tips", lazy: true},
-				//kind: "help", lazy: true},
-				//kind: "changelog", onSelectMode: "changeMode"},
-				//kind: "faqs", lazy: true},
+				
+				{kind: "help", onBannerMessage: "bannerMessage", onGetPreviousPane: "getPreviousPane", onSelectMode: "changeMode", onSavePreferences: "savePreferences", onPersonSelected: "personSelected", onOpenWeb: "openWeb", onSetupSchedule: "setupSchedule", onProgramGuide: "programGuide", onTitleSearch: "titleSearch", onDownloadFile: "downloadFile", onMysqlPluginCommand: "mysqlPluginCommand", onMysqlPluginExecute: "mysqlPluginExecute", onMythprotocolPluginCommand: "mythprotocolPluginCommand"},
 				
 				{kind: "exhibition", onBannerMessage: "bannerMessage", onGetPreviousPane: "getPreviousPane", onSelectMode: "changeMode", onSavePreferences: "savePreferences", onPersonSelected: "personSelected", onOpenWeb: "openWeb", onSetupSchedule: "setupSchedule", onProgramGuide: "programGuide", onTitleSearch: "titleSearch", onDownloadFile: "downloadFile", onMysqlPluginCommand: "mysqlPluginCommand", onMysqlPluginExecute: "mysqlPluginExecute", onMythprotocolBackgroundPluginCommand: "mythprotocolBackgroundPluginCommand"},
 				
@@ -100,9 +98,8 @@ enyo.kind({
 			]},
 			{name: "morePopupMenu", kind: "PopupSelect", className: "morePopupMenu", onSelect: "moreClickSelect", onClose: "moreClickClosed", components: [
 				{name: "preferencesMenu", caption: "Preferences"},
-				{name: "exhibitionMenu", caption: "Exhibition"},
 				{name: "helpMenu", caption: "Help"},
-				{name: "changelogMenu", caption: "Changelog"},
+				{name: "exhibitionMenu", caption: "Exhibition"},
 			]},
 		
 		]},
@@ -122,9 +119,9 @@ enyo.kind({
 			//for development
 			WebMyth.prefsCookie.webserverName = "thewbman.homedns.org";
 			WebMyth.prefsCookie.masterBackendIp = "thewbman.homedns.org";
-			WebMyth.prefsCookie.mythwebXml = false;
+			WebMyth.prefsCookie.mythwebXml = true;
 			WebMyth.prefsCookie.forceScriptScreenshots = true;
-			WebMyth.prefsCookie.useScript = 0;
+			WebMyth.prefsCookie.useScript = 2;
 			WebMyth.prefsCookie.debug = true;
 			//
 			
@@ -175,9 +172,10 @@ enyo.kind({
 		if(debug) this.log("openPreferences");
 		this.$.mainPane.selectViewByName("preferences");
 	},
-	openChangelog: function() {
-		if(debug) this.log("openChangelog");
-		this.$.mainPane.selectViewByName("changelog");
+	openHelp: function() {
+		if(debug) this.log("openHelp");
+		
+		this.$.mainPane.selectViewByName("help");
 	},
 	selectMenuButton: function(inSender) {
 		if(debug) this.log("selectMenuButton with "+inSender.getName());
@@ -273,8 +271,8 @@ enyo.kind({
 			case "Exhibition": 
 				this.$.mainPane.selectViewByName("exhibition");
 				break;
-			case "Changelog": 
-				this.$.mainPane.selectViewByName("changelog");
+			case "Help": 
+				this.$.mainPane.selectViewByName("help");
 				break;
 		}
 	},
@@ -513,98 +511,64 @@ enyo.kind({
 		this.$.remote.deactivate();
 		this.$.exhibition.deactivate();
 		
-		//this.$.welcomeMenu.removeClass("selected");
-		//this.$.remoteMenu.removeClass("selected");
-		//this.$.recordedMenu.removeClass("selected");
-		//this.$.upcomingMenu.removeClass("selected");
-		//this.$.guideMenu.removeClass("selected");
-		//this.$.searchTitleMenu.removeClass("selected");
-		//this.$.searchPeopleMenu.removeClass("selected");
-		//this.$.searchMenu.removeClass("selected");
-		//this.$.videosMenu.removeClass("selected");
-		//this.$.musicMenu.removeClass("selected");
-		//this.$.mediaMenu.removeClass("selected");
-		//this.$.backendMenu.removeClass("selected");
-		//this.$.backendstatusMenu.removeClass("selected");
-		//this.$.logMenu.removeClass("selected");
-		//this.$.preferencesMenu.removeClass("selected");
-		//this.$.helpMenu.removeClass("selected");
-		//this.$.changelogMenu.removeClass("selected");
-		
-		//probably a better way to note activation
 		switch(this.currentPane) {
 			case 'welcome':
-				//this.$.welcomeMenu.addClass("selected");
 				this.$.welcome.activate(this.viewMode);
 				this.$.topMenu.setValue("welcome");
 			  break;
 			case 'remote':
-				//this.$.remoteMenu.addClass("selected");
 				this.$.remote.activate(this.viewMode);
 				this.$.topMenu.setValue("remote");
 			  break;
 			case 'recorded':
-				//this.$.recordedMenu.addClass("selected");
 				this.$.recorded.activate(this.viewMode);
 				this.$.topMenu.setValue("programs");
 			  break;
 			case 'upcoming':
-				//this.$.upcomingMenu.addClass("selected");
 				this.$.upcoming.activate(this.viewMode);
 				this.$.topMenu.setValue("programs");
 			  break;
 			case 'guide':
-				//this.$.guideMenu.addClass("selected");
 				this.$.guide.activate(this.viewMode);
 				this.$.topMenu.setValue("guide");
 			  break;
 			case 'searchTitle':
-				//this.$.searchMenu.addClass("selected");
 				this.$.searchTitle.activate(this.viewMode);
 				this.$.topMenu.setValue("search");
 			  break;
 			case 'searchPeople':
-				//this.$.searchMenu.addClass("selected");
 				this.$.searchPeople.activate(this.viewMode);
 				this.$.topMenu.setValue("search");
 			  break;
 			case 'video':
-				//this.$.mediaMenu.addClass("selected");
 				this.$.video.activate(this.viewMode);
 				this.$.topMenu.setValue("media");
 			  break;
 			case 'music':
-				//this.$.mediaMenu.addClass("selected");
 				this.$.music.activate(this.viewMode);
 				this.$.topMenu.setValue("media");
 			  break;
 			case 'backendstatus':
-				//this.$.backendMenu.addClass("selected");
 				this.$.backendstatus.activate(this.viewMode);
 				this.$.topMenu.setValue("backend");
 			  break;
 			case 'backendlog':
-				//this.$.backendMenu.addClass("selected");
 				this.$.backendlog.activate(this.viewMode);
 				this.$.topMenu.setValue("backend");
 			  break;
 			case 'setupschedule':
-				//this.$.setupschedule.addClass("selected");
 				this.$.setupschedule.activate(this.viewMode);
 				this.$.topMenu.setValue("nothing");
 			  break;
 			case 'preferences':
-				//this.$.preferencesMenu.addClass("selected");
 				this.$.preferences.activate(this.viewMode);
 				this.$.topMenu.setValue("more");
 			  break;
-			case 'changelog':
-				//this.$.changelogMenu.addClass("selected");
-				this.$.changelog.activate(this.viewMode);
+			case 'help':
+				this.$.help.activate(this.viewMode);
 				this.$.topMenu.setValue("more");
 			  break;
 			case 'exhibition':
-				//this.$.changelogMenu.addClass("selected");
 				this.$.exhibition.activate(this.viewMode);
 				this.$.topMenu.hide();
 			  break;
@@ -652,8 +616,8 @@ enyo.kind({
 			case 'preferences':
 				this.$.preferences.deactivate();
 			  break;
-			case 'changelog':
-				this.$.changelog.deactivate();
+			case 'help':
+				this.$.help.deactivate();
 			  break;
 			case 'exhibition':
 				this.$.exhibition.deactivate();
@@ -682,9 +646,6 @@ enyo.kind({
 			this.$.mainPane.selectViewByName(inName);
 		} else if (inName == "preferences") {
 			this.$.mainPane.createComponent({kind: "preferences", onPreferencesClosed: "getPreviousPane", owner: this});
-			this.$.mainPane.selectViewByName(inName);
-		} else if (inName == "changelog") {
-			this.$.mainPane.createComponent({kind: "changelog", onSelectMode: "changeMode", owner: this});
 			this.$.mainPane.selectViewByName(inName);
 		} else {
 			//
@@ -777,14 +738,12 @@ enyo.kind({
 				//this.$.backendlog.gotBack();
 				this.$.setupschedule.gotBack();
 				break;
-			case 'changelog':
+			case 'help':
 				e.preventDefault();
-				//this.$.changelog.gotBack();
 				this.getPreviousPane();
 				break;
 			case 'exhibition':
 				e.preventDefault();
-				//this.$.changelog.gotBack();
 				this.getPreviousPane();
 				break;
 			case 'mainImageView':
@@ -879,12 +838,12 @@ enyo.kind({
 			case 'preferences':
 				this.$.preferences.resize(this.viewMode);
 				break;
+			case 'help':
+				this.$.help.resize(this.viewMode);
+				break;
 			case 'exhibition':
 				this.$.topMenu.hide();
 				this.$.exhibition.resize(this.viewMode);
-				break;
-			case 'changelog':
-				this.$.changelog.resize(this.viewMode);
 				break;
 		};
 	},

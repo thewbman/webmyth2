@@ -752,8 +752,8 @@ enyo.kind({ name: "upcoming",
 		this.$.morePopupMenu.openAroundControl(this.$.moreCommandButton);
 	},
 	moreSelect: function(inSender, inEvent) {
-		if((debug)&&(inEvent)) {
-			this.log("moreSelect: "+inEvent.value);
+		if(inEvent) {
+			if(debug) this.log("moreSelect: "+inEvent.value);
 			
 			switch(inEvent.value) {
 				case "Wikipedia":

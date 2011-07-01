@@ -21,12 +21,11 @@ enyo.kind({ name: "welcome",
 		{name: "getConnectionInfoService", kind: "WebService", handleAs: "xml", onSuccess: "connectionInfoResponse", onFailure: "connectionInfoFailure"},
 		{name: "getSettingsService", kind: "WebService", handleAs: "json", onSuccess: "settingsResponse", onFailure: "settingsFailure"},
 			
-		//{kind: "VFlexBox", flex: 1, components: [
 			{name: "header", kind: "Toolbar", components: [
 				{kind: "Image", src: "webmyth2-28x28.png", onclick: "headerIconClick", style: "padding-right: 4px"},
 				{kind: "VFlexBox", flex: 1, components: [
 					{content: "WebMyth2", kind: "Control", className: "headerTitle"},
-					{name: "headerBackendIp", content: "Master Backend", kind: "Control", className: "headerSubtitle"},
+					{name: "headerSubtitle", content: "Master Backend", kind: "Control", className: "headerSubtitle"},
 				]},
 				{name: "welcomeRightMenuSpacer", kind: "Control", width: "32px"},
 				{name: "welcomeSpinner", kind: "Spinner"},
@@ -74,21 +73,22 @@ enyo.kind({ name: "welcome",
 				]},
 				{kind: "HFlexBox", components: [
 					{flex: 1},
-					{name: "exhibition", kind: "Button", width: "290px", content: "Exhibition", onclick: "selectButton"},
+					{name: "help", kind: "Button", width: "290px", content: "Help", onclick: "selectButton"},
 					{flex: 1},
 				]},
+				//kind: "HFlexBox", components: [
+					//flex: 1},
+					//name: "exhibition", kind: "Button", width: "290px", content: "Exhibition", onclick: "selectButton"},
+					//flex: 1},
+				//]},
 				{content: "&nbsp;"},
 			]},
-			
-		//]},
 		
 	],
 	
 	create: function() {
 		if(debug) this.log("create");
 		this.inherited(arguments);
-		
-		//this.$.welcomeScroller.scrollIntoView(0,0);
 		
 	},
 	
@@ -110,7 +110,7 @@ enyo.kind({ name: "welcome",
 			
 		}
 		
-		this.$.headerBackendIp.setContent(WebMyth.prefsCookie.masterBackendIp);
+		this.$.headerSubtitle.setContent(WebMyth.prefsCookie.masterBackendIp);
 		
 		//if(debug) this.log("requestUrl: "+requestUrl);
 		this.$.getConnectionInfoService.setUrl(requestUrl);

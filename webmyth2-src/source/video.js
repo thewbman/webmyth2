@@ -217,14 +217,14 @@ enyo.kind({ name: "video",
 							{name: "playPopupMenu", kind: "PopupSelect", className: "playPopupMenu", onSelect: "playSelect", onClose: "playClosed", components: [
 								//
 							]},
-							{name: "webPopupMenu", kind: "PopupSelect", className: "webPopupMenu", onSelect: "moreSelect", onClose: "moreClosed", components: [
-								{name: "Homepage", caption: "Homepage", onclick: "openWeb"},
-								{name: "Wikipedia", caption: "Wikipedia", onclick: "openWeb"},
-								{name: "themoviedb", caption: "themoviedb", onclick: "openWeb"},
-								{name: "IMDB", caption: "IMDB", onclick: "openWeb"},
-								{name: "TheTVDB", caption: "TheTVDB", onclick: "openWeb"},
-								{name: "TV.com", caption: "TV.com", onclick: "openWeb"},
-								{name: "Google", caption: "Google", onclick: "openWeb"},
+							{name: "webPopupMenu", kind: "PopupSelect", className: "webPopupMenu", onSelect: "webSelect", onClose: "moreClosed", components: [
+								{name: "Homepage", caption: "Homepage"},
+								{name: "Wikipedia", caption: "Wikipedia"},
+								{name: "themoviedb", caption: "themoviedb"},
+								{name: "IMDB", caption: "IMDB"},
+								{name: "TheTVDB", caption: "TheTVDB"},
+								{name: "TV.com", caption: "TV.com"},
+								{name: "Google", caption: "Google"},
 							]},
 						]},
 					]},
@@ -774,8 +774,8 @@ enyo.kind({ name: "video",
 		this.$.playPopupMenu.openAroundControl(this.$.playCommandButton);
 	},
 	playSelect: function(inSender, inEvent) {
-		if((debug)&&(inEvent)) {
-			this.log("playSelect: "+inEvent.value);
+		if(inEvent) {
+			if(debug) this.log("playSelect: "+inEvent.value);
 			
 			var row = this.detailsProgram;
 			
@@ -844,37 +844,35 @@ enyo.kind({ name: "video",
 		if(debug) this.log("webClick");
 		
 		this.$.webPopupMenu.openAroundControl(this.$.webCommandButton);
-		//this.$.webPopupMenu.openAroundNode(inSender.hasNode());
-		//this.$.webPopupMenu.openAtEvent(inEvent, {top: -50, left: -50});
-		//this.$.webPopupMenu.openAtCenter();
 	},
-	openWeb: function(inSender, inEvent) {
-		if(debug) this.log("openWeb: "+inSender.name);
-		
-		switch(inSender.name) {
-			case "Homepage":
-				this.doOpenWeb("URL", this.detailsProgram.homepage);
-				break;
-			case "Wikipedia":
-				this.doOpenWeb("Wikipedia", this.detailsProgram.title);
-				break;
-			case "themoviedb":
-				this.doOpenWeb("themoviedb", this.detailsProgram.title);
-				break;
-			case "IMDB":
-				this.doOpenWeb("IMDBtitle", this.detailsProgram.title);
-				break;
-			case "TheTVDB":
-				this.doOpenWeb("TheTVDB", this.detailsProgram.title);
-				break;
-			case "TV.com":
-				this.doOpenWeb("TV.com", this.detailsProgram.title);
-				break;
-			case "Google":
-				this.doOpenWeb("Google", this.detailsProgram.title);
-				break;
-		}
-				
+	webSelect: function(inSender, inEvent) {
+		if(inEvent) {
+			if(debug) this.log("webSelect: "+inEvent.value);
+			
+			switch(inEvent.value) {
+				case "Homepage":
+					this.doOpenWeb("URL", this.detailsProgram.homepage);
+					break;
+				case "Wikipedia":
+					this.doOpenWeb("Wikipedia", this.detailsProgram.title);
+					break;
+				case "themoviedb":
+					this.doOpenWeb("themoviedb", this.detailsProgram.title);
+					break;
+				case "IMDB":
+					this.doOpenWeb("IMDBtitle", this.detailsProgram.title);
+					break;
+				case "TheTVDB":
+					this.doOpenWeb("TheTVDB", this.detailsProgram.title);
+					break;
+				case "TV.com":
+					this.doOpenWeb("TV.com", this.detailsProgram.title);
+					break;
+				case "Google":
+					this.doOpenWeb("Google", this.detailsProgram.title);
+					break;
+			}
+		}		
 	},
 	setupSchedule: function(inSender) {
 		if(debug) this.log("setupSchedule");

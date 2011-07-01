@@ -14,6 +14,7 @@
 .backendlog,
 .setupschedule,
 .preferences,
+.help,
 .changelog {
 	background-colorsd: #0B3B0B;
 	background-color: #191C26;
@@ -29,8 +30,12 @@
 	text-align: center;
 }
 
-.enyo-spacer {
+.webmyth2 .enyo-spacer {
 	-webkit-box-flex: 1;
+}
+
+.webmyth2 .enyo-drawer {
+	overflow: visible;
 }
 
 .webmyth2 .enyo-toolbar,
@@ -494,7 +499,10 @@
 }
 
 /* Changelog */
-.changelog .enyo-view {
+.changelog .enyo-view,
+.help .faqsContent,
+.help .tipsContent,
+.help .changelogContent {
 	padding: 5px;
 	margin: 5px;
 }
@@ -596,7 +604,8 @@
 .backendstatus .statusMenu,
 .backendlog .logMenu,
 .preferences .preferencesMenu,
-.setupschedule .setupscheduleMenu   {
+.setupschedule .setupscheduleMenu,
+.help .helpMenu   {
 	z-index: 30;
 	font-size: 14px;
 	text-align: center;
@@ -606,7 +615,8 @@
 .backendstatus .statusMenu .menuItem,
 .backendlog .logMenu .menuItem,
 .preferences .preferencesMenu .menuItem,
-.setupschedule .setupscheduleMenu .menuItem {
+.setupschedule .setupscheduleMenu .menuItem,
+.help .helpMenu .menuItem {
 	border-top2: thin solid white;
 	border-bottom2: thin solid white;
 	-webkit-box-flex: 1;
@@ -624,7 +634,8 @@
 .backendstatus .statusMenu .menuItem.selected,
 .backendlog .logMenu .menuItem.selected,
 .preferences .preferencesMenu .menuItem.selected,
-.setupschedule .setupscheduleMenu .menuItem.selected{
+.setupschedule .setupscheduleMenu .menuItem.selected,
+.help .helpMenu .menuItem.selected {
 	color: white;
 	background-color2: white;
 	text-align: center;
