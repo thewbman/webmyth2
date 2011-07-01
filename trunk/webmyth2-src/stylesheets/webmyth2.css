@@ -19,7 +19,9 @@
 .findbackends {
 	background-colorsd: #0B3B0B;
 	background-color: #191C26;
-	background-imageasdf: url("../images/normal.png");
+	11-webkit-border-image: url("../images/toolbar.png") 2 4 repeat stretch;
+	background-image: url("../images/toolbar.png");
+	background-repeat: repeat-x;
 	color: #F2F2F2;
 }
 
@@ -536,7 +538,7 @@
 }
 
 .backCommandIcon {
-	background-image: url('../images/menu-icon-back.png');
+	background-image: url('../images/menu-icon-return.png');
 	width: 32px;
 	height: 32px;
 	margin: 9px 0px 9px 2px;

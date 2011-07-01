@@ -24,4 +24,5 @@ PALMPDK="/home/wes/Dropbox/development/PalmPDK"
 
 g++ $DEVICEOPTS -o $OUTFILE $SRC $STATIC_LIBS "-I$PALMPDK/include" "-I$PALMPDK/include/SDL" "-L$PALMPDK/device/lib" -Wl,--allow-shlib-undefined $LIBS
 
-echo Then strip the executable with arm-none-linux-gnueabi-bin-strip
+echo ***Now strip the executable with arm-none-linux-gnueabi-bin-strip***
+echo ***Run "strip" on windows***

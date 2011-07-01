@@ -120,6 +120,8 @@ enyo.kind({
 		if(debug) this.log("create");
 		this.inherited(arguments);
 		
+		WebMyth.Metrix = new Metrix(); 
+		
 		if((WebMyth.prefsCookieString)&&(true)) {
 			if(debug) this.log("we have cookie");
 			WebMyth.prefsCookie = enyo.json.parse(WebMyth.prefsCookieString);
@@ -160,6 +162,7 @@ enyo.kind({
 		WebMyth.dateFormatter = new enyo.g11n.DateFmt("EEEE, MMM d");
 		WebMyth.fulldateFormatter = new enyo.g11n.DateFmt("MMM d, yyyy");
 		WebMyth.datetimeFormatter = new enyo.g11n.DateFmt("MMM d, yyyy HH:mm");
+		WebMyth.locale = enyo.g11n.currentLocale();
 		
 		setTimeout(enyo.bind(this,"activate"),1);
 	
@@ -173,7 +176,7 @@ enyo.kind({
 				this.$.mainPane.selectViewByName("exhibition");
 				break;
 			default:
-				this.$.welcome.activate();
+				//this.$.welcome.activate();
 				break;
 		}
 		
@@ -209,6 +212,16 @@ enyo.kind({
 	},
 	submitMetrix: function() {
 		if(debug) this.log("submitMetrix");
+		
+		WebMyth.Metrix.postDeviceData();
+		
+		if((WebMyth.prefsCookie.protoVer != "TBD")&&(WebMyth.prefsCookie.protoVerSubmitted == false)) {
+                WebMyth.Metrix.customCounts("ProtoVer", WebMyth.prefsCookie.protoVer, 1);
+                WebMyth.prefsCookie.protoVerSubmitted = true;
+        }
+
+		
+		WebMyth.Metrix.checkBulletinBoard(1, false);
 		
 	},
 	selectMenuButton: function(inSender) {
@@ -358,7 +371,7 @@ enyo.kind({
 					break;
 				case "Wikipedia":
 					url = "http://";
-					url += "en"; //Mojo.Locale.getCurrentLocale().substring(0,2)
+					url += WebMyth.locale.getLanguage();
 					url += ".wikipedia.org/wiki/Special:Search?search="+webValue;
 					break;
 				case "themoviedb":
@@ -397,8 +410,9 @@ enyo.kind({
 					break;
 				case "Wikipedia":
 					url = "http://";
-					url += "en"; //Mojo.Locale.getCurrentLocale().substring(0,2)
-					url += ".m.wikipedia.org/wiki/Special:Search?search="+webValue;
+					url += WebMyth.locale.getLanguage();
+					url += ".m";
+					url += ".wikipedia.org/wiki/Special:Search?search="+webValue;
 					break;
 				case "themoviedb":
 					url = "http://www.themoviedb.org/search/movies?search[text]="+webValue;
@@ -517,9 +531,12 @@ enyo.kind({
 	bannerMessage: function(inSender, inMessage) {
 		if(debug) this.log("bannerMessage: "+inMessage);
 		
-		//this.$.messagePopupText.setContent("WebMyth2: "+inMessage);
-		this.messageText = inMessage;
-		this.$.messagePopup.openAtCenter();
+		if(window.PalmSystem) {
+			enyo.windows.addBannerMessage(inMessage, "{}");
+		} else {
+			this.messageText = inMessage;
+			this.$.messagePopup.openAtCenter();
+		}
 		
 	},
 	beforeMessageOpen: function() {
@@ -1132,6 +1149,8 @@ enyo.kind({
 	},
 	pluginDisconnected: function() {
 		if(debug) this.log("pluginDisconnected");
+		
+		this.bannerMessage("webmyth2","The plugin has crashed.  Try restarting the app or switch to using the script instead of the plugin.");
 	},
 	mysqlPluginCommand: function(inSender, functionName, query) {
 		if(debug) this.log("mysqlPluginCommand - "+functionName+": "+query);
@@ -1170,10 +1189,10 @@ enyo.kind({
 		
 		switch(paneName) {
 			case "recorded": 
-				if(functionName == "deleteRecordingResponse") this.$.recorded.deleteRecordingResponse();
+				if(functionName == "deleteRecordingResponse") this.$.recorded.deleteRecordingResponse(response);
 				break;
 			case "setupschedule":
-				if(functionName == "rescheduleResponse") this.$.setupschedule.rescheduleResponse();
+				if(functionName == "rescheduleResponse") this.$.setupschedule.rescheduleResponse(response);
 				break;
 				
 		}		
@@ -1474,10 +1493,10 @@ enyo.kind({
 		
 		this.$.setupschedule.getRuleResponse("hybridPlugin",enyo.json.parse(inResponse));
 	},
-	mysqlSetupscheduleSaveRule: function(inResponse){
+	mysqlSetupscheduleSaveRule: function(inResponse, inInsertId){
 		if(debug) this.log("mysqlSetupscheduleSaveRule");
 		
-		this.$.setupschedule.saveRuleResponse("hybridPlugin",inResponse);
+		this.$.setupschedule.saveRuleResponse("hybridPlugin",inResponse, inInsertId);
 	},
 	
 	mysqlExhibitionGetInputs: function(inResponse){
