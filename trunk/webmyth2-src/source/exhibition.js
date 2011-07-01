@@ -29,6 +29,7 @@ enyo.kind({ name: "exhibition",
 	
 	statusCountdown: "",
 	upcomingCountdown: "",
+	extendedStatusCountdown: "",
 	
 	currentRecordingCountdown: "",
 	
@@ -555,7 +556,7 @@ enyo.kind({ name: "exhibition",
 		
 		clearTimeout(this.statusCountdown);
 		clearTimeout(this.upcomingCountdown);
-		clearTimeout(this.currentRecordingCountdown);
+		clearTimeout(this.extendedStatusCountdown);
 			
 		this.statusLoop = true;
 			
@@ -571,6 +572,7 @@ enyo.kind({ name: "exhibition",
 	
 		clearTimeout(this.statusCountdown);
 		clearTimeout(this.upcomingCountdown);
+		clearTimeout(this.extendedStatusCountdown);
 		clearTimeout(this.currentRecordingCountdown);
 		
 		this.statusLoop = false;
@@ -581,6 +583,7 @@ enyo.kind({ name: "exhibition",
 		
 		clearTimeout(this.statusCountdown);
 		clearTimeout(this.upcomingCountdown);
+		clearTimeout(this.extendedStatusCountdown);
 		
 		var requestUrl = "";
 		
@@ -806,12 +809,14 @@ enyo.kind({ name: "exhibition",
 		this.$.allLoads.setContent(this.allLoads);
 		
 		this.upcomingCountdown = setTimeout(enyo.bind(this,"getUpcoming"), 100);
+		this.extendedStatusCountdown = setTimeout(enyo.bind(this,"startLoop"), 30000);	//just in case upcoming fails, restart loop
 	},
 	getUpcoming: function(inCommand) {
 		if(debug) this.log("getUpcoming");
 		
 		clearTimeout(this.statusCountdown);
 		clearTimeout(this.upcomingCountdown);
+		clearTimeout(this.extendedStatusCountdown);
 		
 		if(WebMyth.useScript){
 			

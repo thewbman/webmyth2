@@ -3,7 +3,6 @@ Todo:
  - videos directory
  - music playlist
  - music carousel
- - help
  - skip the/a/an sort
  - sort lists
  - search guide

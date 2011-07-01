@@ -28,8 +28,9 @@ enyo.kind({ name: "backendlog",
 			{content: "Loading...", style: "text-align: center;"},
 		]},
 			
-		{name: "header", kind: "Toolbar", layoutKind: "HFlexLayout", onclick: "revealTop", components: [
-			{name: "leftHeaderTitle", kind: "Control", className: "headerTitle", content: $L("Log"), flex: 1},
+		{name: "header", kind: "Toolbar", layoutKind: "VFlexLayout", onclick: "revealTop", components: [
+			{name: "leftHeaderTitle", kind: "Control", className: "headerTitle", content: $L("Log")},
+			{name: "leftHeaderSubtitle", content: "Master Backend", kind: "Control", className: "headerSubtitle"},
 		]},
 		
 		{kind: "HFlexBox", flex: 1, components: [
@@ -96,6 +97,8 @@ enyo.kind({ name: "backendlog",
 		//this.render();
 		
 		this.resize(inViewMode);
+		
+		this.$.leftHeaderSubtitle.setContent(WebMyth.prefsCookie.masterBackendIp);
 		
 		this.$.allMenu.addClass("selected");
 		this.$.autoexpireMenu.removeClass("selected");

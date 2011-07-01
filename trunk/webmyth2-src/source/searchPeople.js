@@ -311,8 +311,7 @@ enyo.kind({ name: "searchPeople",
 		
 	},
 	deactivate: function() {
-		//if(debug) 
-		this.log("deactivate");
+		if(debug) this.log("deactivate");
 		
 		//this.detailsProgram = defaultProgram;
 		
@@ -734,8 +733,8 @@ enyo.kind({ name: "searchPeople",
 		this.$.peopleWebPopupMenu.openAroundControl(this.$.peopleWebCommandButton);
 	},
 	peopleWebSelect: function(inSender, inEvent) {
-		if((debug)&&(inEvent)) {
-			this.log("peopleWebSelect: "+inEvent.value);
+		if(inEvent) {
+			if(debug) this.log("peopleWebSelect: "+inEvent.value);
 			
 			switch(inEvent.value) {
 				case "Wikipedia":
@@ -778,8 +777,8 @@ enyo.kind({ name: "searchPeople",
 		this.$.morePopupMenu.openAroundControl(this.$.moreCommandButton);
 	},
 	moreSelect: function(inSender, inEvent) {
-		if((debug)&&(inEvent)) {
-			this.log("moreSelect: "+inEvent.value);
+		if(inEvent) {
+			if(debug) this.log("moreSelect: "+inEvent.value);
 			
 			switch(inEvent.value) {
 				case "Wikipedia":
@@ -1133,7 +1132,7 @@ enyo.kind({ name: "searchPeople",
 		var query = "SELECT `people`.`person`, `people`.`name`,  ";
 		query += " `credits`.`chanid`, `credits`.`starttime`, UPPER(`credits`.`role`) AS `role`,  ";
 		query += " `program`.`title`, `program`.`subtitle`, `program`.`category`, `program`.`endtime` AS `endtime`, ";
-		query += " `channel`.`name` AS channame, `channel`.`channum`, ";
+		query += " `channel`.callsign, `channel`.`name` AS channame, `channel`.`channum`, ";
 		query += " 'program' AS type ";
 		query += " FROM `people` ";
 		query += " LEFT OUTER JOIN `credits` ON `credits`.`person` = `people`.`person` ";

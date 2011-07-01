@@ -17,8 +17,9 @@ enyo.kind({ name: "preferences",
 	
 	components: [
 		
-		{name: "header", kind: "Toolbar", layoutKind: "HFlexLayout", onclick: "revealTop", components: [
-			{name: "headerTitle", kind: "Control", className: "headerTitle", content: $L("Preferences"), flex: 1},
+		{name: "header", kind: "Toolbar", layoutKind: "VFlexLayout", onclick: "revealTop", components: [
+			{name: "leftHeaderTitle", kind: "Control", className: "headerTitle", content: $L("Preferences")},
+			{name: "leftHeaderSubtitle", kind: "Control", className: "headerSubtitle", content: ""},
 		]},
 							
 		
@@ -154,8 +155,8 @@ enyo.kind({ name: "preferences",
 							{name: "allowedOrientation", kind: "ListSelector", label: "Orientation", flex: 1, items: [
 								{caption: "Up", value: "up"},
 								{caption: "Left", value: "left"},
-								{caption: "Down", value: "down"},
-								{caption: "Right", value: "right"},
+								//caption: "Down", value: "down"},
+								//caption: "Right", value: "right"},
 								{caption: "Free", value: "free"},
 							]},
 						]},	
@@ -309,6 +310,9 @@ enyo.kind({ name: "preferences",
 		//this.useScriptSelect();
 		//this.allowDownloadsToggle();
 		this.debugToggle();
+		
+		var appInfo = enyo.fetchAppInfo();
+		this.$.leftHeaderSubtitle.setContent(appInfo.title+" - "+appInfo.version);
 		
 		this.revealTop();
 		

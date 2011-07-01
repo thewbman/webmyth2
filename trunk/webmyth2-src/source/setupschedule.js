@@ -439,6 +439,7 @@ enyo.kind({ name: "setupschedule",
 			query += '", startoffset = "'+this.newRule.startoffset+'", endoffset = "'+this.newRule.endoffset+'", autocommflag = "'+this.newRule.autocommflag;
 			query += '", autotranscode = "'+this.newRule.autotranscode+'", autouserjob1 = "'+this.newRule.autouserjob1+'", autouserjob2 = "'+this.newRule.autouserjob2;
 			query += '", autouserjob3 = "'+this.newRule.autouserjob3+'", autouserjob4 = "'+this.newRule.autouserjob4;
+			query += '", findtime = "'+this.newRule.starttime+'", findday = "'+this.newRule.findday+'", findid = "'+this.newRule.findid;
 			query += '" ;';
 	
 			
@@ -494,8 +495,8 @@ enyo.kind({ name: "setupschedule",
 		this.$.morePopupMenu.openAroundControl(this.$.moreCommandButton);
 	},
 	moreSelect: function(inSender, inEvent) {
-		if((debug)&&(inEvent)) {
-			this.log("moreSelect: "+inEvent.value);
+		if(inEvent) {
+			if(debug) this.log("moreSelect: "+inEvent.value);
 			
 			switch(inEvent.value) {
 				case "Wikipedia":

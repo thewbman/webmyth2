@@ -869,8 +869,8 @@ enyo.kind({ name: "music",
 		this.$.playPopupMenu.openAroundControl(this.$.playCommandButton);
 	},
 	playSelect: function(inSender, inEvent) {
-		if((debug)&&(inEvent)) {
-			this.log("playSelect: "+inEvent.value);
+		if(inEvent) {
+			if(debug) this.log("playSelect: "+inEvent.value);
 			
 			var row = this.selectedSong;
 			
@@ -922,8 +922,8 @@ enyo.kind({ name: "music",
 		this.$.webPopupMenu.openAroundControl(this.$.webCommandButton);
 	},
 	webSelect: function(inSender, inEvent) {
-		if((debug)&&(inEvent)) {
-			this.log("webSelect: "+inEvent.value);
+		if(inEvent) {
+			if(debug) this.log("webSelect: "+inEvent.value);
 			
 			switch(inEvent.value) {
 				case "Wikipedia":

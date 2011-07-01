@@ -721,8 +721,8 @@ enyo.kind({ name: "searchTitle",
 		this.$.morePopupMenu.openAroundControl(this.$.moreCommandButton);
 	},
 	moreSelect: function(inSender, inEvent) {
-		if((debug)&&(inEvent)) {
-			this.log("moreSelect: "+inEvent.value);
+		if(inEvent) {
+			if(debug) this.log("moreSelect: "+inEvent.value);
 			
 			switch(inEvent.value) {
 				case "Wikipedia":
@@ -784,7 +784,7 @@ enyo.kind({ name: "searchTitle",
 		var query = "SELECT `program`.title, `program`.subtitle AS subtitle, `program`.chanid AS chanid";
 		query += ", `program`.starttime AS starttime, `program`.endtime AS endtime";
 		query += ", `program`.category, `program`.originalairdate AS airdate";
-		query += ", `channel`.channum, `channel`.name AS channame";
+		query += ", `channel`.callsign, `channel`.channum, `channel`.name AS channame";
 		query += " FROM `program` "
 		query += " LEFT OUTER JOIN `channel` ON `program`.chanid = `channel`.chanid ";
 		query += ' WHERE `title` LIKE "%'+this.searchText+'%" ';
