@@ -66,7 +66,7 @@ enyo.kind({ name: "backendstatus",
 		
 			{name: "statusScroller", kind: "Scroller", autoHorizontal: false, horizontal: false, autoVertical: true, flex: 1, components: [
 		
-				{name: "encodersDrawer", kind: "DividerDrawer", open: false, caption: "Encoders", components: [
+				{name: "encodersDrawer", kind: "DividerDrawer", open: false, caption: "Encoders", animate: false, components: [
 					{name: "encodersVirtualRepeater", kind: "VirtualRepeater", onSetupRow: "getEncodersItem", onclick: "encodersSelect", components: [
 						{name: "encodersItem", kind: "Item", className: "encodersItem", components: [
 							{name: "encodersDescription", className: "encodersDescription"},
@@ -75,7 +75,7 @@ enyo.kind({ name: "backendstatus",
 					]},
 				]},
 				
-				{name: "scheduledDrawer", kind: "DividerDrawer", open: false, caption: "Scheduled", components: [
+				{name: "scheduledDrawer", kind: "DividerDrawer", open: false, caption: "Scheduled", animate: false, components: [
 					{name: "scheduledVirtualRepeater", kind: "VirtualRepeater", onSetupRow: "getScheduledItem", onclick: "scheduledSelect", components: [
 						{name: "scheduledItem", kind: "Item", className: "scheduledItem", components: [
 							{name: "scheduledTitle", className: "scheduledTitle"},
@@ -86,7 +86,7 @@ enyo.kind({ name: "backendstatus",
 					]},
 				]},
 				
-				{name: "jobqueueDrawer", kind: "DividerDrawer", caption: "Job Queue", components: [
+				{name: "jobqueueDrawer", kind: "DividerDrawer", open: false, caption: "Job Queue", animate: false, components: [
 					{name: "jobqueueVirtualRepeater", kind: "VirtualRepeater", onSetupRow: "getJobqueueItem", onclick: "jobqueueSelect", components: [
 						{name: "jobqueueItem", kind: "Item", className: "jobqueueItem", components: [
 							{name: "jobqueueTitle", className: "jobqueueTitle"},
@@ -99,7 +99,7 @@ enyo.kind({ name: "backendstatus",
 					{content: "No recent or current jobs", name: "nojobs"},
 				]},
 				
-				{name: "storageDrawer", kind: "DividerDrawer", caption: "Storage Locations", components: [
+				{name: "storageDrawer", kind: "DividerDrawer", open: false, caption: "Storage Locations", animate: false, components: [
 					{name: "storageVirtualRepeater", kind: "VirtualRepeater", onSetupRow: "getStorageItem", onclick: "storageSelect", components: [
 						{name: "storageItem", kind: "Item", className: "storageItem", components: [
 							{name: "storageName", className: "storageName"},
@@ -110,7 +110,7 @@ enyo.kind({ name: "backendstatus",
 					]},
 				]},
 				
-				{name: "guideDrawer", kind: "DividerDrawer", caption: "Guide Information", components: [
+				{name: "guideDrawer", kind: "DividerDrawer", open: false, caption: "Guide Information", animate: false, components: [
 					
 					{name: "guideStartItem", kind: "Item", className: "enyo-first", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
 						{name: "guideStart", flex: 1},
@@ -139,7 +139,7 @@ enyo.kind({ name: "backendstatus",
 					
 				]},
 				
-				{name: "otherDrawer", kind: "DividerDrawer", caption: "Other Information", components: [
+				{name: "otherDrawer", kind: "DividerDrawer", open: false, caption: "Other Information", animate: false, components: [
 					
 					{name: "masterBackendItem", kind: "Item", className: "enyo-first", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
 						{name: "masterBackend", flex: 1},

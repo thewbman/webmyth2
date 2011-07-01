@@ -8,6 +8,5 @@ Todo:
  - search guide
  - guide recent/favorite channels
  - searchPeople video match - do sort/details
- - master backend search
  - more g11n formating date/time?
  

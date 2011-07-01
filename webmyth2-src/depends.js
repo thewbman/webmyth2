@@ -19,6 +19,8 @@ enyo.depends(
 	"source/help.js",
 		
 	"source/exhibition.js",
+		
+	"source/findbackends.js",
 	
 	"source/Base64.js",
 	"source/htmlEncode.js",

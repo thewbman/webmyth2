@@ -10,6 +10,7 @@ enyo.kind({ name: "welcome",
 	},
 	events: {
 		onBannerMessage: "", 
+		onFirstUse: "",
 		onSelectMode: "",
 		onHaveImageView: "",
 		onSavePreferences: "",
@@ -56,8 +57,8 @@ enyo.kind({ name: "welcome",
 				]},
 				{kind: "HFlexBox", components: [
 					{flex: 1},
-					{name: "music", kind: "Button", width: "130px", content: "Music", onclick: "selectButton"},
 					{name: "video", kind: "Button", width: "130px", content: "Video", onclick: "selectButton"},
+					{name: "music", kind: "Button", width: "130px", content: "Music", onclick: "selectButton"},
 					{flex: 1},
 				]},
 				{kind: "HFlexBox", components: [
@@ -117,9 +118,11 @@ enyo.kind({ name: "welcome",
 		
 		if(WebMyth.prefsCookie.webserverName == "-") {
 			
-			this.bannerMessage("You must setup the backend IP in the preferences");
+			//this.bannerMessage("You must setup the backend IP in the preferences");
 			
-			var countdown = setTimeout(enyo.bind(this, "bannerMessage","You must setup the backend IP in the preferences"), 1000);
+			//var countdown = setTimeout(enyo.bind(this, "bannerMessage","You must setup the backend IP in the preferences"), 1000);
+			
+			this.doFirstUse();
 			
 			//this.getSettings();
 			//
@@ -187,7 +190,8 @@ enyo.kind({ name: "welcome",
 	headerIconClick: function() {
 		if(debug) this.log("headerIconClick");
 		
-		this.doHaveImageView("webmyth2-icon2.png");
+		//this.doHaveImageView("webmyth2-icon2.png");
+		this.doFirstUse();
 	},
 	
 	//Welcome functions

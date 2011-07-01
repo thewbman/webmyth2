@@ -1589,6 +1589,9 @@ enyo.kind({ name: "searchPeople",
 		if(row.type == "program") {
 			this.$.starttime.setContent(row.starttime.replace("T"," "));
 			this.$.endtime.setContent(row.endtime.replace("T"," "));
+		} else {
+			this.$.starttime.setContent("");
+			this.$.endtime.setContent("");
 		}
 		
 		//this.$.rightDetails.setContent(enyo.json.to(row));

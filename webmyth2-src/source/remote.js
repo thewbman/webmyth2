@@ -45,7 +45,7 @@ enyo.kind({ name: "remote",
 	},
 	
 	components: [
-			
+		
 			{name: "sendKeyService", kind: "WebService", handleAs: "txt", onSuccess: "sendKeySuccess", onFailure: "sendKeyFailure"},
 			{name: "sendJumpService", kind: "WebService", handleAs: "txt", onSuccess: "sendJumpSuccess", onFailure: "sendJumpFailure"},
 			{name: "sendPlayService", kind: "WebService", handleAs: "txt", onSuccess: "sendPlaySuccess", onFailure: "sendPlayFailure"},
@@ -82,36 +82,49 @@ enyo.kind({ name: "remote",
 				{name: "slidingPaneBox", kind: "VFlexBox", flex: 1, components: [
 				
 					{name: "remoteHeader", kind: "Toolbar", layoutKind: "VFlexLayout", onclick: "headerClick", components: [
-						{name: "remoteHeaderTitle", kind: "Control", className: "headerTitle", content: $L("Navigation"), flex2: 1},
-						{name: "remoteHeaderSubtitle", kind: "Control", className: "headerSubtitle", content: "&nbsp;", flex2: 1},
+						{name: "remoteHeaderTitle", kind: "Control", className: "headerTitle", content: $L("Navigation")},
+						{name: "remoteHeaderSubtitle", kind: "Control", className: "headerSubtitle", content: "&nbsp;"},
 					]},
 								
-					{name: "slidingPane", kind: "SlidingPane", flex: 1, multiViewMinWidth: 500, onSelectView: "slidingSelected", components: [
-						{name: "left", kind2: "Sliding", className: "left", dragAnywhere: false, width: "33%", components: [
+					{name: "slidingPane", kind: "SlidingPane", className: "slidingPane", flex: 1, multiViewMinWidth: 500, onSelectView: "slidingSelected", components: [
+						{name: "left", className: "left", dragAnywhere: false, width: "310px", width2: "50%", components: [
 							{name: "leftVFlexBox", kind: "VFlexBox", flex: 1, components: [
 								
-								//{name: "leftScroller", kind: "Scroller", autoHorizontal: false, horizontal: false, autoVertical: true, flex: 1, components: [
-									{kind: "HFlexBox", components: [
+								{name: "leftScroller", kind: "Scroller", autoHorizontal: false, horizontal: false, autoVertical: true, flex: 1, components: [
+									{kind: "HFlexBox", showing: false, components: [
 										{kind: "Button", caption: "Mute", value: "f9", flex: 1, onclick: "keyButtonClick"},
 										{kind: "Button", caption: "Vol-", value: "f10", flex: 1, onclick: "keyButtonClick"},
 										{kind: "Button", caption: "Vol+", value: "f11", flex: 1, onclick: "keyButtonClick"},
 									]},
-									{content: "&nbsp"},
+									{content: "&nbsp", showing: false},
 									{name: "standardRemoteWrapper", showing: true, components: [
 										{kind: "HFlexBox", components: [
-											{kind: "Button", caption: "Back", value: "escape", flex: 1, onclick: "keyButtonClick"},
-											{kind: "Button", caption: "Up", value: "up", flex: 1, onclick: "keyButtonClick"},
-											{kind: "Button", caption: "Delete", value: "d", flex: 1, onclick: "keyButtonClick"},
+											{kind: "VFlexBox", align: "center", pack: "start", width: "100px", components: [
+												{kind: "Button", caption: "Back", value: "escape", width: "70px", flex2: 1, onclick: "keyButtonClick"},
+											]},
+											//{kind: "Button", caption: "Up", value: "up", flex: 1, onclick: "keyButtonClick"},
+											{kind: "CustomButton", height: "100px", width: "100px", value: "up", className: "upNavButton", onclick: "keyButtonClick"},
+											{kind: "VFlexBox", align: "center", pack: "start", width: "100px", components: [
+												{kind: "Button", caption: "Delete", value: "d", width: "70px", flex2: 1, onclick: "keyButtonClick"},
+											]},
 										]},
 										{kind: "HFlexBox", components: [
-											{kind: "Button", caption: "Left", value: "left", flex: 1, onclick: "keyButtonClick"},
-											{kind: "Button", caption: "Select", value: "space", flex: 1, onclick: "keyButtonClick"},
-											{kind: "Button", caption: "Right", value: "right", flex: 1, onclick: "keyButtonClick"},
+											//{kind: "Button", caption: "Left", value: "left", flex: 1, onclick: "keyButtonClick"},
+											//{kind: "Button", caption: "Select", value: "space", flex: 1, onclick: "keyButtonClick"},
+											//{kind: "Button", caption: "Right", value: "right", flex: 1, onclick: "keyButtonClick"},
+											{kind: "CustomButton", height: "100px", width: "100px", value: "left", className: "leftNavButton", onclick: "keyButtonClick"},
+											{kind: "CustomButton", height: "100px", width: "100px", value: "space", className: "selectNavButton", onclick: "keyButtonClick"},
+											{kind: "CustomButton", height: "100px", width: "100px", value: "right", className: "rightNavButton", onclick: "keyButtonClick"},
 										]},
 										{kind: "HFlexBox", components: [
-											{kind: "Button", caption: "Menu", value: "m", flex: 1, onclick: "keyButtonClick"},
-											{kind: "Button", caption: "Down", value: "down", flex: 1, onclick: "keyButtonClick"},
-											{kind: "Button", caption: "Info", value: "i", flex: 1, onclick: "keyButtonClick"},
+											{kind: "VFlexBox", align: "center", pack: "end", width: "100px", components: [
+												{kind: "Button", caption: "Menu", value: "m", width: "70px", flex2: 1, onclick: "keyButtonClick"},
+											]},
+											//{kind: "Button", caption: "Down", value: "down", flex: 1, onclick: "keyButtonClick"},
+											{kind: "CustomButton", height: "100px", width: "100px", value: "down", className: "downNavButton", onclick: "keyButtonClick"},
+											{kind: "VFlexBox", align: "center", pack: "end", width: "100px", components: [
+												{kind: "Button", caption: "Info", value: "i", width: "70px", flex2: 1, onclick: "keyButtonClick"},
+											]},
 										]},
 									]},
 									{name: "flickRemoteWrapper", showing: false, components: [
@@ -131,12 +144,12 @@ enyo.kind({ name: "remote",
 										]},
 									]},
 									{content: "&nbsp"},
-									{kind: "HFlexBox", showing: true, components: [
+									{kind: "HFlexBox", showing: false, components: [
 										{kind: "Button", caption: "|&lt;&lt;", allowHtml: true, value: "q", flex: 1, onclick: "keyButtonClick"},
 										{kind: "Button", caption: "||", value: "p", flex: 1, onclick: "keyButtonClick"},
 										{kind: "Button", caption: "&gt;&gt;|", allowHtml: true, value: "z", flex: 1, onclick: "keyButtonClick"},
 									]},
-									{content: "&nbsp", showing: true},
+									{content: "&nbsp", showing: false},
 									{kind: "HFlexBox", components: [
 										{kind: "Button", caption: "LiveTV", value: "livetv", flex: 1, onclick: "jumpButtonClick"},
 										{kind: "Button", caption: "Recorded", value: "playbackrecordings", flex: 1, onclick: "jumpButtonClick"},
@@ -148,20 +161,6 @@ enyo.kind({ name: "remote",
 										//{kind: "Button", caption: "Recorded", value: "playbackrecordings", flex: 1, onclick: "jumpButtonClick"},
 										{kind: "Button", caption: "Video", value: "mythvideo", flex: 1, onclick: "jumpButtonClick"},
 										{kind: "Button", caption: "Music", value: "playmusic", flex: 1, onclick: "jumpButtonClick"},
-									]},
-									//{content: "&nbsp"},
-								//]},
-								
-							]},
-						]},
-						{name: "middle", kind2: "Sliding", className: "middle", dragAnywhere: false, width: "33%", components: [
-							{name: "middleVFlexBox", kind: "VFlexBox", flex: 1, components: [
-								
-								{name: "middleScroller", kind: "Scroller", autoHorizontal: false, horizontal: false, autoVertical: true, flex: 1, components: [
-									{style: "height: 10px"},
-									{kind: "HFlexBox", components: [
-										{content: "Keyboard", flex: 1},
-										{name: "keyboardToggle", kind: "ToggleButton", onChange: "showKeyboardToggle"},
 									]},
 									{content: "&nbsp"},
 									{kind: "HFlexBox", components: [
@@ -180,30 +179,57 @@ enyo.kind({ name: "remote",
 										{kind: "Button", caption: "9", value: "9", flex: 1, onclick: "keyButtonClick"},
 									]},
 									{kind: "HFlexBox", components: [
-										{flex: 1.5},
+										{flex: 2},
 										{kind: "Button", caption: "0", value: "0", flex: 1, onclick: "keyButtonClick"},
-										{flex: 1.5},
+										{flex: 2},
 									]},
-									{content: "&nbsp"},
+									//{content: "&nbsp"},
+									
+								]},
+								
+							]},
+						]},
+					/*{name: "middle", className: "middle", dragAnywhere: false, width: "33%", components: [
+							{name: "middleVFlexBox", kind: "VFlexBox", flex: 1, components: [
+								
+								{name: "middleScroller", kind: "Scroller", autoHorizontal: false, horizontal: false, autoVertical: true, flex: 1, components: [
+									
 								]},
 				
 							]},
 						]},
-						{name: "right", kind2: "Sliding", className: "right", dragAnywhere: false, width: "340px", flex: 1, components: [
+						*/
+						{name: "right", className: "right", dragAnywhere: false, width: "340px", flex: 1, components: [
 							{name: "rightVFlexBox", kind: "VFlexBox", flex: 1, components: [
 								
 								{name: "rightScroller", kind: "Scroller", autoHorizontal: false, horizontal: false, autoVertical: true, flex: 1, components: [
+									//{style: "height: 10px"},
+									{name: "keyboardToggleItem", kind: "Item", layoutKind: "HFlexLayout", className: "enyo-single", components: [
+										{content: "Keyboard", flex: 1},
+										{name: "keyboardToggle", kind: "ToggleButton", onChange: "showKeyboardToggle"},
+									]},
+									
+									{name: "hiddenKeyboardInput", kind: "Input", showing: true, hint: "", height: "1px", onkeypress: "keypressHandler", style: "z-index: -20"},
+								
+									//{content: "&nbsp"},
+									//{style: "height: 10px"},
 									{name: "volumeRowGroup", kind: "RowGroup", caption: "Volume", components: [
 										{kind: "Item", layoutKind: "HFlexLayout", components: [
-											{style: "width: 10px;"},
+											{kind: "CustomButton", height: "30px", width: "30px", value: "f9", className: "muteButton", onclick: "keyButtonClick"},
+											{style: "width: 5px;"},
 											{name: "volumeSlider", kind: "Slider", onChanging: "volumeSliderChanging", onChange: "volumeSliderChange", tapPosition: false, maximum: 100, minimum: 0, position: 50, snap: 2, flex: 1},
 											{style: "width: 10px;"},
 										]},
 									]},
-									{kind: "HFlexBox", components: [
-										{kind: "Button", caption: "|&lt;&lt;", allowHtml: true, value: "q", flex: 1, onclick: "keyButtonClick"},
-										{kind: "Button", caption: "||", value: "p", flex: 1, onclick: "keyButtonClick"},
-										{kind: "Button", caption: "&gt;&gt;|", allowHtml: true, value: "z", flex: 1, onclick: "keyButtonClick"},
+									{kind: "HFlexBox", className: "playbackButtonsWrapper", components: [
+										{kind: "Spacer"},
+										//{kind: "Button", caption: "|&lt;&lt;", allowHtml: true, value: "q", flex: 1, style: "max-width: 115px", onclick: "keyButtonClick"},
+										//{kind: "Button", caption: "||", value: "p", flex: 1, style: "max-width: 115px", onclick: "keyButtonClick"},
+										//{kind: "Button", caption: "&gt;&gt;|", allowHtml: true, value: "z", flex: 1, style: "max-width: 115px", onclick: "keyButtonClick"},
+										{kind: "CustomButton", height: "52px", width: "100px", value: "q", className: "jumpBackButton", onclick: "keyButtonClick"},
+										{kind: "CustomButton", height: "52px", width: "100px", value: "p", className: "pauseButton", onclick: "keyButtonClick"},
+										{kind: "CustomButton", height: "52px", width: "100px", value: "z", className: "jumpForwardButton", onclick: "keyButtonClick"},
+										{kind: "Spacer"},
 									]},
 									{name: "playbackRowGroup", kind: "RowGroup", caption: "Location", components: [
 										{name: "playbackSliderItem", kind: "Item", showing: false, layoutKind: "HFlexLayout", components: [
@@ -249,7 +275,7 @@ enyo.kind({ name: "remote",
 				]},
 				
 				{name: "settingsSlidingPane", kind: "SlidingPane", flex: 1, multiViewMinWidth: 500, onSelectView: "settingsSlidingSelected", components: [
-					{name: "settingsLeft", kind2: "Sliding", className: "left", dragAnywhere: false, width: "33%", components: [
+					{name: "settingsLeft", className: "left", dragAnywhere: false, width: "33%", components: [
 						{name: "settingsLeftVFlexBox", kind: "VFlexBox", flex: 1, components: [
 							{name: "settingsLeftHeader", kind: "Toolbar", layoutKind: "HFlexLayout", onclick: "settingsleftRevealTop", components: [
 								{name: "settingsLeftHeaderTitle", kind: "Control", className: "headerTitle", content: $L("Frontends"), flex2: 1},
@@ -280,7 +306,7 @@ enyo.kind({ name: "remote",
 							
 						]},
 					]},
-					{name: "settingsMiddle", kind2: "Sliding", className: "middle", dragAnywhere: false, width: "33%", components: [
+					{name: "settingsMiddle", className: "middle", dragAnywhere: false, width: "33%", components: [
 						{name: "settingsMiddleVFlexBox", kind: "VFlexBox", flex: 1, components: [
 							{name: "settingsMiddleHeader", kind: "Toolbar", layoutKind: "HFlexLayout", onclick: "settingsMiddleRevealTop", components: [
 								{name: "settingsMiddleHeaderTitle", kind: "Control", className: "headerTitle", content: $L("Add/Edit"), flex2: 1},
@@ -320,7 +346,7 @@ enyo.kind({ name: "remote",
 							]},
 						]},
 					]},
-					{name: "settingsRight", kind2: "Sliding", className: "right", dragAnywhere: false, flex: 1, components: [
+					{name: "settingsRight", className: "right", dragAnywhere: false, flex: 1, components: [
 						{name: "settingsRightVFlexBox", kind: "VFlexBox", flex: 1, components: [
 							{name: "settingsRightHeader", kind: "Toolbar", layoutKind: "HFlexLayout", onclick: "settingsRightRevealTop", components: [
 								{name: "settingsRightHeaderTitle", kind: "Control", className: "headerTitle", content: $L("Test"), flex2: 1},
@@ -399,20 +425,17 @@ enyo.kind({ name: "remote",
 		
 		enyo.keyboard.setManualMode(false);
 		
-		//this.statusLoop = false;
 		this.stopLoop();
 		
-		//this.fullResultList.length = 0;
-		//this.fullDatesList.length = 0;
-		
-		//this.detailsProgram = defaultProgram;
-		
-		//this.finishedGettingUpcoming();
 	},
 	resize: function(inViewMode) {
 		if(debug) this.log("resize");
 
 		this.viewMode = inViewMode;
+		
+		if(enyo.keyboard.isShowing()) {
+			//dont actually resize
+		} else {
 		
 		if(this.viewMode == "tablet") {
 			if(debug) this.log("got viewMode of "+this.viewMode);
@@ -452,7 +475,7 @@ enyo.kind({ name: "remote",
 		
 		this.$.slidingPane.resize();
 		this.$.left.render();
-		this.$.middle.render();
+		//this.$.middle.render();
 		this.$.right.render();
 		
 		if(this.currentPane != "settingsSlidingPane") {
@@ -474,6 +497,8 @@ enyo.kind({ name: "remote",
 				//this.gotoMiddle();
 				this.gotoRight();
 			}
+		}
+		
 		}
 		
 	},
@@ -501,7 +526,16 @@ enyo.kind({ name: "remote",
 	gotSpecialKey: function(inKey) {
 		if(debug) this.log("gotSpecialKey: "+inKey);
 		
-		this.finishedSelectingDate();
+		if(this.currentPane == "slidingPaneBox") {
+			switch(inKey) {
+				case "space":
+					this.sendKey("space");
+					break;
+				case "backspace":
+					this.sendKey("escape");
+					break;
+			}
+		}
 	},
 	bannerMessage: function(message) {
 		if(debug) this.log("bannerMessage: "+message);
@@ -526,6 +560,9 @@ enyo.kind({ name: "remote",
 				break;
 		}
 		
+	},
+	keypressHandler: function() {
+		if(debug) this.log("keypressHandler");
 	},
 	
 	//Internal functions
@@ -569,12 +606,12 @@ enyo.kind({ name: "remote",
 	leftRevealTop: function() {
 		if(debug) this.log("leftRevealTop");
 		
-		//this.$.leftScroller.scrollIntoView(0,0);
+		this.$.leftScroller.scrollIntoView(0,0);
 	},
 	middleRevealTop: function() {
 		if(debug) this.log("middleRevealTop");
 		
-		this.$.middleScroller.scrollIntoView(0,0);
+		//this.$.middleScroller.scrollIntoView(0,0);
 	},
 	rightRevealTop: function() {
 		if(debug) this.log("rightRevealTop");
@@ -708,6 +745,8 @@ enyo.kind({ name: "remote",
 		if(debug) this.log("keyButtonClick: "+inSender.value);
 		
 		this.sendKey(inSender.value);
+		
+		this.$.keyboardToggle.setState(false);
 	},
 	flickButtonClick: function(inSender) {
 		if(debug) this.log("flickButtonClick");
@@ -766,8 +805,15 @@ enyo.kind({ name: "remote",
 		if(debug) this.log("showKeyboardToggle to state: "+inState);
 		
 		if(inState == true) {
+			this.$.hiddenKeyboardInput.setValue(".");
+			enyo.keyboard.setResizesWindow(false);
+			this.$.hiddenKeyboardInput.forceFocusEnableKeyboard();
 			enyo.keyboard.forceShow(5);
 		} else {
+			this.$.hiddenKeyboardInput.setValue(".");
+			enyo.keyboard.setResizesWindow(true);
+			enyo.keyboard.hide();
+			this.$.hiddenKeyboardInput.forceBlur();
 			enyo.keyboard.setManualMode(false);
 		}
 	

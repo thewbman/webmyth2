@@ -77,7 +77,7 @@ enyo.kind({ name: "exhibition",
 					]},
 								
 					{name: "slidingPane", kind: "SlidingPane", flex: 1, multiViewMinWidth: 500, onSelectView: "slidingSelected", components: [
-						{name: "left", kind2: "Sliding", className: "left", dragAnywhere: false, width: "33%", components: [
+						{name: "left", className: "left", dragAnywhere: false, width: "33%", components: [
 							{name: "leftVFlexBox", kind: "VFlexBox", flex: 1, components: [
 								
 								{name: "leftScroller", kind: "Scroller", autoHorizontal: false, horizontal: false, autoVertical: true, flex: 1, components: [
@@ -116,7 +116,7 @@ enyo.kind({ name: "exhibition",
 								
 							]},
 						]},
-						{name: "middle", kind2: "Sliding", className: "middle", dragAnywhere: false, width: "33%", components: [
+						{name: "middle", className: "middle", dragAnywhere: false, width: "33%", components: [
 							{name: "middleVFlexBox", kind: "VFlexBox", flex: 1, components: [
 								
 								{name: "middleScroller", kind: "Scroller", autoHorizontal: false, horizontal: false, autoVertical: true, flex: 1, components: [
@@ -143,7 +143,7 @@ enyo.kind({ name: "exhibition",
 				
 							]},
 						]},
-						{name: "right", kind2: "Sliding", className: "right", dragAnywhere: false, width: "340px", flex: 1, components: [
+						{name: "right", className: "right", dragAnywhere: false, width: "340px", flex: 1, components: [
 							{name: "rightVFlexBox", kind: "VFlexBox", flex: 1, components: [
 								
 								{name: "rightScroller", kind: "Scroller", autoHorizontal: false, horizontal: false, autoVertical: true, flex: 1, components: [

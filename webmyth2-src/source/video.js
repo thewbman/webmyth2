@@ -830,8 +830,7 @@ enyo.kind({ name: "video",
 	
 				this.doRemoteCommand("play",cmd);
 				
-				//this.doSelectMode("remote");
-				var countdown = setTimeout(enyo.bind(this, "doSelectMode", "remote"), 1000);
+				if(WebMyth.prefsCookie.playJumpRemote) var countdown = setTimeout(enyo.bind(this, "doSelectMode", "remote"), 1000);
 			
 			}
 			
@@ -1374,7 +1373,7 @@ enyo.kind({ name: "video",
 			this.$.rightDetailsCoverartWrapper.hide();
 		}
 			
-		this.getPeople();
+		setTimeout(enyo.bind(this,"getPeople"),200);
 		
 	},
 	upnpFailure: function(inSender, inResponse) {
