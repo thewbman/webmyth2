@@ -132,12 +132,6 @@ enyo.kind({
 			
 			/*
 			//for development
-			WebMyth.prefsCookie.webserverName = "thewbman.homedns.org";
-			WebMyth.prefsCookie.masterBackendIp = "thewbman.homedns.org";
-			WebMyth.prefsCookie.mythwebXml = true;
-			WebMyth.prefsCookie.forceScriptScreenshots = true;
-			WebMyth.prefsCookie.useScript = 2;
-			WebMyth.prefsCookie.debug = true;
 			//
 			*/
 			
