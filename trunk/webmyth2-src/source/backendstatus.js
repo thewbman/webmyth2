@@ -679,7 +679,8 @@ enyo.kind({ name: "backendstatus",
 		
 			var text = "";
 			
-			text += "Encoder #"+row.id;
+			//text += "Encoder #"+row.id;
+			text += "#"+row.id;
 			
 			for(var i = 0; i < this.inputs.length; i++) {
 				if(this.inputs[i].cardid == row.id) text += " ("+this.inputs[i].displayname+")";

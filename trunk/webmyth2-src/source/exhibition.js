@@ -442,7 +442,8 @@ enyo.kind({ name: "exhibition",
 		
 			var text = "";
 			
-			text += "Encoder #"+row.id;
+			//text += "Encoder #"+row.id;
+			text += "#"+row.id;
 			
 			for(var i = 0; i < this.inputs.length; i++) {
 				if(this.inputs[i].cardid == row.id) text += " ("+this.inputs[i].displayname+")";
@@ -981,6 +982,9 @@ enyo.kind({ name: "exhibition",
 		if(this.currentRecordings.length == 0) {
 			this.currentRecordingIndex = -1;
 			this.$.currentRecordingWrapper.hide();
+		
+			if(this.statusLoop) this.currentRecordingCountdown = setTimeout(enyo.bind(this,"updateCurrentRecording"), 1000);
+		
 		} else {
 			this.currentRecordingIndex++;
 			if(this.currentRecordingIndex == this.currentRecordings.length) this.currentRecordingIndex = 0;
@@ -1013,9 +1017,9 @@ enyo.kind({ name: "exhibition",
 			this.$.currentRecordingTime.setContent(row.starttime.substring(11,16)+" to "+row.endtime.substring(11,16));
 			
 			this.$.currentRecordingWrapper.show();
-		}
 		
-		if(this.statusLoop) this.currentRecordingCountdown = setTimeout(enyo.bind(this,"updateCurrentRecording"), 6000);
+			if(this.statusLoop) this.currentRecordingCountdown = setTimeout(enyo.bind(this,"updateCurrentRecording"), 6000);
+		}
 		
 	},
 	

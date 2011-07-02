@@ -35,6 +35,7 @@ enyo.kind({
 		{name: "openProgramService", kind: "PalmService", service: "palm://com.palm.applicationManager/", method: "launch", onSuccess: "openProgramResponse", onFailure: "openProgramFailure"},
 		
 		{kind: "AppMenu", components: [
+			{kind: "EditMenu"},
 			{caption: "Preferences", onclick: "openPreferences"},
 			{caption: "Help", onclick: "openHelp"},
 		]},
@@ -43,8 +44,14 @@ enyo.kind({
 			{content: "This app requires an existing MythTV system to connect to.", style: "text-align: center;"},
 			{content: "If you aren't sure what that means this app is probably not for you.", style: "text-align: center;"},
 			{kind: "Button", caption: "Backend Search", onclick:"openFindbackends"},
-			{kind: "Button", caption: "Manual Setup", onclick:"openPreferences"},
+			{kind: "Button", caption: "Manual Setup", onclick:"openManualPopup"},
+			{kind: "Button", caption: "Preferences", onclick:"openPreferences"},
 			{kind: "Button", caption: "Help", onclick:"openHelp"},
+		]},
+		{name: "manualBackendPopup", kind: "Popup", onBeforeOpen: "beforeManualBackendOpen", scrim: true, dismissWithClick: true, dismissWithEscape: true, showKeyboardWhenOpening: true, components: [
+			{content: "Master Backend Address", style: "text-align: center;"},
+			{name: "manualBackendInput", kind: "Input", className: "searchText"},
+			{kind: "Button", caption: "Save", onclick: "submitManualBackend"},
 		]},
 		
 		{name: "messagePopup", kind: "Popup", scrim: true, onBeforeOpen: "beforeMessageOpen", components: [
@@ -188,6 +195,41 @@ enyo.kind({
 		if(debug) this.log("openFirstUse");
 		
 		this.$.firstUsePopup.openAtCenter();
+	},
+	openManualPopup: function() {
+		if(debug) this.log("openManualPopup");
+		
+		this.$.firstUsePopup.close();
+	
+		this.$.manualBackendPopup.openAtCenter();
+	
+	},
+	beforeManualBackendOpen: function() {
+		if(debug) this.log("beforeManualBackendOpen");
+		
+		if(WebMyth.prefsCookie.masterBackendIp == "-"){
+		
+			this.$.manualBackendInput.setValue("");
+			
+		} else {
+		
+			this.$.manualBackendInput.setValue(WebMyth.prefsCookie.masterBackendIp);
+		
+		}
+	
+	},
+	submitManualBackend: function() {
+		if(debug) this.log("submitManualBackend");
+		
+		WebMyth.prefsCookie.masterBackendIp = this.$.manualBackendInput.getValue();
+		
+		if(WebMyth.prefsCookie.webserverName == "-") WebMyth.prefsCookie.webserverName = WebMyth.prefsCookie.masterBackendIp;
+		
+		this.savePreferences();
+		
+		this.$.manualBackendPopup.close();
+		
+		this.$.welcome.activate();
 	},
 	openPreferences: function() {
 		if(debug) this.log("openPreferences");
@@ -453,6 +495,7 @@ enyo.kind({
 		} else {
 			if(debug) this.log("NOT opening using Palm system");
 			window.open(url);
+			//window.location = url;
 		}
 	 
 	},
@@ -1163,7 +1206,7 @@ enyo.kind({
 		} catch(e) {
 			this.error(e);
 			
-			this.bannerMessage("webmyth2", "There was an error with a query.  Try the last action again");
+			this.bannerMessage("webmyth2", "There was an error with the last query.");
 		}
 	},
 	mysqlPluginExecute: function(inSender, functionName, query) {
@@ -1177,7 +1220,7 @@ enyo.kind({
 		} catch(e) {
 			this.error(e);
 			
-			this.bannerMessage("webmyth2", "There was an error with a query.  Try the last action again");
+			this.bannerMessage("webmyth2", "There was an error with the last query.");
 		}	
 	},
 	mythprotocolPluginCommand: function(inSender, paneName, functionName, command) {

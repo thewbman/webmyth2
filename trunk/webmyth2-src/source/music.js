@@ -985,9 +985,11 @@ enyo.kind({ name: "music",
 		query += " music_albums.album_name, music_albums.compilation, ";
 		query += " music_albumart.albumart_id ";
 		query += " FROM music_songs ";
-		query += " LEFT OUTER JOIN music_artists ON music_songs.artist_id = music_artists.artist_id "
+		query += " LEFT OUTER JOIN music_artists ON music_songs.artist_id = music_artists.artist_id ";
 		query += " LEFT OUTER JOIN music_albums ON music_songs.album_id = music_albums.album_id ";
 		query += " LEFT OUTER JOIN music_albumart ON music_songs.directory_id = music_albumart.directory_id ";
+		query += " GROUP BY song_id ";
+		query += " ; ";
 		
 		if(debug) this.log("music query is :"+query);
 		
