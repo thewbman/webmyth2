@@ -13,6 +13,8 @@ enyo.kind({ name: "findbackends",
 	confirmedHosts: [],
 	//confirmedHosts: [{address: "192.168.1.105"}],
 	
+	hostsIndex: 0,
+	
 	events: {
 		onBannerMessage: "", 
 		onSelectMode: "",
@@ -23,8 +25,8 @@ enyo.kind({ name: "findbackends",
 	
 	components: [
 	
-		{name: "findBackendsService", kind: "PalmService", service: "palm://com.palm.zeroconf/", method: "browse", onSuccess: "findBackendsSuccess", onFailure: "findBackendsFailure"},
-		{name: "resolveBackendService", kind: "PalmService", service: "palm://com.palm.zeroconf/", method: "resolve", onSuccess: "resolveBackendSuccess", onFailure: "resolveBackendFailure"},
+		{name: "findBackendsService", kind: "PalmService", service: "palm://com.palm.zeroconf/", method: "browse", subscribe: true, onSuccess: "findBackendsSuccess", onFailure: "findBackendsFailure"},
+		{name: "resolveBackendService", kind: "PalmService", service: "palm://com.palm.zeroconf/", method: "resolve", subscribe: true, onSuccess: "resolveBackendSuccess", onFailure: "resolveBackendFailure"},
 		
 		{name: "testBackendService", kind: "WebService", handleAs: "xml", onSuccess: "testBackendResponse", onFailure: "testBackendFailure"},
 			
@@ -159,7 +161,7 @@ enyo.kind({ name: "findbackends",
 		
 		var myParameters = {regType: "_workstation._tcp", subscribe: true};
 		
-		this.$.findBackendsService.call(myParameters);
+		this.$.findBackendsService.call({regType: "_workstation._tcp", subscribe: true, params: {regType: "_workstation._tcp", subscribe: true}});
 	
 	},
 	findBackendsSuccess: function(inSender, inResponse) {
@@ -188,22 +190,36 @@ enyo.kind({ name: "findbackends",
 		
 	},
 	resolveHost: function(inValue){
-		if(debug) this.log("resolveHost: "+inValue);
+		if(debug) this.log("resolveHost: "+inValue+": "+enyo.json.stringify(this.foundHosts[inValue]));
 		
 		var info = this.foundHosts[inValue];
 		
-		var myParameters = {regType: info.regType, domainName: info.domainName, instanceName: info.instanceName, subscribe: true};
+		//var myParameters = {regType: info.regType, domainName: info.domainName, instanceName: info.instanceName, subscribe: true};
 			
-		this.$.resolveBackendService.call(myParameters);
+		this.$.resolveBackendService.call({regType: info.regType, instanceName: info.instanceName, domainName: info.domainName, subscribe: true, params: {regType: info.regType, instanceName: info.instanceName, domainName: info.domainName, subscribe: true}});
 		
+		/*
+		var r = new enyo.PalmService();
+		r.service = "palm://com.palm.zeroconf/";
+		r.method = "resolve";
+		r.onSuccess = "resolveBackendSuccess";
+		r.onFailure = "resolveBackendFailure";
+		r.call({regType: info.regType, domainName: info.domainName, instanceName: info.instanceName, subscribe: true, params: {regType: info.regType, domainName: info.domainName, instanceName: info.instanceName, subscribe: true}});
+		*/
 	},
 	resolveBackendSuccess: function(inSender, inResponse) {
 		if(debug) this.log("resolveBackendSuccess: "+enyo.json.stringify(inResponse));
 		
-		this.foundHosts[index].IPv4Address = inResponse.IPv4Address;
-		this.foundHosts[index].fullName = inResponse.fullName;
+		if(inResponse.IPv4Address) {
 		
-		this.testHost(inResponse.IPv4Address);
+			this.foundHosts[this.hostsIndex].IPv4Address = inResponse.IPv4Address;
+			this.foundHosts[this.hostsIndex].fullName = inResponse.fullName;
+			
+			this.hostsIndex++;
+			
+			this.testHost(inResponse.IPv4Address);
+		
+		}
 		
 	},
 	resolveBackendFailure: function(inSender, inResponse) {
@@ -215,18 +231,22 @@ enyo.kind({ name: "findbackends",
 	testHost: function(inAddress) {
 		if(debug) this.log("testHost: "+inAddress);
 		
-		this.$.searchingPopup.close();
+		if(inAddress) {
 		
-		var requestUrl = "http://"+inAddress+":6544/Myth/GetSetting?Key=MasterServerIP";
+			var requestUrl = "http://"+inAddress+":6544/Myth/GetSetting?Key=MasterServerIP";
 		
-		if(debug) this.log("requestUrl: "+requestUrl);
-		
-		this.$.testBackendService.setUrl(requestUrl);
-		this.$.testBackendService.call();
+			if(debug) this.log("requestUrl: "+requestUrl);
+			
+			this.$.testBackendService.setUrl(requestUrl);
+			this.$.testBackendService.call();
+			
+		}
 		
 	},
 	testBackendResponse: function(inSender, inResponse) {
 		if(debug) this.log("testBackendResponse");
+		
+		this.$.searchingPopup.close();
 		
 		var valueNode = inResponse.getElementsByTagName("Value")[0];
 		

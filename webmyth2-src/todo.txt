@@ -9,5 +9,8 @@ Todo:
  - guide recent/favorite channels
  - searchPeople video match - do sort/details
  - more g11n formating date/time?
+ - filter search people
+ - cleanup empty video response on search people
+ - set offset when selcting details (like carousel)
  
  
