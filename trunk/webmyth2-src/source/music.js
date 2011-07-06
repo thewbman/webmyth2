@@ -23,7 +23,9 @@ enyo.kind({ name: "music",
 	
 	resultList: [],	
 	
-	playlist: [],
+	editPlaylists: [],
+	displayEditPlaylists: [],
+	selectPlaylists: [],
 	
 	detailsSong: {},
 	
@@ -55,13 +57,15 @@ enyo.kind({ name: "music",
 		onTitleSearch: "",
 		onDownloadFile: "",
 		onMysqlPluginCommand: "",
+		onMysqlPluginExecute: "",
 	},
 	
 	components: [
 			
 			{name: "streamSongService", kind: "PalmService", service: "palm://com.palm.applicationManager/", method: "launch"},
 			{name: "getMusicService", kind: "WebService", handleAs: "json", onSuccess: "musicResponse", onFailure: "musicFailure"},
-			{name: "getPlaylistService", kind: "WebService", handleAs: "json", onSuccess: "playlistResponse", onFailure: "playlistFailure"},
+			{name: "getPlaylistService", kind: "WebService", handleAs: "json", onSuccess: "getPlaylistResponse", onFailure: "getPlaylistFailure"},
+			{name: "savePlaylistService", kind: "WebService", handleAs: "txt", onSuccess: "savePlaylistResponse", onFailure: "savePlaylistFailure"},
 			
 			{name: "loadingPopup", kind: "Popup", scrim: true, dismissWithClick: true, dismissWithEscape: true, components: [
 				{kind: "HFlexBox", components: [
@@ -87,6 +91,16 @@ enyo.kind({ name: "music",
 					{name: "downloadButton", caption: "Download", kind: "Button", flex: 1, onclick: "playButtonClick"},
 				]},
 			]},
+		
+			{name: "playlistConfirmPopup", kind: "Popup", scrim: true, onBeforeOpen: "beforePlaylistConfirmOpen", scrim: true, components: [
+				{name: "confirmMessagePopupText", style: "text-align: center;"},
+				{kind: "Button", caption: "Yes", className: "enyo-button-affirmative", onclick:"savePlaylist"},
+				{kind: "Button", caption: "No", className: "enyo-button-negative", onclick:"closeConfirmPopup"},
+			]},
+			{name: "playlistNamePopup", kind: "Popup", onOpen: "playlistNameOpen", scrim: true, showKeyboardWhenOpening: true, components: [
+				{name: "playlistNameInput", kind: "Input", hint: "Enter playlist name"},
+				{kind: "Button", caption: "Save playlist", onclick: "savePlaylist"},
+			]},
 			
 			{name: "musicPane", kind: "Pane", flex: 1, transitionKind: "enyo.transitions.Simple", onSelectView: "viewSelected", components: [
 			
@@ -103,12 +117,23 @@ enyo.kind({ name: "music",
 								{label: "Songs", value: "musicSongs"},
 								{label: "Playlists", value: "musicPlaylists"},
 							]},
-							{name: "playlistSelectorItem", kind: "Item", align: "center", showing: false, tapHighlight: false, layoutKind: "HFlexLayout", style: "border-bottom-color: rgba(255, 255, 255, 0.496094);", components: [
-								{name: "playlistSelector", kind: "ListSelector", label: $L("Playlist"), onChange: "playlistSelect", flex: 1, items: [
-									{caption: $L("New"), value: "[]:[]new[]:[]"},
-								]},
-							]},
 							
+							{name: "editPlaylistsWrapper", kind: "VFlexBox", showing: false, components: [
+							
+								//caption: $L("Playlists"), kind: "Divider"},
+							
+								{name: "editPlaylistSelectorItem", kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", style: "border-top: none; border-bottom: none;", components: [
+									{name: "editPlaylistSelector", kind: "ListSelector", label: $L("Playlist"), onChange: "editPlaylistChange", flex: 1, items: [
+										//{"type": "1 - New", "playlist_id": "-1", "playlist_name": "Create new", "value": "+ Create new +", "label": "+ Create new +", "playlist_songs": "", "length": "0", "songcount": "0", "hostname": ""},
+									]},
+								]},
+								
+								//name: "savePlaylist", kind: "Button", width: "92%", content: "Save", onclick: "savePlaylistClick"},
+					
+								{caption: $L("Artists"), kind: "Divider"},
+							
+							]},
+								
 							{name: "artistsSearchInputWrapper", className: "searchInputWrapper", kind: "HFlexBox", components: [
 								{name: "artistsSearchInput", kind: "Input", hint: "Filter", oninput: "artistsInput", flex: 1, components: [
 									{name: "artistsSearchClear", kind: "Image", src: "images/11-x@2x.png", showing: false, className: "searchClear", onclick: "resetArtistsSearch"},
@@ -127,9 +152,14 @@ enyo.kind({ name: "music",
 							{name: "leftFooter", kind: "Toolbar", components: [
 								{name: "leftBackCommandIcon", kind: "Control", className: "backCommandIcon", onclick: "gotBack"},
 								{kind: "Spacer"},
-								{icon: 'images/menu-icon-refresh.png', onclick: "getMusic"},
+								{name: "refreshCommandButton", icon: 'images/menu-icon-refresh.png', onclick: "getMusic"},
+								{name: "savePlaylistCommandButton", caption: $L("Save Playlist"), onclick: "savePlaylistClick", showing: false},
 								{kind: "Spacer"},
 								{name: "leftBackCommandIconSpacer", kind: "Control", className: "backCommandIconSpacer"},
+							]},
+							
+							{name: "savePlaylistPopupMenu", kind: "PopupSelect", className: "savePlaylistPopupMenu", onSelect: "savePlaylistSelect", onClose: "savePlaylistClosed", components: [
+								//
 							]},
 						]},
 					]},
@@ -176,6 +206,21 @@ enyo.kind({ name: "music",
 								{name: "rightHeaderSubtitle", kind: "Control", className: "headerSubtitle", content: "All Albums"},
 							]},
 							
+							{name: "selectPlaylistsWrapper", kind: "VFlexBox", showing: false, components: [
+							
+								{name: "selectPlaylistsDrawer", kind: "DividerDrawer", open: false, caption: "Playlists", animate: false, onOpenChanged: "selectPlaylistsDrawerChanged", components: [
+									{name: "playlistsVirtualRepeater", kind: "VirtualRepeater", onSetupRow: "getPlaylistItem", onclick: "selectPlaylistSelect", components: [
+										{name: "playlistItem", kind: "Item", className: "playlistItem", layoutKind: "HFlexLayout", components: [
+											{name: "playlistName", className: "truncating", flex: 1},
+											{name: "playlistChecked", kind: "Image", className: "playlistChecked", src: "images/checkmark.png"},
+										]}
+									]},
+								]},
+					
+								{caption: $L("Songs"), kind: "Divider"},
+							
+							]},
+							
 							{name: "songsSearchInputWrapper", className: "searchInputWrapper", kind: "HFlexBox", components: [
 								{name: "songsSearchInput", kind: "Input", hint: "Filter", oninput: "songsInput", flex: 1, components: [
 									{name: "songsSearchClear", kind: "Image", src: "images/11-x@2x.png", showing: false, className: "searchClear", onclick: "resetSongsSearch"},
@@ -184,7 +229,6 @@ enyo.kind({ name: "music",
 							]},
 							
 							{name: "songsVirtualList", kind: "VirtualList", onSetupRow: "setupSongItem", onclick: "songSelect", flex: 1, components: [
-								//name: "songDivider", kind: "Divider",
 								{name: "songItem", kind: "Item", className: "songsList", layoutKind: "HFlexLayout", components: [
 									{name: "songAlbumArt", kind: "Image", className: "songAlbumArt"},
 									{kind: "VFlexBox", flex: 1, components: [
@@ -198,15 +242,7 @@ enyo.kind({ name: "music",
 							]},
 							
 							{name: "songsSoundWrapper", className: "songsSoundWrapper", showing: false, kind: "Item", layoutKind: "HFlexLayout", align: "center", pack: "center", components: [
-								//{name: "songsSound", kind: "Sound", src: "none"},
-								//{kind: "Spacer"},
-								//{name: "localPlayButton", kind: "Control", content: "Play", onclick: "demoClick"},
-								//{kind: "Spacer"},
 								{name: "songsVideo", kind: "Video", src: "none", showControls: true, flex: 1, width: "300px", height: "30px"},
-									//using video since it will auto stop playback when src changes
-								//{content: "&nbsp;"},
-								//{name: "localStopButton", kind: "Control", content: "Pause", onclick: "localStopClick"},
-								//{kind: "Spacer"},
 							]},
 							
 							{name: "rightCommandMenu", kind: "Toolbar", slidingHandler: false, components: [
@@ -214,9 +250,8 @@ enyo.kind({ name: "music",
 								{flex: 2},
 								{name: "playCommandButton", caption: $L("Play"), onclick: "playClick", showing: false},
 								{kind: "Spacer"},
-								{name: "demoCommandButton", caption: $L("Demo"), onclick: "demoClick", showing: false},
-								{kind: "Spacer"},
 								{name: "webCommandButton", caption: $L("Web"), onclick: "webClick", showing: false},
+								{name: "moreCommandButton", caption: $L("More"), onclick: "moreClick", showing: false},
 								{flex: 2},
 							]},
 							
@@ -238,6 +273,10 @@ enyo.kind({ name: "music",
 									{name: "Song[]:[]Google", caption: "Google"},
 								]},
 							]},
+							{name: "morePopupMenu", kind: "PopupSelect", className: "morePopupMenu", onSelect: "moreSelect", onClose: "moreClosed", components: [
+								{name: "Select all", caption: "Select all"},
+								{name: "Deselect all", caption: "Deselect all"},
+							]},
 						]},
 					]},
 				]},
@@ -255,6 +294,7 @@ enyo.kind({ name: "music",
 		
 		this.render();
 		
+		//this.activate("tablet");
 	},
 	
 	//Externally called functions
@@ -527,48 +567,261 @@ enyo.kind({ name: "music",
 		
 		this.musicMode = inSender.getValue();
 		
+		for(var i = 0; i < this.fullResultList.length; i++) {
+			this.fullResultList[i].inPlaylist == false;
+		}
+			
+		this.resetSongSelect();
+		
 		if(this.musicMode == "musicSongs") {
 			//ask to save playlist
 			
-			this.$.playlistSelectorItem.hide();
+			this.$.editPlaylistsWrapper.hide();
 			this.$.artistsVirtualList.resized();
+			
+			this.$.selectPlaylistsWrapper.hide();
+			this.$.songsVirtualList.resized();
 			
 			this.fullResultList.length = 0;
 			this.fullResultList = cleanMusic(this.rawResultList);
 			
 			this.$.leftHeaderSubtitle.setContent($L("Songs"));
 			
+			this.$.refreshCommandButton.show();
+			this.$.savePlaylistCommandButton.hide();
+			
 			this.finishedGettingMusic();
 			
 		} else {
 		
-			this.selectedPlaylist = this.playlist[0];
-			this.$.playlistSelector.setValue("+ Create new +");
+			//this.selectedPlaylist = this.editPlaylists[0];
+			this.$.editPlaylistSelector.setValue(this.selectedPlaylist.caption);
 		
-			this.$.playlistSelectorItem.show();
+			this.$.editPlaylistsWrapper.show();
 			this.$.artistsVirtualList.resized();
+			
+			this.$.selectPlaylistsWrapper.show();
+			this.$.playlistsVirtualRepeater.render();
+			this.$.songsVirtualList.resized();
 			
 			this.$.leftHeaderSubtitle.setContent($L("Playlists"));
 			
-			this.bannerMessage("Viewing playlists works, but saving currently does not");
+			this.$.refreshCommandButton.hide();
+			this.$.savePlaylistCommandButton.show();
+			
+			this.finishedGettingMusic();
+			
+			//this.doBannerMessage("Viewing playlists works, but saving currently does not", true);
 		}
 	},
-	playlistSelect: function(inSender, inValue, inOldValue) {
-		if(debug) this.log("playlistSelect from "+inOldValue+" to "+inValue);
+	editPlaylistChange: function(inSender, inValue, inOldValue) {
+		if(debug) this.log("editPlaylistChange from "+inOldValue+" to "+inValue+" and getValue: "+this.$.editPlaylistSelector.getValue());
 		
 		//ask to save old
 		
 		this.selectedPlaylist = {};
 		
-		for(var i = 0; i < this.playlist.length; i++) {
-			if(inValue == this.playlist[i].caption) this.selectedPlaylist = this.playlist[i];
+		for(var i = 0; i < this.editPlaylists.length; i++) {
+			if(inValue == this.editPlaylists[i].caption) this.selectedPlaylist = this.editPlaylists[i];
 		}
 		
 		if(debug) this.log("selectedPlaylist: "+enyo.json.stringify(this.selectedPlaylist));
 		
+		this.fullResultList.length = 0;
+		this.selectPlaylists.length = 0;
+		
 		this.fullResultList = parseMusicInPlaylist(this.rawResultList, this.selectedPlaylist);
+		this.selectPlaylists = parsePlaylistsInPlaylist(this.editPlaylists, this.selectedPlaylist);
+		
+		this.$.playlistsVirtualRepeater.render();
+		
+		this.$.editPlaylistSelector.setValue(this.selectedPlaylist.caption);
 		
 		this.finishedGettingMusic();
+		
+	},
+	savePlaylistClick: function() {
+		if(debug) this.log("savePlaylistClick");
+		
+		var saveOptions = [];
+		
+		switch(this.selectedPlaylist.type) {
+			case "1 - New":
+				saveOptions.push({caption: "New playlist"});
+				break;
+			case "2 - Host":
+				saveOptions.push({caption: "Update '"+this.selectedPlaylist.caption+"'"});
+				saveOptions.push({caption: "New playlist"});
+				break;
+			case "3 - Named":
+				saveOptions.push({caption: "Update '"+this.selectedPlaylist.caption+"'"});
+				saveOptions.push({caption: "New playlist"});
+				saveOptions.push({caption: "Delete"});
+				break;
+		}
+				
+		
+		this.$.savePlaylistPopupMenu.setItems(saveOptions);
+		
+		this.$.savePlaylistPopupMenu.openAroundControl(this.$.savePlaylistCommandButton);
+		
+	},
+	savePlaylistSelect: function(inSender, inEvent) {
+		if(debug) this.log("savePlaylistSelect: "+inEvent.value);
+		
+		this.savePlaylistType = inEvent.value;
+		
+		switch(inEvent.value) {
+			case "New playlist":
+				this.$.playlistNamePopup.openAtCenter();
+				break;
+			case "Update '"+this.selectedPlaylist.caption+"'": 
+				this.popupMessage = "If you are currently listening to music or have done so recently on this frontend your updates will not be saved.  You must close out of the MythTV frontend completely before your changes can be saved.  Do you want to save now?";
+				if(this.selectedPlaylist.type == "2 - Host") {
+					this.$.playlistConfirmPopup.openAtCenter();
+				} else {
+					this.savePlaylist();
+				}
+				break;
+			case "Delete":
+				this.popupMessage = "Are you sure you want to delete the playlist '"+this.selectedPlaylist.playlist_name+"'?";
+				this.$.playlistConfirmPopup.openAtCenter();
+				break;
+		}
+	
+	},
+	beforePlaylistConfirmOpen: function() {
+		if(debug) this.log("beforePlaylistConfirmOpen");
+		
+		this.$.confirmMessagePopupText.setContent(this.popupMessage);
+		
+	},
+	closeConfirmPopup: function() {
+		if(debug) this.log("closeConfirmPopup");
+		
+		this.$.playlistConfirmPopup.close();
+	},
+	playlistNameOpen: function() {
+		if(debug) this.log("playlistNameOpen");
+		
+		this.$.playlistNameInput.forceFocusEnableKeyboard();
+	},
+	savePlaylist: function() {
+		if(debug) this.log("savePlaylist");
+		
+		this.$.playlistConfirmPopup.close();
+		this.$.playlistNamePopup.close();
+		
+		var songArray = [];
+		var arrayIndex = 0, totalLength = 0;
+		
+		if(this.selectedPlaylist.type == "2 - Host") {
+			for(i = 0; i < this.selectPlaylists.length; i++){
+			
+				s = this.selectPlaylists[i];
+				
+				if(s.inPlaylist) {
+					s.index = this.selectPlaylists.indexOf(s);
+					s.song_id = parseInt(s.playlist_id)*(-1);
+					s.type = "playlist";
+					
+					songArray[arrayIndex] = s.song_id;
+					totalLength += parseInt(s.length);
+					arrayIndex++;
+					
+				}
+				
+			}
+		}
+		
+		this.fullResultList.sort(sort_by("playlistOrder"));
+		
+		for(i = 0; i < this.fullResultList.length; i++){
+			
+			s = this.fullResultList[i];
+			
+			if(s.inPlaylist) {
+				s.index = this.fullResultList.indexOf(s);
+				s.type = "song";
+				
+				if(debug) this.log("matching song "+s.name+" "+s.index);
+				
+				songArray[arrayIndex] = s.song_id;
+				totalLength += parseInt(s.length);
+				arrayIndex++;
+			}
+			
+		}
+		
+		this.songArrayString = songArray.toString();
+		this.newSongcount = arrayIndex;
+		this.newLength = totalLength;
+	
+		if(debug) this.log("New array list is "+this.songArrayString+" with length "+this.newLength);
+		
+		var query = "";
+		
+		switch(this.savePlaylistType) {
+			case "New playlist":
+				query += 'INSERT INTO `music_playlists` SET `playlist_name` = "'+this.$.playlistNameInput.getValue()+'", `playlist_songs` = "'+songArray.toString();
+				query += '", `length` = "'+totalLength+'", `songcount` = "'+arrayIndex;
+				query += '" ;';
+				break;
+			case "Update '"+this.selectedPlaylist.caption+"'":
+				query += 'UPDATE `music_playlists` SET `playlist_songs` = "'+songArray.toString();
+				query += '", `length` = "'+totalLength+'", `songcount` = "'+arrayIndex;
+				query += '" WHERE `playlist_id` = "'+this.selectedPlaylist.playlist_id+'" LIMIT 1 ;';
+				break;
+			case "Delete":
+				query += 'DELETE FROM `music_playlists` ';
+				query += ' WHERE `playlist_id` = "'+this.selectedPlaylist.playlist_id+'" LIMIT 1 ;';
+				break;
+		}
+		
+		if(debug) this.log("query is "+query);
+			
+		if(WebMyth.useScript) {
+			
+			var requestUrl = "http://"+WebMyth.prefsCookie.webserverName+"/"+WebMyth.prefsCookie.webmythPythonFile;
+			requestUrl += "?op=executeSQL";				
+			requestUrl += "&query64=";		
+			requestUrl += Base64.encode(query);
+			
+			if(debug) this.log("requestUrl: "+requestUrl);
+		
+			this.$.savePlaylistService.setUrl(requestUrl);
+			this.$.savePlaylistService.call();
+		
+		} else {
+		
+			this.doMysqlPluginExecute("mysqlMusicSavePlaylist", query);
+		
+		}
+		
+	},
+	savePlaylistResponse: function(inSender, inResponse) {
+		if(debug) this.log("savePlaylistResponse: "+inResponse);
+		
+		if(this.savePlaylistType == "Delete") {
+			this.doBannerMessage("Deleted playlist");
+		} else {
+			this.doBannerMessage("Saved playlist");
+		}
+		
+		this.$.musicRadioGroup.setValue("musicSongs");
+		this.musicMode = "musicSongs";
+		
+		this.getPlaylists();
+		
+	},
+	savePlaylistFailure: function(inSender, inResponse) {
+		if(debug) this.log("savePlaylistFailure");
+		
+		if(this.savePlaylistType == "Delete") {
+			this.doBannerMessage("Error deleting playlist");
+		} else {
+			this.doBannerMessage("Error saving playlist");
+		}
 		
 	},
 	artistsInput: function() {
@@ -730,9 +983,21 @@ enyo.kind({ name: "music",
 		//this.$.songsSoundWrapper.show();
 		//this.$.songsVirtualList.resized();
 		
-		this.$.playCommandButton.show();
-		this.$.demoCommandButton.show();
-		this.$.webCommandButton.show();
+		if(this.musicMode == "musicPlaylists") {
+			this.$.playCommandButton.show();
+			//this.$.demoCommandButton.show();
+			this.$.webCommandButton.hide();
+			this.$.moreCommandButton.show();
+			
+			//this.$.moreCommandSpacer2.hide();
+		} else {
+			this.$.playCommandButton.show();
+			//this.$.demoCommandButton.show();
+			this.$.webCommandButton.show();
+			this.$.moreCommandButton.hide();
+			
+			//this.$.moreCommandSpacer2.show();
+		}
 		
 		var songUrl = "";
 			
@@ -763,6 +1028,12 @@ enyo.kind({ name: "music",
 		if(this.musicMode == "musicPlaylists") {
 		
 			this.resultList[inEvent.rowIndex].inPlaylist = !this.resultList[inEvent.rowIndex].inPlaylist;
+			
+			if(this.resultList[inEvent.rowIndex].inPlaylist) {
+				this.resultList[inEvent.rowIndex].playlistOrder = 500000;
+			} else {
+				this.resultList[inEvent.rowIndex].playlistOrder = 9000000;
+			}
 			
 		} else {
 			
@@ -834,9 +1105,23 @@ enyo.kind({ name: "music",
 		this.$.songsSoundWrapper.hide();
 		this.$.songsVirtualList.resized();
 		
-		this.$.playCommandButton.hide();
-		this.$.demoCommandButton.hide();
-		this.$.webCommandButton.hide();
+		if(this.musicMode == "musicPlaylists") {
+			this.$.playCommandButton.hide();
+			//this.$.demoCommandButton.hide();
+			this.$.webCommandButton.hide();
+			this.$.moreCommandButton.hide();
+			
+			//this.$.moreCommandSpacer1.show();
+			//this.$.moreCommandSpacer2.show();
+		} else {
+			this.$.playCommandButton.hide();
+			//this.$.demoCommandButton.hide();
+			this.$.webCommandButton.hide();
+			this.$.moreCommandButton.hide();
+			
+			//this.$.moreCommandSpacer1.hide();
+			//this.$.moreCommandSpacer2.show();
+		}
 		
 		this.selectedSongIndex = -1;
 		
@@ -910,6 +1195,7 @@ enyo.kind({ name: "music",
 				var songDirectory = "/media/internal/music/"+row.artist_name+"/"+row.album_name+"/";
 				
 				this.doDownloadFile(songUrl, songFilename, songDirectory, "com.palm.app.musicplayer");
+				this.doDownloadFile(songUrl, songFilename, songDirectory);
 			
 			}
 			
@@ -942,6 +1228,40 @@ enyo.kind({ name: "music",
 			}
 		}
 	},
+	moreClick: function(inSender, inEvent) {
+		if(debug) this.log("moreClick");
+		
+		this.$.morePopupMenu.openAroundControl(this.$.moreCommandButton);
+	},
+	moreSelect: function(inSender, inEvent) {
+		if(inEvent) {
+			if(debug) this.log("moreSelect: "+inEvent.value);
+			
+			switch(inEvent.value) {
+				case "Select all": 
+					
+					for(var i = 0; i < this.resultList.length; i++) {
+						this.resultList[i].inPlaylist = true;
+						if(this.resultList[i].playlistOrder == 9000000) this.resultList[i].playlistOrder = 500000;
+					}
+					
+					this.$.songsVirtualList.punt();
+					
+					break;
+				case "Deselect all": 
+					
+					for(var i = 0; i < this.resultList.length; i++) {
+						this.resultList[i].inPlaylist = false;
+						this.resultList[i].playlistOrder = 9000000;
+					}
+					
+					this.$.songsVirtualList.punt();
+					
+					break;
+			}
+			
+		}
+	},
 	musicDetailsPopupClick: function(inSender) {
 		if(debug) this.log("musicDetailsPopupClick: "+inSender.getName());
 		
@@ -969,6 +1289,24 @@ enyo.kind({ name: "music",
 		
 		this.$.musicPane.selectViewByName("slidingPane");
 	},
+	selectPlaylistsDrawerChanged: function() {
+		if(debug) this.log("selectPlaylistsDrawerChanged");
+		
+		try {
+			this.$.songsVirtualList.resized();
+		} catch(e) {
+			if(debug) this.log(e);
+		}
+	},
+	selectPlaylistSelect: function(inSender, inEvent) {
+		if(debug) this.log("selectPlaylistSelect "+inEvent.rowIndex);
+		
+		this.selectPlaylists[inEvent.rowIndex].inPlaylist = !this.selectPlaylists[inEvent.rowIndex].inPlaylist;
+		
+		this.$.playlistsVirtualRepeater.render();
+		
+	},
+	
 	
 	
 	//Music functions
@@ -1062,27 +1400,55 @@ enyo.kind({ name: "music",
 			
 		}
 	},
-	playlistResponse: function(inSender, inResponse) {
-		if(debug) this.log("playlistResponse");
-		//if(debug) this.log("playlistResponse: "+enyo.json.stringify(inResponse));
+	getPlaylistResponse: function(inSender, inResponse) {
+		if(debug) this.log("getPlaylistResponse");
+		//if(debug) this.log("getPlaylistResponse: "+enyo.json.stringify(inResponse));
 		
-		this.playlist.length = 0;
+		this.editPlaylists.length = 0;
+		this.displayEditPlaylists.length = 0;
 		
 		if(inResponse == " ]\n") {
 			//no matching searches
 		} else {
-			this.playlist = cleanMusicPlaylists(inResponse);
+			this.editPlaylists = cleanMusicPlaylists(inResponse);
 			
-			//if(debug) this.log("this.playlist: "+enyo.json.stringify(this.playlist));
+			//if(debug) this.log("this.editPlaylists: "+enyo.json.stringify(this.editPlaylists));
 			
-			this.$.playlistSelector.setItems(this.playlist);
+			for(var i = 0; i < this.editPlaylists.length; i++) {
+				this.displayEditPlaylists.push(this.editPlaylists[i].caption);
+			}
+			
+			if(debug) this.log("this.displayEditPlaylists: "+enyo.json.stringify(this.displayEditPlaylists));
+			
+			this.selectPlaylists.length = 0;
+			
+			var newList = this.editPlaylists.concat([]);
+			
+			for(var i = 0; i < newList.length; i++) {
+				
+				var s = newList[i];
+				
+				if(s.type == "3 - Named"){
+					this.selectPlaylists.push(s);
+				}
+				
+			}
+			
+			//if(debug) this.log("this.selectPlaylists: "+enyo.json.stringify(this.selectPlaylists));
+			
+			this.$.playlistsVirtualRepeater.render();
 		}
 		
+		this.$.editPlaylistSelector.setItems(this.displayEditPlaylists);
+		this.selectedPlaylist = this.editPlaylists[0];
+		this.$.editPlaylistSelector.setValue(this.selectedPlaylist.caption);
+		
+		this.resetSongsSearch();
 		this.finishedGettingMusic();
 		
 	},
-	playlistFailure: function(inSender, inResponse) {
-		this.error("playlistFailure");
+	getPlaylistFailure: function(inSender, inResponse) {
+		this.error("getPlaylistFailure");
 		
 		this.bannerMessage("ERROR: Failed to get music from backend at '"+WebMyth.prefsCookie.webserverName+"'");
 		
@@ -1092,9 +1458,23 @@ enyo.kind({ name: "music",
 		if(debug) this.log("finishedGettingMusic");
 		
 		if(this.$.musicRadioGroup.getValue() == "musicSongs") {
-			this.$.playlistSelectorItem.hide();
+			this.$.editPlaylistsWrapper.hide();
+			
+			this.$.selectPlaylistsWrapper.hide();
+			this.$.songsVirtualList.resized();
+			
+		} else if(this.selectedPlaylist.type == "2 - Host") {
+			this.$.editPlaylistsWrapper.show();
+			
+			this.$.selectPlaylistsWrapper.show();
+			this.$.playlistsVirtualRepeater.render();
+			this.$.songsVirtualList.resized();
+			
 		} else {
-			this.$.playlistSelectorItem.show();
+			this.$.editPlaylistsWrapper.show();
+			
+			this.$.selectPlaylistsWrapper.hide();
+			this.$.songsVirtualList.resized();
 		}
 		
 		this.resize(this.viewMode);
@@ -1110,6 +1490,7 @@ enyo.kind({ name: "music",
 		this.$.artistsVirtualList.punt();
 		
 		this.finishedSelectingArtist();
+		//this.resetAlbumsSearch();
 	},
 	finishedSelectingArtist: function() {
 		if(debug) this.log("finishedSelectingArtist with selectedArtist: "+this.selectedArtist);
@@ -1136,13 +1517,20 @@ enyo.kind({ name: "music",
 		this.$.albumsVirtualList.punt();
 		
 		this.finishedSelectingAlbum();
+		//this.resetSongSelect();
 	},
 	finishedSelectingAlbum: function() {
 		if(debug) this.log("finishedSelectingAlbum with selectedAlbum: "+this.selectedAlbum);
 		
 		this.resultList.length = 0;
 		this.resultList = this.filterSongs(trimList(this.middleResultList,"album_name",this.selectedAlbum));
-		this.resultList.sort(triple_sort_by("playlistOrder", "track", "name"));
+		
+		if(this.musicMode == "musicPlaylists") {
+			this.resultList.sort(sort_by("playlistOrder"));
+		} else {
+			this.resultList.sort(double_sort_by("track", "name"));
+		}
+		
 		
 		this.resetSongSelect();
 		this.$.songsVirtualList.punt();
@@ -1221,7 +1609,7 @@ enyo.kind({ name: "music",
 		if(!enyo.g11n.Char.isLetter(b)) b = "#";
 		
 		if(inIndex == 0) {
-			return "All";
+			return "All Artists";
 		} else if(inIndex == 1) {
 			return b;
 		} else {
@@ -1320,7 +1708,7 @@ enyo.kind({ name: "music",
 		if(!enyo.g11n.Char.isLetter(b)) b = "#";
 		
 		if(inIndex == 0) {
-			return "All";
+			return "All Albums";
 		} else if(inIndex == 1) {
 			return b;
 		} else {
@@ -1356,7 +1744,7 @@ enyo.kind({ name: "music",
 		
 			//this.setupSongDivider(inIndex);
 			
-			if(row.inPlaylist) {
+			if((row.inPlaylist)&&(this.musicMode == "musicPlaylists")) {
 				this.$.songChecked.show();
 			} else {
 				this.$.songChecked.hide();
@@ -1443,6 +1831,27 @@ enyo.kind({ name: "music",
 		var b = r1.name.substring(0,1);
 		
 		return a != b ? b : null;
+	},
+	getPlaylistItem: function(inSender, inIndex) {
+		//if(debug) this.log("getPlaylistItem "+inIndex+" "+enyo.json.stringify(this.selectPlaylists[inIndex]));
+		var row = this.selectPlaylists[inIndex];
+		
+		if(row) {
+		
+			if(inIndex == 0) this.$.playlistItem.setStyle("border-top: none;");
+			
+			this.$.playlistName.setContent(row.playlist_name);
+			
+			if(row.inPlaylist) {
+				this.$.playlistChecked.show();
+			} else {
+				this.$.playlistChecked.hide();
+			}
+			
+			return true;
+		
+		}
+		
 	},
 	
 });

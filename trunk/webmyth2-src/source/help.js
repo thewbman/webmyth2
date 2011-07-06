@@ -88,6 +88,8 @@ enyo.kind({ name: "help",
 		this.inherited(arguments);
 		
 		this.render();
+		
+		//this.activate("tablet");
 	},
 	
 	//Externally called functions

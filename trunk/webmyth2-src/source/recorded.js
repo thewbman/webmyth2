@@ -172,7 +172,7 @@ enyo.kind({ name: "recorded",
 							{name: "rightScroller", kind: "Scroller", autoHorizontal: false, horizontal: false, autoVertical: true, flex: 1, components: [
 								{kind: "HFlexBox", components: [
 									{kind: "Spacer"},
-									{name: "rightDetailsScreenshot", kind: "Image", className: "largeScreenshot", onclick: "screenshotSelect"},
+									{name: "rightDetailsScreenshot", kind: "Image", className: "largeScreenshot", onclick: "screenshotSelect", showing: false},
 									{kind: "Spacer"},
 								]},
 								{name: "recStatusText", className: "recStatusText", kind: "Control"},
@@ -299,9 +299,9 @@ enyo.kind({ name: "recorded",
 		
 		this.detailsProgram = defaultProgram;
 		
-		//this.render();
+		this.render();
 		
-		//this.activate();
+		//this.activate("tablet");
 		
 	},
 	

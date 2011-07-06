@@ -76,6 +76,9 @@ enyo.kind({ name: "findbackends",
 		if(debug) this.log("create");
 		this.inherited(arguments);
 		
+		this.render();
+		
+		//this.activate2("tablet");
 	},
 	
 	//Externally called functions

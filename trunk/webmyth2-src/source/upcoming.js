@@ -272,7 +272,7 @@ enyo.kind({ name: "upcoming",
 		
 		this.render();
 		
-		//this.activate();
+		//this.activate("tablet");
 		
 	},
 	

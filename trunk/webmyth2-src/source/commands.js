@@ -16,10 +16,10 @@ function defaultCookie() {
 		
 		manualDatabase: false,
 		databaseHost: '-',
-		databasePort: '',
+		databasePort: '3306',
 		databaseUsername: '',
 		databasePassword: '',
-		databaseName: '',
+		databaseName: 'mythconverg',
 		
 		webserverName: '-',
 		webserverUsername: '',	
@@ -1953,7 +1953,7 @@ var cleanMusic = function(fullList) {
 		//k = u.length;
 		//s.filenameEnd = u[k - 1];
 			
-		s.playlistOrder = 1000000;
+		s.playlistOrder = 9000000;
 		s.inPlaylist = false;
 			
 		if(s.track < 10) {
@@ -1973,7 +1973,7 @@ var cleanMusicPlaylists = function(fullList) {
 
 	var finalList = [];
 	
-	finalList.push({"type": "1 - New", "playlist_id": "-1", "playlist_name": "Create new", "caption": "+ Create new +", "playlist_songs": "", "length": "0", "songcount": "0", "hostname": ""});
+	finalList.push({"type": "1 - New", "playlist_id": "-1", "playlist_name": "Create new", "value": "+ Create new +", "caption": "+ Create new +", "label": "+ Create new +", "playlist_songs": "", "length": "0", "songcount": "0", "hostname": ""});
 	
 	var i, j, k, s, t = [], u = [];
 	
@@ -1982,10 +1982,14 @@ var cleanMusicPlaylists = function(fullList) {
 		
 		if(s.hostname == ""){
 			s.type = "3 - Named";
+			s.label = s.playlist_name;
+			s.value = s.playlist_name;
 			s.caption = s.playlist_name;
 			finalList.push(s);
 		} else if(s.playlist_name == "default_playlist_storage") {
 			s.type = "2 - Host";
+			s.label = "Frontend: "+s.hostname;
+			s.value = "Frontend: "+s.hostname;
 			s.caption = "Frontend: "+s.hostname;
 			finalList.push(s);
 		}
@@ -2026,7 +2030,7 @@ var parseMusicInPlaylist = function(fullList, playlistObject) {
 	for(i = 0; i < fullList.length; i++) {
 		s = fullList[i];
 		
-		s.playlistOrder = 1000000;
+		s.playlistOrder = 9000000;
 		s.inPlaylist = false;
 		
 		//Break down name if is has '/'
@@ -2053,7 +2057,7 @@ var parseMusicInPlaylist = function(fullList, playlistObject) {
 					s.playlistOrder = "000"+parseInt(s.playlistOrder);
 				} else if(s.playlistOrder < 100000) {
 					s.playlistOrder = "00"+parseInt(s.playlistOrder);
-				} else if(s.playlistOrder < 1000000) {
+				} else if(s.playlistOrder < 9000000) {
 					s.playlistOrder = "0"+parseInt(s.playlistOrder);
 				} 
 				
@@ -2067,6 +2071,75 @@ var parseMusicInPlaylist = function(fullList, playlistObject) {
 		}
 		
 		finalList.push(s);
+		
+	}
+	
+	finalList.sort(sort_by('playlistOrder', false));
+	
+	return finalList;	
+	
+}
+
+var parsePlaylistsInPlaylist = function(fullList, playlistObject) {
+	
+	var	finalList = [];
+	var playlistOrderList = [];
+	
+	var myPlaylist = playlistObject.playlist_songs.split(",");
+	
+	var i, j, s = {};
+	var sortListIndex = 0;
+		
+	//Flag playlist if in playlist
+	for(j = 0; j < myPlaylist.length; j++) {
+		
+		if(myPlaylist[j] < 0) {
+			//Make sure we are not getting songs, just playlists
+			playlistOrderList.push({"playlist_id": parseInt(-1*myPlaylist[j]), "order": j});
+		}	
+	}
+	
+	playlistOrderList.sort(sort_by('playlist_id', false));
+	
+	
+	//Prep music list
+	fullList.sort(sort_by("playlist_id", false));
+	
+	for(i = 0; i < fullList.length; i++) {
+		s = fullList[i];
+		
+		s.playlistOrder = 9000000;
+		s.inPlaylist = false;
+		
+		if(playlistOrderList.length > 0) {		
+			if(s.playlist_id == playlistOrderList[sortListIndex].playlist_id) {
+				s.inPlaylist = true;
+				s.playlistOrder = playlistOrderList[sortListIndex].order;
+				
+				if(s.playlistOrder < 10) {
+					s.playlistOrder = "000000"+parseInt(s.playlistOrder);
+				} else if(s.playlistOrder < 100) {
+					s.playlistOrder = "00000"+parseInt(s.playlistOrder);
+				} else if(s.playlistOrder < 1000) {
+					s.playlistOrder = "0000"+parseInt(s.playlistOrder);
+				} else if(s.playlistOrder < 10000) {
+					s.playlistOrder = "000"+parseInt(s.playlistOrder);
+				} else if(s.playlistOrder < 100000) {
+					s.playlistOrder = "00"+parseInt(s.playlistOrder);
+				} else if(s.playlistOrder < 9000000) {
+					s.playlistOrder = "0"+parseInt(s.playlistOrder);
+				} 
+				
+				sortListIndex++;
+				
+				if(sortListIndex >= playlistOrderList.length){
+					sortListIndex--;
+				}
+			
+			}
+		}
+		
+		if(s.type == "3 - Named") finalList.push(s);
 		
 	}
 	

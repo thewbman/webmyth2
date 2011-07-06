@@ -4,7 +4,9 @@
 enyo.kind({ name: "searchPeople",
 	kind: "VFlexBox",
 	className: "searchPeople enyo-view",			//enyo-view needed to get vflexbox to work?
-	published: {},
+	published: {
+		haveIncomingPerson: false,
+	},
 	
 	phonePixels: 500,
 	viewMode: "phone",
@@ -35,8 +37,6 @@ enyo.kind({ name: "searchPeople",
 	carouselIndex: -1,
 	
 	filterString: "",
-	
-	haveIncomingPerson: false,
 	
 	events: {
 		onBannerMessage: "",
@@ -272,11 +272,11 @@ enyo.kind({ name: "searchPeople",
 		
 		this.detailsProgram = defaultProgram;
 		
-		//this.render();
+		this.render();
 		
 		//setTimeout(enyo.bind(this,"showDetails"),1);
 		
-		//this.activate();
+		//this.activate2("tablet");
 		
 	},
 	

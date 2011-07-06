@@ -202,8 +202,9 @@ enyo.kind({ name: "backendstatus",
 		this.statusTime = "";
 		this.allLoads = "";
 		
-		
 		this.render();
+		
+		//this.activate("tablet");
 	},
 	
 	//Externally called functions

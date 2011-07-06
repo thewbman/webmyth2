@@ -245,7 +245,7 @@ enyo.kind({ name: "video",
 		
 		this.render();
 		
-		//this.activate();
+		//this.activate("tablet");
 		
 	},
 	
@@ -523,7 +523,7 @@ enyo.kind({ name: "video",
 		if(debug) this.log("videosGroupSelect from "+inOldValue+" to "+inValue);
 		
 		if(inValue == "Directory") {
-			this.bannerMessage("Directory is not yet supported");
+			this.doBannerMessage("Directory is not yet supported", true);
 			
 			this.$.videosGroupSelector.setValue(WebMyth.prefsCookie.inOldValue);
 			

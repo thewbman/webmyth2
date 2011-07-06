@@ -243,7 +243,9 @@ enyo.kind({ name: "preferences",
 		if(debug) this.log("create");
 		this.inherited(arguments);
 		
-		//this.activate();
+		this.render();
+		
+		//this.activate("tablet");
 		
 	},
 		
@@ -493,12 +495,12 @@ enyo.kind({ name: "preferences",
 	allowDownloadsToggle: function(inSender, inState) {
 		if(debug) this.log("allowDownloadsToggle to state: "+inState);
 		
-		this.bannerMessage("See homepage for download details");
+		this.doBannerMessage("See homepage for download details", true);
 	},
 	mythwebXmlToggle: function(inSender, inState) {
 		if(debug) this.log("mythwebXmlToggle to state: "+inState);
 		
-		this.bannerMessage("See website for installing mythweb module");
+		this.doBannerMessage("See website for installing mythweb module", true);
 		
 		if(inState) {
 			this.$.MythXML_keyItem.show();
@@ -509,7 +511,7 @@ enyo.kind({ name: "preferences",
 	metrixToggle: function(inSender, inState) {
 		if(debug) this.log("metrixToggle to state: "+inState);
 		
-		this.bannerMessage("The app does not yet submit any data to Metrix, but it will do so in a future release.");
+		//this.bannerMessage("The app does not yet submit any data to Metrix, but it will do so in a future release.");
 	},
 	debugToggle: function(inSender, inState) {
 		if(debug) this.log("debugToggle to state: "+inState);
