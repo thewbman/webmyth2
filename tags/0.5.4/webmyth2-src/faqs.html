@@ -1,0 +1,34 @@
+
+<div class="faqs-body">
+
+<div class="title">What is MythTV?</div><ul>
+<li>MythTV is a Free Open Source software digital video recorder (DVR) project distributed under the terms of the GNU GPL. This app relies fully relies on having a MythTV system already setup and running.  If you do not already have a MythTV setup this app is not for you.  <a href="http://www.mythtv.org" target="_blank">MythTV Homepage</a></li>
+
+</ul><hr /><div class="title">What does this app do?</div><ul>
+<li>The WebMyth2 app can interact with almost all aspects of a MythTV system.  It can be a remote control, show recorded programs, show scheduled upcoming programs, show the program guide, show videos, show music, show backend status, show backend log, and setup recording schedules. The app is a rewrite of the original WebMyth app written on the depreciated Mojo framework for the original Palm webOS phones.</li>
+
+</ul><hr /><div class="title">WebMyth2 can't seem to talk to a remote frontend even though I know it is a valid frontend.</div><ul>
+<li>First check that the frontend has been setup to allow remote control under the general frontend settings.  Then check that the correct IP address and port is entered for the frontend.  (If you are using the script for remote control make sure the hostname is correct and that the server where the script is installed can resolve that hostname.)</li>
+
+</ul><hr /><div class="title">Can I use WebMyth2 remotely over the cell network or another WiFi network?</div><ul>
+<li>For the most part, yes. You will have to know the IP address assigned to you by your internet provider (or setup a domain name that resolves to your IP address). Then on your router you should forward ports 80 (webserver), 3306 (MySQL), 6543 (MythTV backend), 6544 (MythTV backend XML) and 6546 (frontend remote control) to the correct local IP address(es). You can also download a small addon module for MythWeb to avoid having to forward port 6544.  See the app homepage for details.  If these ports are blocked by your ISP or the network connection you are using you are out of luck.</li>
+
+</ul><hr /><div class="title">Why doesn't video playback work for all videos?</div><ul>
+<li>Unless you have a very recent build of MythTV there isn't a way to reliably play back video files from remote storage directories.  Hopefully playback of video files that are not in sub-directories of your Videos storage group will work remotely, but if the video is in a sub-directory the app gets the frontend to try and play the file locally.  For now I recommend mounting the remote Videos storage group locally via NFS for playback.  (And I know having MythTV show video information during playback is not working.)</li>
+
+</ul><hr /><div class="title">What is the script file noted in the preferences?</div><ul>
+<li>Earlier versions of the app required a server script to access all of the MythTV functions.  The app is still compatable with the script and it can be used if desired by setting it in the preferences.  Using the script is a good way to avoid having to forward all the ports when using the app from a cell network.</li>
+
+</ul><hr /><div class="title">What is the app's homepage?</div><ul>
+<li>It is right <a href="http://code.google.com/p/webmyth2/" target="_blank">here</a>.</li>
+
+</ul><hr /><div class="title">Is there anyway I can help out?</div><ul>
+<li>Yes.  I would be happy to have anyone add to the app that wants to.  The two areas I would appreciate the most help on are style/theming and any language translations.  Though any type of help would be welcome.  Email the developer <a href="mailto:webmyth.help@gmail.com?subject=WebMyth2 Help">here</a> to get started.</li>
+
+</ul><hr /><div class="title">What if I have some other question and/or suggestion?</div><ul>
+<li>You can always email the developer <a href="mailto:webmyth.help@gmail.com?subject=WebMyth2 Help">here</a>.</li>
+
+</ul>
+
+
+</div>

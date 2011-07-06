@@ -1,0 +1,22 @@
+#!/bin/bash
+
+echo List your source files here
+SRC=webmyth_service.cpp
+
+echo List the libraries needed
+LIBS="-lpdl -lSDL -lpthread"
+
+echo static libs
+STATIC_LIBS=libmysqlclient_x86.a
+
+echo itermediate object file
+MIDFILE=webmyth_service.o
+
+echo Name your output executable
+OUTFILE=webmyth_service_x86
+
+PALMPDK="/home/wes/Dropbox/development/PalmPDK"
+
+echo g++ -o $OUTFILE $SRC $STATIC_LIBS "-I$PALMPDK/include" "-I$PALMPDK/include/SDL" "-L/usr/lib" -Wl,--allow-shlib-undefined $LIBS
+
+g++ -o $OUTFILE $SRC $STATIC_LIBS "-I$PALMPDK/include" "-I$PALMPDK/include/SDL" "-L/usr/lib" "-L$PALMPDK/emulator/lib" -Wl,--allow-shlib-undefined $LIBS
