@@ -118,7 +118,7 @@ enyo.kind({ name: "welcome",
 		//if(debug) this.log("requestUrl: "+requestUrl);
 		this.$.getConnectionInfoService.setUrl(requestUrl);
 		
-		if(WebMyth.prefsCookie.webserverName == "-") {
+		if((WebMyth.prefsCookie.webserverName == "-")||(WebMyth.prefsCookie.masterBackendIp == "-")) {
 			
 			//this.bannerMessage("You must setup the backend IP in the preferences");
 			

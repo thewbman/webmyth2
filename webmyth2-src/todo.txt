@@ -11,6 +11,6 @@ Todo:
  - more g11n formating date/time?
  - filter search people
  - cleanup empty video response on search people
- - set offset when selcting details (like carousel)
+ - set offset when selecting details (like carousel)
  
  

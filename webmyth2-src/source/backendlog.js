@@ -89,6 +89,8 @@ enyo.kind({ name: "backendlog",
 		this.inherited(arguments);
 		
 		this.render();
+		
+		//this.activate("tablet");
 	},
 	
 	//Externally called functions

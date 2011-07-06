@@ -4,7 +4,9 @@
 enyo.kind({ name: "searchTitle",
 	kind: "VFlexBox",
 	className: "searchTitle enyo-view",			//enyo-view needed to get vflexbox to work?
-	published: {},
+	published: {
+		haveIncomingTitle: false,
+	},
 	
 	phonePixels: 500,
 	viewMode: "tablet",
@@ -35,8 +37,6 @@ enyo.kind({ name: "searchTitle",
 	carouselIndex: -1,
 	
 	filterString: "",
-	
-	haveIncomingTitle: false,
 	
 	events: {
 		onBannerMessage: "",
@@ -267,11 +267,11 @@ enyo.kind({ name: "searchTitle",
 		
 		this.detailsProgram = defaultProgram;
 		
-		//this.render();
+		this.render();
 		
 		//setTimeout(enyo.bind(this,"showDetails"),1);
 		
-		//this.activate();
+		//this.activate2("tablet");
 		
 	},
 	
@@ -466,7 +466,7 @@ enyo.kind({ name: "searchTitle",
 		
 		this.viewMode = inViewMode;
 		
-		this.haveIncomingTitle = true
+		this.haveIncomingTitle = true;
 		
 		this.searchText = inTitle;
 		//this.$.leftHeaderTitle.setContent("Title Search: '"+this.searchText+"'");

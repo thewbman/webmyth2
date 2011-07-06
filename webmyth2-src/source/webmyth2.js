@@ -44,7 +44,7 @@ enyo.kind({
 			{content: "This app requires an existing MythTV system to connect to.", style: "text-align: center;"},
 			{content: "If you aren't sure what that means this app is probably not for you.", style: "text-align: center;"},
 			{kind: "Button", caption: "Backend Search", onclick:"openFindbackends"},
-			{kind: "Button", caption: "Manual Setup", onclick:"openManualPopup"},
+			{kind: "Button", caption: "Manual Backend Setup", onclick:"openManualPopup"},
 			{kind: "Button", caption: "Preferences", onclick:"openPreferences"},
 			{kind: "Button", caption: "Help", onclick:"openHelp"},
 		]},
@@ -54,7 +54,7 @@ enyo.kind({
 			{kind: "Button", caption: "Save", onclick: "submitManualBackend"},
 		]},
 		
-		{name: "messagePopup", kind: "Popup", scrim: true, onBeforeOpen: "beforeMessageOpen", components: [
+		{name: "messagePopup", kind: "Popup", scrim: true, onBeforeOpen: "beforeBannerMessageOpen", components: [
 			{name: "messagePopupText", style: "text-align: center;"},
 			{kind: "Button", caption: "OK", onclick:"closeMessagePopup"}
 		]},
@@ -396,6 +396,7 @@ enyo.kind({
 		if(debug) this.log("personSelected: "+enyo.json.stringify(personObject));
 		
 		//send along viewMode just to make we are in correct mode
+		this.$.searchPeople.setHaveIncomingPerson(true);
 		this.$.searchPeople.externalPerson(personObject, this.viewMode);
 		
 		this.$.mainPane.selectViewByName("searchPeople");
@@ -522,6 +523,7 @@ enyo.kind({
 		if(debug) this.log("titleSearch: "+title);
 		
 		//send along viewMode just to make we are in correct mode
+		this.$.searchTitle.setHaveIncomingTitle(true);
 		this.$.searchTitle.externalTitle(title, this.viewMode);
 		
 		this.$.mainPane.selectViewByName("searchTitle");
@@ -544,7 +546,7 @@ enyo.kind({
 		if(inResponse.completed) {
 			this.bannerMessage("webmyth2", "Download finished!");
 			
-			this.$.openProgramService.call({id: this.downloadOpenApp});
+			if(this.downloadOpenApp) this.$.openProgramService.call({id: this.downloadOpenApp});
 			
 			//open app
 		} else {
@@ -571,19 +573,19 @@ enyo.kind({
 		
 		this.$.remote.externalCommand(inType, inCommand);
 	},
-	bannerMessage: function(inSender, inMessage) {
+	bannerMessage: function(inSender, inMessage, forcePopup) {
 		if(debug) this.log("bannerMessage: "+inMessage);
 		
-		if(window.PalmSystem) {
-			enyo.windows.addBannerMessage(inMessage, "{}");
-		} else {
+		if((forcePopup)||(!window.PalmSystem)){
 			this.messageText = inMessage;
 			this.$.messagePopup.openAtCenter();
-		}
+		} else {
+			enyo.windows.addBannerMessage(inMessage, "{}");
+		} 
 		
 	},
-	beforeMessageOpen: function() {
-		if(debug) this.log("beforeMessageOpen");
+	beforeBannerMessageOpen: function() {
+		if(debug) this.log("beforeBannerMessageOpen");
 		
 		this.$.messagePopupText.setContent(this.messageText);
 	},
@@ -736,23 +738,46 @@ enyo.kind({
 	viewCreated: function(inSender, inName) {
 		if(debug) this.log("viewCreated with name: "+inName);
 		
-		if (inName == "welcome") {
-			//this.$.mainPane.createComponent({kind: "recorded", onSelectMode: "changeMode", onSavePreferences: "savePreferences", onPersonSelected: "personSelected", onOpenWeb: "openWeb", onSetupSchedule: "setupSchedule", onProgramGuide: "programGuide", onTitleSearch: "titleSearch", owner: this});
-			//this.$.mainPane.selectViewByName(inName);
-		} else if (inName == "remote") {
-			this.$.mainPane.createComponent({kind: "remote", onSelectMode: "changeMode", owner: this});
+		if (inName == "recorded") {
+			this.$.mainPane.createComponent({kind: "recorded", onBannerMessage: "bannerMessage", onGetPreviousPane: "getPreviousPane", onSelectMode: "changeMode", onSavePreferences: "savePreferences", onPersonSelected: "personSelected", onOpenWeb: "openWeb", onSetupSchedule: "setupSchedule", onProgramGuide: "programGuide", onTitleSearch: "titleSearch", onDownloadFile: "downloadFile", onRemoteCommand: "remoteCommand", onMysqlPluginCommand: "mysqlPluginCommand", onMysqlPluginExecute: "mysqlPluginExecute", owner: this});
 			this.$.mainPane.selectViewByName(inName);
-		} else if (inName == "recorded") {
-			this.$.mainPane.createComponent({kind: "recorded", onSelectMode: "changeMode", onSavePreferences: "savePreferences", onPersonSelected: "personSelected", onOpenWeb: "openWeb", onSetupSchedule: "setupSchedule", onProgramGuide: "programGuide", onTitleSearch: "titleSearch", onDownloadFile: "downloadFile", owner: this});
-			this.$.mainPane.selectViewByName(inName);
+			this.$.topMenu.setValue("programs");
 		} else if (inName == "upcoming") {
-			this.$.mainPane.createComponent({kind: "upcoming", onSelectMode: "changeMode", onSavePreferences: "savePreferences", onPersonSelected: "personSelected", onOpenWeb: "openWeb", onSetupSchedule: "setupSchedule", onProgramGuide: "programGuide", onTitleSearch: "titleSearch", onDownloadFile: "downloadFile", owner: this});
+			this.$.mainPane.createComponent({kind: "upcoming", onBannerMessage: "bannerMessage", onGetPreviousPane: "getPreviousPane", onSelectMode: "changeMode", onSavePreferences: "savePreferences", onPersonSelected: "personSelected", onOpenWeb: "openWeb", onSetupSchedule: "setupSchedule", onProgramGuide: "programGuide", onTitleSearch: "titleSearch", onDownloadFile: "downloadFile", onRemoteCommand: "remoteCommand", onMysqlPluginCommand: "mysqlPluginCommand", onMysqlPluginExecute: "mysqlPluginExecute", owner: this});
 			this.$.mainPane.selectViewByName(inName);
+			this.$.topMenu.setValue("programs");
+		} else if (inName == "music") {
+			this.$.mainPane.createComponent({kind: "music", onBannerMessage: "bannerMessage", onGetPreviousPane: "getPreviousPane", onSelectMode: "changeMode", onSavePreferences: "savePreferences", onPersonSelected: "personSelected", onOpenWeb: "openWeb", onSetupSchedule: "setupSchedule", onProgramGuide: "programGuide", onTitleSearch: "titleSearch", onDownloadFile: "downloadFile", onRemoteCommand: "remoteCommand", onMysqlPluginCommand: "mysqlPluginCommand", onMysqlPluginExecute: "mysqlPluginExecute", owner: this});
+			this.$.mainPane.selectViewByName(inName);
+			this.$.topMenu.setValue("media");
+		} else if (inName == "video") {
+			this.$.mainPane.createComponent({kind: "video", onBannerMessage: "bannerMessage", onGetPreviousPane: "getPreviousPane", onSelectMode: "changeMode", onSavePreferences: "savePreferences", onPersonSelected: "personSelected", onOpenWeb: "openWeb", onSetupSchedule: "setupSchedule", onProgramGuide: "programGuide", onTitleSearch: "titleSearch", onDownloadFile: "downloadFile", onRemoteCommand: "remoteCommand", onMysqlPluginCommand: "mysqlPluginCommand", onMysqlPluginExecute: "mysqlPluginExecute", owner: this});
+			this.$.mainPane.selectViewByName(inName);
+			this.$.topMenu.setValue("media");
+		} else if (inName == "backendstatus") {
+			this.$.mainPane.createComponent({kind: "backendstatus", onBannerMessage: "bannerMessage", onGetPreviousPane: "getPreviousPane", onSelectMode: "changeMode", onSavePreferences: "savePreferences", onPersonSelected: "personSelected", onOpenWeb: "openWeb", onSetupSchedule: "setupSchedule", onProgramGuide: "programGuide", onTitleSearch: "titleSearch", onDownloadFile: "downloadFile", onRemoteCommand: "remoteCommand", onMysqlPluginCommand: "mysqlPluginCommand", onMysqlPluginExecute: "mysqlPluginExecute", owner: this});
+			this.$.mainPane.selectViewByName(inName);
+			this.$.topMenu.setValue("backend");
+		} else if (inName == "backendlog") {
+			this.$.mainPane.createComponent({kind: "backendlog", onBannerMessage: "bannerMessage", onGetPreviousPane: "getPreviousPane", onSelectMode: "changeMode", onSavePreferences: "savePreferences", onPersonSelected: "personSelected", onOpenWeb: "openWeb", onSetupSchedule: "setupSchedule", onProgramGuide: "programGuide", onTitleSearch: "titleSearch", onDownloadFile: "downloadFile", onRemoteCommand: "remoteCommand", onMysqlPluginCommand: "mysqlPluginCommand", onMysqlPluginExecute: "mysqlPluginExecute", owner: this});
+			this.$.mainPane.selectViewByName(inName);
+			this.$.topMenu.setValue("backend");
+		} else if (inName == "exhibition") {
+			this.$.mainPane.createComponent({kind: "exhibition", onBannerMessage: "bannerMessage", onGetPreviousPane: "getPreviousPane", onSelectMode: "changeMode", onSavePreferences: "savePreferences", onPersonSelected: "personSelected", onOpenWeb: "openWeb", onSetupSchedule: "setupSchedule", onProgramGuide: "programGuide", onTitleSearch: "titleSearch", onDownloadFile: "downloadFile", onRemoteCommand: "remoteCommand", onMysqlPluginCommand: "mysqlPluginCommand", onMysqlPluginExecute: "mysqlPluginExecute", owner: this});
+			this.$.mainPane.selectViewByName(inName);
+			this.$.topMenu.setValue("more");
+		} else if (inName == "help") {
+			this.$.mainPane.createComponent({kind: "help", onBannerMessage: "bannerMessage", onGetPreviousPane: "getPreviousPane", onSelectMode: "changeMode", onSavePreferences: "savePreferences", onPersonSelected: "personSelected", onOpenWeb: "openWeb", onSetupSchedule: "setupSchedule", onProgramGuide: "programGuide", onTitleSearch: "titleSearch", onDownloadFile: "downloadFile", onRemoteCommand: "remoteCommand", onMysqlPluginCommand: "mysqlPluginCommand", onMysqlPluginExecute: "mysqlPluginExecute", owner: this});
+			this.$.mainPane.selectViewByName(inName);
+			this.$.topMenu.setValue("more");
+		} else if (inName == "findbackends") {
+			this.$.mainPane.createComponent({kind: "findbackends", onBannerMessage: "bannerMessage", onGetPreviousPane: "getPreviousPane", onSelectMode: "changeMode", onSavePreferences: "savePreferences", onPersonSelected: "personSelected", onOpenWeb: "openWeb", onSetupSchedule: "setupSchedule", onProgramGuide: "programGuide", onTitleSearch: "titleSearch", onDownloadFile: "downloadFile", onRemoteCommand: "remoteCommand", onMysqlPluginCommand: "mysqlPluginCommand", onMysqlPluginExecute: "mysqlPluginExecute", owner: this});
+			this.$.mainPane.selectViewByName(inName);
+			this.$.topMenu.setValue("more");
 		} else if (inName == "preferences") {
-			this.$.mainPane.createComponent({kind: "preferences", onPreferencesClosed: "getPreviousPane", owner: this});
+			this.$.mainPane.createComponent({kind: "preferences", onBannerMessage: "bannerMessage", onGetPreviousPane: "getPreviousPane", onSelectMode: "changeMode", onSavePreferences: "savePreferences", onPersonSelected: "personSelected", onOpenWeb: "openWeb", onSetupSchedule: "setupSchedule", onProgramGuide: "programGuide", onTitleSearch: "titleSearch", onDownloadFile: "downloadFile", onRemoteCommand: "remoteCommand", onMysqlPluginCommand: "mysqlPluginCommand", onMysqlPluginExecute: "mysqlPluginExecute", owner: this});
 			this.$.mainPane.selectViewByName(inName);
-		} else {
-			//
+			this.$.topMenu.setValue("more");
 		}
 		
 		//return true;
@@ -1174,6 +1199,7 @@ enyo.kind({
 		
 		this.$.plugin.addCallback("mysqlMusicGetMusic",enyo.bind(this,this.mysqlMusicGetMusic), true);
 		this.$.plugin.addCallback("mysqlMusicGetPlaylists",enyo.bind(this,this.mysqlMusicGetPlaylists), true);
+		this.$.plugin.addCallback("mysqlMusicSavePlaylist",enyo.bind(this,this.mysqlMusicSavePlaylist), true);
 		
 		this.$.plugin.addCallback("mysqlBackendlogGetLog",enyo.bind(this,this.mysqlBackendlogGetLog), true);
 		
@@ -1511,7 +1537,12 @@ enyo.kind({
 	mysqlMusicGetPlaylists: function(inResponse){
 		if(debug) this.log("mysqlMusicGetPlaylists");
 		
-		this.$.music.playlistResponse("hybridPlugin",enyo.json.parse(inResponse));
+		this.$.music.getPlaylistResponse("hybridPlugin",enyo.json.parse(inResponse));
+	},
+	mysqlMusicSavePlaylist: function(inResponse, inInsertId){
+		if(debug) this.log("mysqlMusicSavePlaylist");
+		
+		this.$.music.savePlaylistResponse("hybridPlugin",inResponse, inInsertId);
 	},
 	
 	mysqlBackendlogGetLog: function(inResponse){
@@ -1549,14 +1580,5 @@ enyo.kind({
 	},
 	
 });
-
-
-
-
-
-
-
-
-
 
 

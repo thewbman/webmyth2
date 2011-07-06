@@ -214,6 +214,8 @@ enyo.kind({ name: "exhibition",
 		
 		this.render();
 		
+		//this.activate2("tablet");
+		
 	},
 	
 	//Externally called functions
