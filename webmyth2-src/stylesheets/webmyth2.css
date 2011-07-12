@@ -605,9 +605,7 @@
 
 /* Changelog */
 .changelog .enyo-view,
-.help .faqsContent,
-.help .tipsContent,
-.help .changelogContent {
+.help .helpContent {
 	padding: 5px;
 	margin: 5px;
 }

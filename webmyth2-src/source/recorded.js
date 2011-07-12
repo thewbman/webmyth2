@@ -1803,7 +1803,7 @@ enyo.kind({ name: "recorded",
 		var row = this.detailsProgram;
 		
 		if(row.filesize.length > 0) {
-			setTimeout(enyo.bind(this,"getJobqueue"),200);
+			setTimeout(enyo.bind(this,"getJobqueue"),300);
 		} else {
 			this.jobqueueFailure(); 
 		}

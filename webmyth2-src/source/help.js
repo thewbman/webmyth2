@@ -17,6 +17,7 @@ enyo.kind({ name: "help",
 		{name: "getFaqsService", kind: "WebService", handleAs: "txt", onSuccess: "getFaqsResponse", onFailure: "getFaqsFailure"},
 		{name: "getTipsService", kind: "WebService", handleAs: "txt", onSuccess: "getTipsResponse", onFailure: "getTipsFailure"},
 		{name: "getChangelogService", kind: "WebService", handleAs: "txt", onSuccess: "getChangelogResponse", onFailure: "getChangelogFailure"},
+		{name: "getSupportService", kind: "WebService", handleAs: "txt", onSuccess: "getSupportResponse", onFailure: "getSupportFailure"},
 
 		{name: "loadingPopup", kind: "Popup", scrim: true, dismissWithClick: true, dismissWithEscape: true, components: [
 			{kind: "HFlexBox", components: [
@@ -46,25 +47,34 @@ enyo.kind({ name: "help",
 				{name: "changelogMenu", kind: "HFlexBox", align: "center", pack: "center", className: "menuItem", flex: 1, onclick: "selectMenuButton", components: [
 					{content: $L("Changelog")},
 				]},
+				{name: "supportMenu", kind: "HFlexBox", align: "center", pack: "center", className: "menuItem", flex: 1, onclick: "selectMenuButton", components: [
+					{content: $L("Support")},
+				]},
 			]},
 		
 			{name: "helpScroller", kind: "Scroller", autoHorizontal: false, horizontal: false, autoVertical: true, flex: 1, components: [
 		
 				{name: "faqsDrawer", kind: "DividerDrawer", caption: "FAQs", open: false, animate: false, components: [
 					
-					{name: "faqsContent", allowHtml: true, className: "smallerFont faqsContent"},
+					{name: "faqsContent", allowHtml: true, className: "smallerFont helpContent"},
 					
 				]},
 				
 				{name: "tipsDrawer", kind: "DividerDrawer", caption: "Tips", open: false, animate: false, components: [
 					
-					{name: "tipsContent", allowHtml: true, className: "smallerFont tipsContent"},
+					{name: "tipsContent", allowHtml: true, className: "smallerFont helpContent"},
 					
 				]},
 				
 				{name: "changelogDrawer", kind: "DividerDrawer", caption: "Changelog", open: false, animate: false, components: [
 					
-					{name: "changelogContent", allowHtml: true, className: "smallerFont changelogContent"},
+					{name: "changelogContent", allowHtml: true, className: "smallerFont helpContent"},
+					
+				]},
+				
+				{name: "supportDrawer", kind: "DividerDrawer", caption: "Support", open: false, animate: false, components: [
+					
+					{name: "supportContent", allowHtml: true, className: "smallerFont helpContent"},
 					
 				]},
 				
@@ -105,14 +115,27 @@ enyo.kind({ name: "help",
 		this.$.faqsMenu.removeClass("selected");
 		this.$.tipsMenu.removeClass("selected");
 		this.$.changelogMenu.removeClass("selected");
+		this.$.supportMenu.removeClass("selected");
 		
 		this.$.faqsDrawer.close();
 		this.$.tipsDrawer.close();
 		this.$.changelogDrawer.close();
+		this.$.supportDrawer.close();
 			
+		this.$.faqsDrawer.toggleOpen();
+		this.$.tipsDrawer.toggleOpen();
+		this.$.changelogDrawer.toggleOpen();
+		this.$.supportDrawer.toggleOpen();
+		
 		this.$.faqsDrawer.show();
 		this.$.tipsDrawer.show();
 		this.$.changelogDrawer.show();
+		this.$.supportDrawer.show();
+		
+		this.$.faqsDrawer.render();
+		this.$.tipsDrawer.render();
+		this.$.changelogDrawer.render();
+		this.$.supportDrawer.render();
 		
 		var appInfo = enyo.fetchAppInfo();
 		this.$.leftHeaderSubtitle.setContent(appInfo.title+" - "+appInfo.version);
@@ -122,6 +145,7 @@ enyo.kind({ name: "help",
 		setTimeout(enyo.bind(this,"getFaqs"),100);
 		setTimeout(enyo.bind(this,"getTips"),100);
 		setTimeout(enyo.bind(this,"getChangelog"),100);
+		setTimeout(enyo.bind(this,"getSupport"),100);
 		
 	},
 	deactivate: function() {
@@ -173,25 +197,39 @@ enyo.kind({ name: "help",
 		this.$.faqsDrawer.close();
 		this.$.tipsDrawer.close();
 		this.$.changelogDrawer.close();
+		this.$.supportDrawer.close();
 		
 		this.$.allMenu.removeClass("selected");
 		this.$.faqsMenu.removeClass("selected");
 		this.$.tipsMenu.removeClass("selected");
 		this.$.changelogMenu.removeClass("selected");
+		this.$.supportMenu.removeClass("selected");
 		
 		if(newMode == "all") {
 		
 			this.$.allMenu.addClass("selected");
 			
+			this.$.faqsDrawer.toggleOpen();
+			this.$.tipsDrawer.toggleOpen();
+			this.$.changelogDrawer.toggleOpen();
+			this.$.supportDrawer.toggleOpen();
+			
 			this.$.faqsDrawer.show();
 			this.$.tipsDrawer.show();
 			this.$.changelogDrawer.show();
+			this.$.supportDrawer.show();
+			
+			this.$.faqsDrawer.render();
+			this.$.tipsDrawer.render();
+			this.$.changelogDrawer.render();
+			this.$.supportDrawer.render();
 			
 		} else {
 		
 			this.$.faqsDrawer.hide();
 			this.$.tipsDrawer.hide();
 			this.$.changelogDrawer.hide();
+			this.$.supportDrawer.hide();
 			
 			switch(newMode) {
 				case "faqs":
@@ -214,6 +252,13 @@ enyo.kind({ name: "help",
 					this.$.changelogDrawer.toggleOpen();
 					this.$.changelogDrawer.show();
 					this.$.changelogDrawer.render();
+					break;
+				case "support":
+					this.$.supportMenu.addClass("selected");
+					
+					this.$.supportDrawer.toggleOpen();
+					this.$.supportDrawer.show();
+					this.$.supportDrawer.render();
 					break;
 			}	
 		} 
@@ -277,6 +322,25 @@ enyo.kind({ name: "help",
 		this.error("getChangelogFailure");
 		
 		this.$.changelogContent.setContent("Error getting changelog");
+		
+	},
+	getSupport: function() {
+	
+		this.$.getSupportService.setUrl("./support.html");
+		this.$.getSupportService.call();
+	
+	},
+	getSupportResponse: function(inSender, inResponse) {
+		//if(debug) this.log("getSupportResponse: "+inResponse);
+		if(debug) this.log("getSupportResponse");
+		
+		this.$.supportContent.setContent(inResponse);
+		
+	},
+	getSupportFailure: function(inSender, inResponse) {
+		this.error("getSupportFailure");
+		
+		this.$.supportContent.setContent("Error getting support");
 		
 	},
 	

@@ -1373,7 +1373,7 @@ enyo.kind({ name: "video",
 			this.$.rightDetailsCoverartWrapper.hide();
 		}
 			
-		setTimeout(enyo.bind(this,"getPeople"),200);
+		setTimeout(enyo.bind(this,"getPeople"),300);
 		
 	},
 	upnpFailure: function(inSender, inResponse) {

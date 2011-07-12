@@ -741,6 +741,8 @@ var parseUpcomingPlugin = function(fullData) {
 	
 	if(WebMyth.prefsCookie.protoVer == 23056){
 		finalList = parsePrograms41(fullData, type);
+	} else if(WebMyth.prefsCookie.protoVer >= 67){
+		finalList = parsePrograms67(fullData, type);
 	} else if(WebMyth.prefsCookie.protoVer >= 57){
 		finalList = parsePrograms57(fullData, type);
 	} else if(WebMyth.prefsCookie.protoVer >= 41){
@@ -758,6 +760,192 @@ var parseUpcomingPlugin = function(fullData) {
 	return finalList;
 
 };
+
+var parsePrograms67 = function(fullResponse, type) {	
+
+	//Protocol verion 67 and up - 44 fields
+
+	var finalList = [];
+	var fullArray = fullResponse.split("[]:[]");
+	var offset = 1;
+	
+	//this.log("Parsing upcoming total programs is "+fullArray[1]+", length is "+fullArray.length);
+	
+	if(type == "upcoming") {
+		WebMyth.hasConflicts = fullArray[0].substring(8,9);
+		WebMyth.expectedLength = fullArray[1];
+		offset = 2;
+	}
+	
+	var i, programNum = 0, fieldNum = 0;
+	var singleProgramJson = {};
+	var newDate = new Date();
+	
+	for(i = offset; i < fullArray.length; i++){
+		switch(fieldNum){
+			case 0:
+				singleProgramJson.title = fullArray[i];
+			  break;
+			case 1:
+				singleProgramJson.subtitle = fullArray[i];
+			  break;
+			case 2:
+				singleProgramJson.description = fullArray[i];
+			  break;
+			case 3:
+				singleProgramJson.season = fullArray[i];
+			  break;
+			case 4:
+				singleProgramJson.episode = fullArray[i];
+			  break;
+			case 5:
+				singleProgramJson.category = fullArray[i];
+			  break;
+			case 6:
+				singleProgramJson.chanid = fullArray[i];
+			  break;
+			case 7:
+				singleProgramJson.channum = fullArray[i];
+			  break;
+			case 8:
+				singleProgramJson.callsign = fullArray[i];
+			  break;
+			case 9:
+				singleProgramJson.channame = fullArray[i];
+			  break;
+			  
+			case 10:
+				//singleProgramJson.filename = fullArray[i];
+			  break;
+			case 11:
+				//singleProgramJson.filesize = fullArray[i];
+			  break; 
+			case 12:
+				singleProgramJson.starttimeint = fullArray[i];
+				newDate.setTime(fullArray[i]*1000);
+				singleProgramJson.starttime = dateJSToISO(newDate);
+				//singleProgramJson.starttimespace = singleProgramJson.starttime.replace("T"," ");
+			  break;
+			case 13:
+				singleProgramJson.endtimeint = fullArray[i];
+				newDate.setTime(fullArray[i]*1000);
+				singleProgramJson.endtime = dateJSToISO(newDate);
+			  break;
+		/*	case 14:
+				//singleProgramJson.findid = fullArray[i];
+			  break;
+			case 15:
+				//singleProgramJson.hostname = fullArray[i];
+			  break;
+			case 16:
+				//singleProgramJson.sourceid = fullArray[i];
+			  break;	*/
+			case 17:
+				singleProgramJson.cardid = fullArray[i];
+			  break;
+		/*	case 18:
+				//singleProgramJson.inputid = fullArray[i];
+			  break;
+			case 19:
+				//singleProgramJson.recpriority = fullArray[i];
+			  break;  */
+			  
+			case 20:
+				singleProgramJson.recstatus = fullArray[i];
+				singleProgramJson.recstatustext = recstatusDecode(fullArray[i]);
+			  break;
+			case 21:
+				//singleProgramJson.recordid = fullArray[i];
+			  break;
+			case 22:
+				singleProgramJson.rectype = fullArray[i];
+			  break;
+			case 23:
+				//singleProgramJson.dupin = fullArray[i];
+			  break;
+			case 24:
+				//singleProgramJson.dupmethod = fullArray[i];
+			  break;
+			case 25:
+				singleProgramJson.recstarttsint = fullArray[i];
+				newDate.setTime(fullArray[i]*1000);
+				singleProgramJson.recstartts = dateJSToISO(newDate);
+			  break;
+			case 26:
+				singleProgramJson.recendtsint = fullArray[i];
+				newDate.setTime(fullArray[i]*1000);
+				singleProgramJson.recendts = dateJSToISO(newDate);
+			  break;
+		/*	case 27:
+				//singleProgramJson.programflags = fullArray[i];
+			  break;
+			case 28:
+				//singleProgramJson.recGroup = fullArray[i];
+			  break;
+			case 29:
+				//singleProgramJson.outputFilters = fullArray[i];
+			  break;	*/
+			  
+			case 30:
+				singleProgramJson.seriesid = fullArray[i];
+			  break;
+			case 31:
+				singleProgramJson.programid = fullArray[i];
+			  break;
+			case 32:
+				singleProgramJson.initref = fullArray[i];
+			  break;
+		/*	case 33:
+				//singleProgramJson.lastmodified = fullArray[i];
+			  break;
+			case 34:
+				//singleProgramJson.stars = fullArray[i];
+			  break;	*/
+			case 35:
+				singleProgramJson.airdate = fullArray[i];
+			  break;
+		/*	case 36:
+				//singleProgramJson.playgroup = fullArray[i];
+			  break;
+			case 37:
+				//singleProgramJson.recpriority2 = fullArray[i];
+			  break;
+			case 38:
+				//singleProgramJson.parentid = fullArray[i];
+			  break;
+			case 39:
+				//singleProgramJson.storagegroup = fullArray[i];
+			  break;	*/
+			  
+			case 40:
+				//singleProgramJson.audio_props = fullArray[i];
+			  break;
+			case 41:
+				//singleProgramJson.video_props = fullArray[i];
+			  break;
+			case 42:
+				//singleProgramJson.subtitle_type = fullArray[i];
+			  break;  
+			case 43:
+				//41st field, push and reset counters
+				//singleProgramJson.year = fullArray[i];
+				
+				finalList.push(singleProgramJson);
+				
+				singleProgramJson = {};
+				programNum++;
+				fieldNum = -1;
+			  break;
+		}
+		
+		fieldNum++;
+	}
+	
+	WebMyth.parsedPrograms = programNum;
+	
+	return finalList;
+	
+}
 
 var parsePrograms57 = function(fullResponse, type) {	
 
@@ -829,29 +1017,29 @@ var parsePrograms57 = function(fullResponse, type) {
 				singleProgramJson.endtime = dateJSToISO(newDate);
 			  break;
 		/*	case 12:
-				//singleProgramJson.findId = fullArray[i];
+				//singleProgramJson.findid = fullArray[i];
 			  break;
 			case 13:
 				//singleProgramJson.hostname = fullArray[i];
 			  break;
 			case 14:
-				//singleProgramJson.sourceId = fullArray[i];
+				//singleProgramJson.sourceid = fullArray[i];
 			  break;	*/
 			case 15:
 				singleProgramJson.cardid = fullArray[i];
 			  break;
 		/*	case 16:
-				//singleProgramJson.inputId = fullArray[i];
+				//singleProgramJson.inputid = fullArray[i];
 			  break;
 			case 17:
-				//singleProgramJson.recPriority = fullArray[i];
+				//singleProgramJson.recpriority = fullArray[i];
 			  break;  */
 			case 18:
 				singleProgramJson.recstatus = fullArray[i];
 				singleProgramJson.recstatustext = recstatusDecode(fullArray[i]);
 			  break;
 			case 19:
-				//singleProgramJson.recordId = fullArray[i];
+				//singleProgramJson.recordid = fullArray[i];
 			  break;
 			  
 			case 20:
@@ -861,7 +1049,7 @@ var parsePrograms57 = function(fullResponse, type) {
 				//singleProgramJson.dupin = fullArray[i];
 			  break;
 			case 22:
-				//singleProgramJson.dupMethod = fullArray[i];
+				//singleProgramJson.dupmethod = fullArray[i];
 			  break;
 			case 23:
 				singleProgramJson.recstarttsint = fullArray[i];
@@ -894,7 +1082,7 @@ var parsePrograms57 = function(fullResponse, type) {
 			  break;
 			  
 		/*	case 30:
-				//singleProgramJson.lastModified = fullArray[i];
+				//singleProgramJson.lastmodified = fullArray[i];
 			  break;
 			case 31:
 				//singleProgramJson.stars = fullArray[i];
@@ -1026,30 +1214,30 @@ var parsePrograms41 = function(fullResponse, type) {
 				//singleProgramJson.shareable = fullArray[i];
 			  break;
 			case 15:
-				//singleProgramJson.findId = fullArray[i];
+				//singleProgramJson.findid = fullArray[i];
 			  break;
 			case 16:
 				//singleProgramJson.hostname = fullArray[i];
 			  break;
 			case 17:
-				//singleProgramJson.sourceId = fullArray[i];
+				//singleProgramJson.sourceid = fullArray[i];
 			  break;	*/
 			case 18:
 				singleProgramJson.cardid = fullArray[i];
 			  break;
 		/*	case 19:
-				//singleProgramJson.inputId = fullArray[i];
+				//singleProgramJson.inputid = fullArray[i];
 			  break;
 			  
 			case 20:
-				//singleProgramJson.recPriority = fullArray[i];
+				//singleProgramJson.recpriority = fullArray[i];
 			  break;  */
 			case 21:
 				singleProgramJson.recstatus = fullArray[i];
 				singleProgramJson.recstatustext = recstatusDecode(fullArray[i]);
 			  break;
 			case 22:
-				//singleProgramJson.recordId = fullArray[i];
+				//singleProgramJson.recordid = fullArray[i];
 			  break;
 			case 23:
 				singleProgramJson.rectype = fullArray[i];
@@ -1058,7 +1246,7 @@ var parsePrograms41 = function(fullResponse, type) {
 				//singleProgramJson.dupin = fullArray[i];
 			  break;
 			case 25:
-				//singleProgramJson.dupMethod = fullArray[i];
+				//singleProgramJson.dupmethod = fullArray[i];
 			  break;
 			case 26:
 				singleProgramJson.recstarttsint = fullArray[i];
@@ -1097,7 +1285,7 @@ var parsePrograms41 = function(fullResponse, type) {
 				singleProgramJson.programid = fullArray[i];
 			  break;
 		/*	case 35:
-				//singleProgramJson.lastModified = fullArray[i];
+				//singleProgramJson.lastmodified = fullArray[i];
 			  break;
 			case 36:
 				//singleProgramJson.stars = fullArray[i];
@@ -1232,30 +1420,30 @@ var parsePrograms35 = function(fullResponse, type) {
 				//singleProgramJson.shareable = fullArray[i];
 			  break;
 			case 15:
-				//singleProgramJson.findId = fullArray[i];
+				//singleProgramJson.findid = fullArray[i];
 			  break;
 			case 16:
 				//singleProgramJson.hostname = fullArray[i];
 			  break;
 			case 17:
-				//singleProgramJson.sourceId = fullArray[i];
+				//singleProgramJson.sourceid = fullArray[i];
 			  break;	*/
 			case 18:
 				singleProgramJson.cardid = fullArray[i];
 			  break;
 		/*	case 19:
-				//singleProgramJson.inputId = fullArray[i];
+				//singleProgramJson.inputid = fullArray[i];
 			  break;
 			  
 			case 20:
-				//singleProgramJson.recPriority = fullArray[i];
+				//singleProgramJson.recpriority = fullArray[i];
 			  break;  */
 			case 21:
 				singleProgramJson.recstatus = fullArray[i];
 				singleProgramJson.recstatustext = recstatusDecode(fullArray[i]);
 			  break;
 			case 22:
-				//singleProgramJson.recordId = fullArray[i];
+				//singleProgramJson.recordid = fullArray[i];
 			  break;
 			case 23:
 				singleProgramJson.rectype = fullArray[i];
@@ -1264,7 +1452,7 @@ var parsePrograms35 = function(fullResponse, type) {
 				//singleProgramJson.dupin = fullArray[i];
 			  break;
 			case 25:
-				//singleProgramJson.dupMethod = fullArray[i];
+				//singleProgramJson.dupmethod = fullArray[i];
 			  break;
 			case 26:
 				singleProgramJson.recstarttsint = fullArray[i];
@@ -1303,7 +1491,7 @@ var parsePrograms35 = function(fullResponse, type) {
 				singleProgramJson.programid = fullArray[i];
 			  break;
 		/*	case 35:
-				//singleProgramJson.lastModified = fullArray[i];
+				//singleProgramJson.lastmodified = fullArray[i];
 			  break;
 			case 36:
 				//singleProgramJson.stars = fullArray[i];
@@ -1435,30 +1623,30 @@ var parsePrograms32 = function(fullResponse, type) {
 				//singleProgramJson.shareable = fullArray[i];
 			  break;
 			case 15:
-				//singleProgramJson.findId = fullArray[i];
+				//singleProgramJson.findid = fullArray[i];
 			  break;
 			case 16:
 				//singleProgramJson.hostname = fullArray[i];
 			  break;
 			case 17:
-				//singleProgramJson.sourceId = fullArray[i];
+				//singleProgramJson.sourceid = fullArray[i];
 			  break;	*/
 			case 18:
 				singleProgramJson.cardid = fullArray[i];
 			  break;
 		/*	case 19:
-				//singleProgramJson.inputId = fullArray[i];
+				//singleProgramJson.inputid = fullArray[i];
 			  break;
 			  
 			case 20:
-				//singleProgramJson.recPriority = fullArray[i];
+				//singleProgramJson.recpriority = fullArray[i];
 			  break;  */
 			case 21:
 				singleProgramJson.recstatus = fullArray[i];
 				singleProgramJson.recstatustext = recstatusDecode(fullArray[i]);
 			  break;
 			case 22:
-				//singleProgramJson.recordId = fullArray[i];
+				//singleProgramJson.recordid = fullArray[i];
 			  break;
 			case 23:
 				singleProgramJson.rectype = fullArray[i];
@@ -1467,7 +1655,7 @@ var parsePrograms32 = function(fullResponse, type) {
 				//singleProgramJson.dupin = fullArray[i];
 			  break;
 			case 25:
-				//singleProgramJson.dupMethod = fullArray[i];
+				//singleProgramJson.dupmethod = fullArray[i];
 			  break;
 			case 26:
 				singleProgramJson.recstarttsint = fullArray[i];
@@ -1506,7 +1694,7 @@ var parsePrograms32 = function(fullResponse, type) {
 				singleProgramJson.programid = fullArray[i];
 			  break;
 		/*	case 35:
-				//singleProgramJson.lastModified = fullArray[i];
+				//singleProgramJson.lastmodified = fullArray[i];
 			  break;
 			case 36:
 				//singleProgramJson.stars = fullArray[i];
@@ -1629,30 +1817,30 @@ var parsePrograms31 = function(fullResponse, type) {
 				//singleProgramJson.shareable = fullArray[i];
 			  break;
 			case 15:
-				//singleProgramJson.findId = fullArray[i];
+				//singleProgramJson.findid = fullArray[i];
 			  break;
 			case 16:
 				//singleProgramJson.hostname = fullArray[i];
 			  break;
 			case 17:
-				//singleProgramJson.sourceId = fullArray[i];
+				//singleProgramJson.sourceid = fullArray[i];
 			  break;	*/
 			case 18:
 				singleProgramJson.cardid = fullArray[i];
 			  break;
 		/*	case 19:
-				//singleProgramJson.inputId = fullArray[i];
+				//singleProgramJson.inputid = fullArray[i];
 			  break;
 			  
 			case 20:
-				//singleProgramJson.recPriority = fullArray[i];
+				//singleProgramJson.recpriority = fullArray[i];
 			  break;  */
 			case 21:
 				singleProgramJson.recstatus = fullArray[i];
 				singleProgramJson.recstatustext = recstatusDecode(fullArray[i]);
 			  break;
 			case 22:
-				//singleProgramJson.recordId = fullArray[i];
+				//singleProgramJson.recordid = fullArray[i];
 			  break;
 			case 23:
 				singleProgramJson.rectype = fullArray[i];
@@ -1661,7 +1849,7 @@ var parsePrograms31 = function(fullResponse, type) {
 				//singleProgramJson.dupin = fullArray[i];
 			  break;
 			case 25:
-				//singleProgramJson.dupMethod = fullArray[i];
+				//singleProgramJson.dupmethod = fullArray[i];
 			  break;
 			case 26:
 				singleProgramJson.recstarttsint = fullArray[i];
@@ -1700,7 +1888,7 @@ var parsePrograms31 = function(fullResponse, type) {
 				singleProgramJson.programid = fullArray[i];
 			  break;
 		/*	case 35:
-				//singleProgramJson.lastModified = fullArray[i];
+				//singleProgramJson.lastmodified = fullArray[i];
 			  break;
 			case 36:
 				//singleProgramJson.stars = fullArray[i];
@@ -1821,30 +2009,30 @@ var parsePrograms25 = function(fullResponse, type) {
 				//singleProgramJson.shareable = fullArray[i];
 			  break;
 			case 15:
-				//singleProgramJson.findId = fullArray[i];
+				//singleProgramJson.findid = fullArray[i];
 			  break;
 			case 16:
 				//singleProgramJson.hostname = fullArray[i];
 			  break;
 			case 17:
-				//singleProgramJson.sourceId = fullArray[i];
+				//singleProgramJson.sourceid = fullArray[i];
 			  break;	*/
 			case 18:
 				singleProgramJson.cardid = fullArray[i];
 			  break;
 		/*	case 19:
-				//singleProgramJson.inputId = fullArray[i];
+				//singleProgramJson.inputid = fullArray[i];
 			  break;
 			  
 			case 20:
-				//singleProgramJson.recPriority = fullArray[i];
+				//singleProgramJson.recpriority = fullArray[i];
 			  break;  */
 			case 21:
 				singleProgramJson.recstatus = fullArray[i];
 				singleProgramJson.recstatustext = recstatusDecode(fullArray[i]);
 			  break;
 			case 22:
-				//singleProgramJson.recordId = fullArray[i];
+				//singleProgramJson.recordid = fullArray[i];
 			  break;
 			case 23:
 				singleProgramJson.rectype = fullArray[i];
@@ -1853,7 +2041,7 @@ var parsePrograms25 = function(fullResponse, type) {
 				//singleProgramJson.dupin = fullArray[i];
 			  break;
 			case 25:
-				//singleProgramJson.dupMethod = fullArray[i];
+				//singleProgramJson.dupmethod = fullArray[i];
 			  break;
 			case 26:
 				singleProgramJson.recstarttsint = fullArray[i];
@@ -1892,7 +2080,7 @@ var parsePrograms25 = function(fullResponse, type) {
 				singleProgramJson.programid = fullArray[i];
 			  break;
 		/*	case 35:
-				//singleProgramJson.lastModified = fullArray[i];
+				//singleProgramJson.lastmodified = fullArray[i];
 			  break;
 			case 36:
 				//singleProgramJson.stars = fullArray[i];
