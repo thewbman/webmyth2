@@ -557,6 +557,8 @@ enyo.kind({ name: "preferences",
 		WebMyth.prefsCookie.livetvJumpRemote = this.$.livetvJumpRemote.getState();
 		WebMyth.prefsCookie.remoteDashboard = this.$.remoteDashboard.getState();
 		
+		WebMyth.prefsCookie.allowedOrientation = this.$.allowedOrientation.getValue();
+		
 		WebMyth.prefsCookie.allowMetrix = this.$.allowMetrix.getState();
 		
 		WebMyth.prefsCookie.debug = this.$.debug.getState();

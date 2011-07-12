@@ -807,7 +807,9 @@ enyo.kind({ name: "searchTitle",
 		
 		} else {
 			
-			this.doMysqlPluginCommand("mysqlSearchTitleGetPrograms", query);
+			//have to delay here for some weird race condition with plugin?
+			//this.doMysqlPluginCommand("mysqlSearchTitleGetPrograms", query);
+			setTimeout(enyo.bind(this,"doMysqlPluginCommand","mysqlSearchTitleGetPrograms", query),200);
 			
 		}
 		

@@ -231,12 +231,26 @@ enyo.kind({ name: "backendstatus",
 		this.$.guideDrawer.close();
 		this.$.otherDrawer.close();
 			
+		this.$.encodersDrawer.toggleOpen();
+		this.$.scheduledDrawer.toggleOpen();
+		this.$.jobqueueDrawer.toggleOpen();
+		this.$.storageDrawer.toggleOpen();
+		this.$.guideDrawer.toggleOpen();
+		this.$.otherDrawer.toggleOpen();
+			
 		this.$.encodersDrawer.show();
 		this.$.scheduledDrawer.show();
 		this.$.jobqueueDrawer.show();
 		this.$.storageDrawer.show();
 		this.$.guideDrawer.show();
 		this.$.otherDrawer.show();
+			
+		this.$.encodersDrawer.render();
+		this.$.scheduledDrawer.render();
+		this.$.jobqueueDrawer.render();
+		this.$.storageDrawer.render();
+		this.$.guideDrawer.render();
+		this.$.otherDrawer.render();
 		
 		this.revealTop();
 		
@@ -321,12 +335,26 @@ enyo.kind({ name: "backendstatus",
 		
 			this.$.allMenu.addClass("selected");
 			
+			this.$.encodersDrawer.toggleOpen();
+			this.$.scheduledDrawer.toggleOpen();
+			this.$.jobqueueDrawer.toggleOpen();
+			this.$.storageDrawer.toggleOpen();
+			this.$.guideDrawer.toggleOpen();
+			this.$.otherDrawer.toggleOpen();
+				
 			this.$.encodersDrawer.show();
 			this.$.scheduledDrawer.show();
 			this.$.jobqueueDrawer.show();
 			this.$.storageDrawer.show();
 			this.$.guideDrawer.show();
 			this.$.otherDrawer.show();
+				
+			this.$.encodersDrawer.render();
+			this.$.scheduledDrawer.render();
+			this.$.jobqueueDrawer.render();
+			this.$.storageDrawer.render();
+			this.$.guideDrawer.render();
+			this.$.otherDrawer.render();
 			
 		} else {
 		
