@@ -2745,11 +2745,110 @@ var cleanVideos = function(fullList) {
 	
 	finalList.sort(double_sort_by("title","fullEpisode"));
 	
+	return finalList;
+	
+};
+
+var cleanVideosDirectories = function(fullList) {
+
+	var finalList = [];
+	
+	var i, s = {}, t = {}, u = [];
+	
+	var lastDirectory1 = "asdf-fake-directory";
+	var lastDirectory2 = "asdf-fake-directory";
+	var lastDirectory3 = "asdf-fake-directory";
+	var lastDirectory4 = "asdf-fake-directory";
+	var lastDirectory5 = "asdf-fake-directory";
+	var lastDirectory6 = "asdf-fake-directory";
+	
+	for(i = 0; i < fullList.length; i++) {
+		s = fullList[i];
+		t = {};
+		u.length = 0;
+		
+		u = s.directory.split("/");
+		
+		if((s.fileLevels > 1)&&(lastDirectory1 != s.level1)){
+			t = {};
+			
+			t.directory = s.level1+'/';
+			t.directoryLevels = 2;
+			t.localDirectory = u[t.directoryLevels-2];
+			t.upperDirectory = t.directory.replace(t.localDirectory+'/',"");
+			
+			finalList.push(t);
+			lastDirectory1 = s.level1;
+		}
+		
+		
+		if((s.fileLevels > 2)&&(lastDirectory2 != s.level2)){
+			t = {};
+			
+			t.directory = s.level2+'/';
+			t.directoryLevels = 3;
+			t.localDirectory = u[t.directoryLevels-2];
+			t.upperDirectory = t.directory.replace(t.localDirectory+'/',"");
+			
+			finalList.push(t);
+			lastDirectory2 = s.level2;
+		}
+		
+		if((s.fileLevels > 3)&&(lastDirectory3 != s.level3)){
+			t = {};
+			
+			t.directory = s.level3+'/';
+			t.directoryLevels = 4;
+			t.localDirectory = u[t.directoryLevels-2];
+			t.upperDirectory = t.directory.replace(t.localDirectory+'/',"");
+			
+			finalList.push(t);
+			lastDirectory3 = s.level3;
+		}
+		
+		if((s.fileLevels > 4)&&(lastDirectory4 != s.level4)){
+			t = {};
+			
+			t.directory = s.level4+'/';
+			t.directoryLevels = 5;
+			t.localDirectory = u[t.directoryLevels-2];
+			t.upperDirectory = t.directory.replace(t.localDirectory+'/',"");
+			
+			finalList.push(t);
+			lastDirectory4 = s.level4;
+		}
+		
+		if((s.fileLevels > 5)&&(lastDirectory5 != s.level5)){
+			t = {};
+			
+			t.directory = s.level5+'/';
+			t.directoryLevels = 6;
+			t.localDirectory = u[t.directoryLevels-2];
+			t.upperDirectory = t.directory.replace(t.localDirectory+'/',"");
+			
+			finalList.push(t);
+			lastDirectory5 = s.level5;
+		}
+		
+		if((s.fileLevels > 6)&&(lastDirectory4 != s.level6)){
+			t = {};
+			
+			t.directory = s.level6+'/';
+			t.directoryLevels = 7;
+			t.localDirectory = u[t.directoryLevels-2];
+			t.upperDirectory = t.directory.replace(t.localDirectory+'/',"");
+			
+			finalList.push(t);
+			lastDirectory6 = s.level6;
+		}
+		
+		
+	}
+	
 	
 	return finalList;
 	
-	
-};
+}
 
 var trimVideosByGroup = function(fullList,inGroup,currentDirectory) {
 
@@ -2766,7 +2865,7 @@ var trimVideosByGroup = function(fullList,inGroup,currentDirectory) {
 			finalList.push(s);
 		}
 		
-	} else if (inGroup == 'Dierctory') {
+	} else if (inGroup == 'Directory') {
 	
 		var i, s;
 	
@@ -2794,6 +2893,26 @@ var trimVideosByGroup = function(fullList,inGroup,currentDirectory) {
 			}
 		}
 		
+	}
+	
+	return finalList;
+
+}
+
+var trimVideosDirectories = function(fullList,currentDirectory) {
+
+	var finalList = []
+	
+	var i, s;
+	
+	for (i = 0; i < fullList.length; i++) {
+		s = fullList[i];
+			
+		if (s.upperDirectory == currentDirectory) {
+			finalList.push(s);
+		} else {
+			//Does not match
+		}
 	}
 	
 	return finalList;
