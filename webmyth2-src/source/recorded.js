@@ -312,7 +312,7 @@ enyo.kind({ name: "recorded",
 		
 		this.resize(inViewMode);
 		
-		this.$.programsVirtualList.punt();
+		//this.$.programsVirtualList.punt();
 		//this.middleRevealTop();
 		this.rightRevealTop();
 		
@@ -348,6 +348,8 @@ enyo.kind({ name: "recorded",
 	},
 	deactivate: function() {
 		if(debug) this.log("deactivate");
+		
+		this.programListOffset = Math.max(0,this.selectedProgramIndex-1);
 		
 		//this.fullResultList.length = 0;
 		//this.fullGroupsList.length = 0;
@@ -660,7 +662,7 @@ enyo.kind({ name: "recorded",
 	},
 	programSelect: function(inSender, inEvent) {
 		if(debug) this.log("programSelect index "+inEvent.rowIndex);
-		
+
 		var newIndex = inEvent.rowIndex+this.programListOffset;
 		
 		var row = this.resultList[newIndex];
@@ -676,6 +678,8 @@ enyo.kind({ name: "recorded",
 		this.selectedProgramIndex = newIndex;
 		
 		this.$.programsVirtualList.refresh();
+		
+		//this.programListOffset = Math.max(0,newIndex-1);
 		
 		this.peopleFailure();
 		this.jobqueueFailure();

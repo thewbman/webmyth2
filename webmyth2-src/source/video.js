@@ -4,12 +4,12 @@
 enyo.kind({ name: "video",
 	kind: "VFlexBox",
 	className: "video enyo-view",			//enyo-view needed to get vflexbox to work?
+	
 	published: {
 		phonePixels: 500,
 		viewMode: "tablet",
 		currentSlider: "left",
 		currentPane: "slidingPane",
-		currentDirectory: "",
 	},
 	
 	fullResultList: [],
@@ -19,6 +19,10 @@ enyo.kind({ name: "video",
 	titlesList: [],
 	
 	resultList: [],	
+	
+	fullDirectoryList: [],
+	
+	directoriesList: [],
 	
 	programListOffset: 0,
 	
@@ -34,6 +38,8 @@ enyo.kind({ name: "video",
 	selectedTitleIndex: -1,
 	selectedIntid: -1,
 	selectedProgramIndex: -1,
+	
+	currentDirectory: "",
 	
 	carouselIndex: -1,
 	
@@ -256,7 +262,7 @@ enyo.kind({ name: "video",
 		
 		this.resize(inViewMode);
 		
-		this.$.programsVirtualList.punt();
+		//this.$.programsVirtualList.punt();
 		//this.middleRevealTop();
 		this.rightRevealTop();
 		
@@ -282,9 +288,17 @@ enyo.kind({ name: "video",
 			this.getVideos();
 		}
 		
+		if(WebMyth.prefsCookie.videosGroup == "Directory") {
+			this.$.titleDivider.setCaption("Directories");
+		} else {
+			this.$.titleDivider.setCaption("Titles");
+		}
+		
 	},
 	deactivate: function() {
 		if(debug) this.log("deactivate");
+		
+		this.programListOffset = Math.max(0,this.selectedProgramIndex-1);
 		
 		//this.fullResultList.length = 0;
 		//this.fullTitlesList.length = 0;
@@ -523,13 +537,19 @@ enyo.kind({ name: "video",
 		if(debug) this.log("videosGroupSelect from "+inOldValue+" to "+inValue);
 		
 		if(inValue == "Directory") {
-			this.doBannerMessage("Directory is not yet supported", true);
 			
-			this.$.videosGroupSelector.setValue(WebMyth.prefsCookie.inOldValue);
+			this.$.titleDivider.setCaption("Directories");
+			
+			WebMyth.prefsCookie.videosGroup = inValue;
 			
 		} else {
+		
+			this.$.titleDivider.setCaption("Titles");
+			
 			WebMyth.prefsCookie.videosGroup = inValue;
 		}
+		
+		this.currentDirectory = "";
 		
 		this.selectedTitle = "";
 		this.selectedIntid = -1;
@@ -546,19 +566,30 @@ enyo.kind({ name: "video",
 	titleSelect: function(inSender, inEvent) {
 		if(debug) this.log("titleSelect index "+inEvent.rowIndex);
 		
-		var oldTitleIndex = this.selectedTitleIndex;
+		if(WebMyth.prefsCookie.videosGroup == "Directory") {
 		
-		this.selectedTitleIndex = inEvent.rowIndex;
-		this.selectedTitle = this.titlesList[inEvent.rowIndex].value;
+			var row = this.directoriesList[inEvent.rowIndex];
+			
+			this.currentDirectory = row.directory;
+			
+			this.finishedSelectingGroup();
+			
+		} else {
 		
-		//this.$.titlesVirtualRepeater.render();
-		//this.$.titlesVirtualRepeater.renderRow(oldTitleIndex);
-		//this.$.titlesVirtualRepeater.renderRow(this.selectedTitleIndex);
-		this.$.titlesVirtualList.refresh();
-		
-		if(this.viewMode == "phone") this.gotoMiddle();
-		
-		this.resetProgramsSearch();
+			var oldTitleIndex = this.selectedTitleIndex;
+			
+			this.selectedTitleIndex = inEvent.rowIndex;
+			this.selectedTitle = this.titlesList[inEvent.rowIndex].value;
+			
+			//this.$.titlesVirtualRepeater.render();
+			//this.$.titlesVirtualRepeater.renderRow(oldTitleIndex);
+			//this.$.titlesVirtualRepeater.renderRow(this.selectedTitleIndex);
+			this.$.titlesVirtualList.refresh();
+			
+			if(this.viewMode == "phone") this.gotoMiddle();
+			
+			this.resetProgramsSearch();
+		}
 	},
 	resetProgramsSearch: function(inSender) {
 		if(debug) this.log("resetProgramsSearch");
@@ -598,8 +629,10 @@ enyo.kind({ name: "video",
 	},
 	programSelect: function(inSender, inEvent) {
 		if(debug) this.log("programSelect index "+inEvent.rowIndex);
-		
+
 		var newIndex = inEvent.rowIndex+this.programListOffset;
+		
+		//this.programListOffset = Math.max(0,newIndex-1);
 		
 		var row = this.resultList[newIndex];
 		
@@ -664,14 +697,14 @@ enyo.kind({ name: "video",
 						{content: row.carouselText, kind: "Control", className: "carouselSubtitle"}, 
 					]},
 					
-					//{kind: "Spacer"},
+					//kind: "Spacer"},
 					
 					{kind: "HFlexBox", flex: 1, width: "100%", align: "center", pack: "center", components: [
-						//{kind: "Image", src: row.coverartUrl, className: "carouselVideoImage"},
+						//kind: "Image", src: row.coverartUrl, className: "carouselVideoImage"},
 						{kind: "ImageView", flex2: 1, className: "imageView", centerSrc: row.coverartUrl},
 					]},
 
-					//{kind: "Spacer"},
+					//kind: "Spacer"},
 							
 					{kind: "Toolbar", width: "100%", layoutKind: "HFlexLayout", components: [
 						{content: row.plot, kind: "Control", className: "carouselDescription", showing: row.hasPlot},
@@ -940,6 +973,14 @@ enyo.kind({ name: "video",
 		if(debug) this.log("completed video parsing with "+this.fullResultList.length+" total items");
 		//if(debug) this.log("video fullResultList is: "+enyo.json.stringify(this.fullResultList));
 		
+		this.fullDirectoryList.length = 0;
+		
+		this.fullDirectoryList = cleanVideosDirectories(this.fullResultList.sort(sort_by('filename', false)));
+		
+		if(debug) this.log("completed video directories parsing with length "+this.fullDirectoryList.length+": "+enyo.json.stringify(this.fullDirectoryList));
+		
+		this.currentDirectory = "";
+		
 		this.$.errorMessage.setContent("");
 		
 		this.leftRevealTop();
@@ -1003,10 +1044,12 @@ enyo.kind({ name: "video",
 		
 	},
 	finishedSelectingGroup: function() {
-		if(debug) this.log("finishedSelectingGroup and have videosGroup: "+WebMyth.prefsCookie.videosGroup+" and selectedTitle: "+this.selectedTitle);
+		if(debug) this.log("finishedSelectingGroup and have videosGroup: "+WebMyth.prefsCookie.videosGroup+" and selectedTitle: '"+this.selectedTitle+"' and directory: '"+this.currentDirectory+"'");
 	
 		this.titlesList.length = 0;
 		this.middleResultList.length = 0;
+		
+		this.directoriesList.length = 0;
 		
 		this.middleResultList = trimVideosByGroup(this.fullResultList,WebMyth.prefsCookie.videosGroup,this.currentDirectory);
 		this.titlesList = cleanTitleList(this.middleResultList, this.selectedTitle);
@@ -1014,13 +1057,37 @@ enyo.kind({ name: "video",
 		this.$.videosGroupSelector.setValue(WebMyth.prefsCookie.videosGroup);
 		this.titlesList.splice(0,0,{label: "All", value: "", count: this.middleResultList.length});
 		
+		this.directoriesList = trimVideosDirectories(this.fullDirectoryList,this.currentDirectory);
+		
+		if(this.currentDirectory != "") {
+			this.directoriesList.splice(0,0,{localDirectory: " - Top Level - ", directory: ""});
+			
+			var currentDirectoryArray = this.currentDirectory.split("/");
+			var directoryRightOffset = "-";
+			var directoryRoot = "";
+			
+			if(debug) this.log("currentDirectoryArray: "+enyo.json.stringify(currentDirectoryArray));
+			
+			for(var i = 0; i < currentDirectoryArray.length - 1; i++) {
+				directoryRightOffset = directoryRightOffset + "-";
+				directoryRoot += currentDirectoryArray[i] + "/";
+				this.directoriesList.splice(i+1,0,{localDirectory: " "+directoryRightOffset+" "+currentDirectoryArray[i], directory: directoryRoot});
+			}
+		}
+		
+		if(debug) this.log("this.directoriesList: "+enyo.json.stringify(this.directoriesList));
+		
 		this.finishedSelectingTitle();
 	},
 	finishedSelectingTitle: function() {
 		if(debug) this.log("finishedSelectingTitle with selectedTitle: "+this.selectedTitle);
 		
 		//this.$.titlesVirtualRepeater.render();
-		this.$.titlesVirtualList.refresh();
+		if(WebMyth.prefsCookie.videosGroup == "Directory") {
+			this.$.titlesVirtualList.punt();
+		} else {
+			this.$.titlesVirtualList.refresh();
+		}
 		
 		this.resultList.length = 0;
 		this.resultList = this.filterPrograms(trimList(this.middleResultList,"title",this.selectedTitle));
@@ -1028,6 +1095,9 @@ enyo.kind({ name: "video",
 		
 		if((this.selectedTitle == "")&&(WebMyth.prefsCookie.videosGroup == "All")) {
 			this.$.middleHeaderTitle.setContent("All Videos");
+		} else if(WebMyth.prefsCookie.videosGroup == "Directory") {
+			//this.$.middleHeaderTitle.setContent("Videos ['/"+this.currentDirectory+"']");
+			this.$.middleHeaderTitle.setContent("/"+this.currentDirectory+"");
 		} else if(this.selectedTitle == "") {
 			this.$.middleHeaderTitle.setContent("Videos ["+WebMyth.prefsCookie.videosGroup+"]");
 		} else {
@@ -1115,14 +1185,26 @@ enyo.kind({ name: "video",
 		return finalList;
 	},
 	getTitleItem: function(inSender, inIndex) {
-		var row = this.titlesList[inIndex];
+		if(WebMyth.prefsCookie.videosGroup == "Directory") var row1 = this.directoriesList[inIndex];
+		else var row2 = this.titlesList[inIndex];
 		
-		if(row) {
+		if(row1) {
 		
-			this.$.title.setContent(row.label);
-			this.$.count.setContent("("+row.count+")");
+			this.$.title.setContent(row1.localDirectory);
+			this.$.count.setContent("");
+			
+			if(inIndex == this.directoriesList.length-1) this.$.titleItem.setStyle("border-bottom: none;");
+			if(inIndex == 0) this.$.titleItem.setStyle("border-top: none;");
+			
+			return true;
+		}
+		
+		if(row2) {
+		
+			this.$.title.setContent(row2.label);
+			this.$.count.setContent("("+row2.count+")");
 						
-			if((row.value == this.selectedTitle)&&(this.viewMode == "tablet")) {
+			if((row2.value == this.selectedTitle)&&(this.viewMode == "tablet")) {
 				//this.$.dateItem.setStyle("background-color:rgba(0,0,0,0.05);border-top-color:rgba(0,0,0,0.05);");
 				this.$.titleItem.addClass("selected");
 			} else {
@@ -1130,6 +1212,7 @@ enyo.kind({ name: "video",
 				this.$.titleItem.removeClass("selected");
 			}
 			
+			if(inIndex == this.titlesList.length-1) this.$.titleItem.setStyle("border-bottom: none;");
 			if(inIndex == 0) this.$.titleItem.setStyle("border-top: none;");
 			
 			return true;

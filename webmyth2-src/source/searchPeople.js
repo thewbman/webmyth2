@@ -36,6 +36,8 @@ enyo.kind({ name: "searchPeople",
 	
 	carouselIndex: -1,
 	
+	programListOffset: 0,
+	
 	filterString: "",
 	
 	events: {
@@ -286,8 +288,8 @@ enyo.kind({ name: "searchPeople",
 		
 		this.resize(inViewMode);
 		
-		this.leftRevealTop();
-		this.middleRevealTop();
+		//this.leftRevealTop();
+		//this.middleRevealTop();
 		setTimeout(enyo.bind(this,"showDetails"),1);
 
 		if(this.haveIncomingPerson) {
@@ -303,7 +305,7 @@ enyo.kind({ name: "searchPeople",
 		} else {
 		
 			//just keep previous search results
-			this.resetProgramsSearch();
+			//this.resetProgramsSearch();
 		
 		}
 
@@ -312,6 +314,8 @@ enyo.kind({ name: "searchPeople",
 	},
 	deactivate: function() {
 		if(debug) this.log("deactivate");
+		
+		this.programListOffset = Math.max(0,this.selectedProgramIndex-1);
 		
 		//this.detailsProgram = defaultProgram;
 		
@@ -560,6 +564,7 @@ enyo.kind({ name: "searchPeople",
 	middleRevealTop: function() {
 		if(debug) this.log("middleRevealTop");
 		
+		this.programListOffset = 0;
 		this.$.programsVirtualList.punt();
 	},
 	rightRevealTop: function() {
@@ -695,8 +700,12 @@ enyo.kind({ name: "searchPeople",
 	},
 	programSelect: function(inSender, inEvent) {
 		if(debug) this.log("programSelect index "+inEvent.rowIndex);
+
+		var newIndex = inEvent.rowIndex+this.programListOffset;
 		
-		var row = this.resultList[inEvent.rowIndex];
+		//this.programListOffset = Math.max(0,newIndex-1);
+		
+		var row = this.resultList[newIndex];
 		
 		this.selectedChanid = row.chanid;
 		this.selectedStarttime = row.starttime;

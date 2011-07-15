@@ -283,7 +283,7 @@ enyo.kind({ name: "upcoming",
 		
 		this.resize(inViewMode);
 		
-		this.$.programsVirtualList.punt();
+		//this.$.programsVirtualList.punt();
 		//this.middleRevealTop();
 		this.rightRevealTop();
 		
@@ -296,6 +296,8 @@ enyo.kind({ name: "upcoming",
 	},
 	deactivate: function() {
 		if(debug) this.log("deactivate");
+		
+		this.programListOffset = Math.max(0,this.selectedProgramIndex-1);
 		
 		//this.fullResultList.length = 0;
 		//this.fullDatesList.length = 0;
@@ -596,8 +598,10 @@ enyo.kind({ name: "upcoming",
 	},
 	programSelect: function(inSender, inEvent) {
 		if(debug) this.log("programSelect index "+inEvent.rowIndex);
-		
+
 		var newIndex = inEvent.rowIndex+this.programListOffset;
+		
+		//this.programListOffset = Math.max(0,newIndex-1);
 		
 		var row = this.resultList[newIndex];
 		

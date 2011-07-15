@@ -1,7 +1,5 @@
 Todo:
  - searchtitle/people carousels
- - videos directory
- - music playlist
  - music carousel
  - skip the/a/an sort
  - sort lists
@@ -11,6 +9,5 @@ Todo:
  - more g11n formating date/time?
  - filter search people
  - cleanup empty video response on search people
- - set offset when selecting details (like carousel)
  
  
