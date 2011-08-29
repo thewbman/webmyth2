@@ -37,7 +37,12 @@ enyo.kind({
 		{kind: "AppMenu", components: [
 			{kind: "EditMenu"},
 			{caption: "Preferences", onclick: "openPreferences"},
-			{caption: "Help", onclick: "openHelp"},
+			{caption: "Help", components: [
+				{caption: "Help", onclick: "openHelp"},
+				{caption: "App Homepage", onclick: "openHomepage"},
+				{caption: "Leave review", onclick: "openCatalog"},
+				{caption: "Email Developer", onclick: "emailDeveloper"},
+			]},
 		]},
 		
 		{name: "firstUsePopup", kind: "Popup", scrim: true, onBeforeOpen: "beforefirstUseOpen", components: [
@@ -246,6 +251,25 @@ enyo.kind({
 		this.$.mainPane.selectViewByName("help");
 		
 		this.$.firstUsePopup.close();
+	},
+	openHomepage: function() {
+		if(debug) this.log("openHomepage");
+		
+		window.open("http://code.google.com/p/webmyth2/");
+	},
+	openCatalog: function() {
+		if(debug) this.log("openCatalog");
+		
+		var appInfo = enyo.fetchAppInfo();
+		
+		window.open("http://developer.palm.com/appredirect/?packageid="+appInfo.id);
+	},
+	emailDeveloper: function() {
+		if(debug) this.log("emailDeveloper");
+		
+		var appInfo = enyo.fetchAppInfo();
+		
+		window.open("mailto:webmyth.help@gmail.com?subject=WebMyth2 Help - v"+appInfo.version);
 	},
 	openFindbackends: function() {
 		if(debug) this.log("openFindbackends");
