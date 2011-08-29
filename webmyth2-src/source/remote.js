@@ -215,10 +215,14 @@ enyo.kind({ name: "remote",
 									//{style: "height: 10px"},
 									{name: "volumeRowGroup", kind: "RowGroup", caption: "Volume", components: [
 										{kind: "Item", layoutKind: "HFlexLayout", components: [
-											{kind: "CustomButton", height: "30px", width: "30px", value: "f9", className: "muteButton", onclick: "keyButtonClick"},
+											{name: "volumeMuteButton", kind: "CustomButton", height: "30px", width: "30px", value: "f9", className: "muteButton", onclick: "keyButtonClick"},
 											{style: "width: 5px;"},
 											{name: "volumeSlider", kind: "Slider", onChanging: "volumeSliderChanging", onChange: "volumeSliderChange", tapPosition: false, maximum: 100, minimum: 0, position: 50, snap: 2, flex: 1},
-											{style: "width: 10px;"},
+											{name: "volumeSlideSpacer", style: "width: 10px;"},
+											{name: "volumeDownSpacer", showing: false, kind: "Spacer"},
+											{name: "volumeDownButton", showing: false, kind: "CustomButton", height: "30px", width: "30px", value: "f10", className: "volumeDownButton", onclick: "keyButtonClick"},
+											{name: "volumeUpSpacer", showing: false, kind: "Spacer"},
+											{name: "volumeUpButton", showing: false, kind: "CustomButton", height: "30px", width: "30px", value: "f11", className: "volumeUpButton", onclick: "keyButtonClick"},
 										]},
 									]},
 									{kind: "HFlexBox", className: "playbackButtonsWrapper", components: [
@@ -414,6 +418,28 @@ enyo.kind({ name: "remote",
 		this.clearTest();
 		
 		this.updateHeader();
+		
+		if((WebMyth.prefsCookie.protoVer < 63)||(WebMyth.prefsCookie.protoVer == 23056)) {
+		
+			this.$.volumeSlider.hide();
+			this.$.volumeSlideSpacer.hide();
+			
+			this.$.volumeDownSpacer.show();
+			this.$.volumeDownButton.show();
+			this.$.volumeUpSpacer.show();
+			this.$.volumeUpButton.show();
+		
+		} else {
+		
+			this.$.volumeSlider.show();
+			this.$.volumeSlideSpacer.show();
+			
+			this.$.volumeDownSpacer.hide();
+			this.$.volumeDownButton.hide();
+			this.$.volumeUpSpacer.hide();
+			this.$.volumeUpButton.hide();
+
+		}		
 		
 		this.$.keyboardToggle.setState(false);
 		
@@ -806,12 +832,12 @@ enyo.kind({ name: "remote",
 		
 		if(inState == true) {
 			this.$.hiddenKeyboardInput.setValue(".");
-			enyo.keyboard.setResizesWindow(false);
+			//enyo.keyboard.setResizesWindow(false);
 			this.$.hiddenKeyboardInput.forceFocusEnableKeyboard();
 			enyo.keyboard.forceShow(5);
 		} else {
 			this.$.hiddenKeyboardInput.setValue(".");
-			enyo.keyboard.setResizesWindow(true);
+			//enyo.keyboard.setResizesWindow(true);
 			enyo.keyboard.hide();
 			this.$.hiddenKeyboardInput.forceBlur();
 			enyo.keyboard.setManualMode(false);
@@ -1583,7 +1609,21 @@ enyo.kind({ name: "remote",
 		
 		if(this.statusLoop) {
 		
-			if(WebMyth.useScriptRemote) {
+			if((WebMyth.prefsCookie.protoVer < 63)||(WebMyth.prefsCookie.protoVer == 23056)) {
+			
+				this.$.volumeSlider.hide();
+				this.$.volumeSlideSpacer.hide();
+				
+				this.$.volumeDownSpacer.show();
+				this.$.volumeDownButton.show();
+				this.$.volumeUpSpacer.show();
+				this.$.volumeUpButton.show();
+				
+				this.statusLoop = true;
+		
+				this.resetLoop();
+			
+			} else if(WebMyth.useScriptRemote) {
 			
 				var requestUrl = "http://"+WebMyth.prefsCookie.webserverName+"/"+WebMyth.prefsCookie.webmythPythonFile;
 				requestUrl += "?op=remote&type=query";

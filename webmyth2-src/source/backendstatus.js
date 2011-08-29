@@ -96,7 +96,7 @@ enyo.kind({ name: "backendstatus",
 							{name: "jobqueueComments", className: "jobqueueComments"},
 						]}
 					]},
-					{content: "No recent or current jobs", name: "nojobs"},
+					//content: "No recent or current jobs", name: "nojobs"},
 				]},
 				
 				{name: "storageDrawer", kind: "DividerDrawer", open: false, caption: "Storage Locations", animate: false, components: [
@@ -776,8 +776,10 @@ enyo.kind({ name: "backendstatus",
 			var typeText = "";
 			var statusText = "";
 			
-			typeText += jobqueueTypeDecode(row.type);
-			typeText += " on "+row.hostname;
+			if(row.type > -1) {
+				typeText += jobqueueTypeDecode(row.type);
+				typeText += " on "+row.hostname;
+			}
 			
 			statusText += jobqueueStatusDecode(row.status);
 			
@@ -794,7 +796,9 @@ enyo.kind({ name: "backendstatus",
 
 			if(inIndex == 0) {
 				this.$.jobqueueItem.addClass("enyo-first");
-			} else if(inIndex == this.jobqueueList.length - 1) {
+			} 
+			
+			if(inIndex == this.jobqueueList.length - 1) {
 				this.$.jobqueueItem.addClass("enyo-last");
 			}
 			
@@ -824,6 +828,13 @@ enyo.kind({ name: "backendstatus",
 	},		
 	finishedLoadingStatus: function() {
 	
+		if(this.jobqueueList.length == 0) {
+			//this.$.nojobs.show();
+			this.jobqueueList.push({title: "No current or recent jobs", starttime: "", type: -100, status: -100, hostname: "", comments: ""});
+		} else {
+			//this.$.nojobs.hide();
+		}
+		
 		this.$.encodersVirtualRepeater.render();
 		this.$.scheduledVirtualRepeater.render();
 		this.$.jobqueueVirtualRepeater.render();
@@ -845,12 +856,6 @@ enyo.kind({ name: "backendstatus",
 		this.$.statusTime.setContent(this.statusTime);
 		this.$.allLoads.setContent(this.allLoads);
 		
-		
-		if(this.jobqueueList.length == 0) {
-			this.$.nojobs.show();
-		} else {
-			this.$.nojobs.hide();
-		}
 	
 		this.$.loadingPopup.close();
 		enyo.scrim.hide();

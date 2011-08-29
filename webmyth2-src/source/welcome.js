@@ -158,7 +158,7 @@ enyo.kind({ name: "welcome",
 			this.$.getConnectionInfoService.call();
 		}
 		
-		this.$.networkAlerts.push({type: "Data"});
+		if(window.PalmSystem) this.$.networkAlerts.push({type: "Data"});
 	},
 	deactivate: function() {
 		if(debug) this.log("deactivate");
@@ -277,7 +277,7 @@ enyo.kind({ name: "welcome",
 	getSettings: function(){
 		if(debug) this.log("getSettings");
 		
-		var query = "SELECT * FROM `settings`  WHERE ";
+		var query = "SELECT `data`, `value`, `hostname` FROM `settings`  WHERE ";
 		query += " `value` = 'AutoCommercialFlag'";
 		query += " OR `value` = 'AutoTranscode' ";
 		query += " OR `value` = 'AutoRunUserJob1' ";
@@ -297,6 +297,7 @@ enyo.kind({ name: "welcome",
 		query += " OR `value` = 'BackendServerPort' ";
 		query += " OR `value` = 'MythXML_on' ";
 		query += " OR `value` = 'MythXML_key' ";
+		query += " UNION SELECT COUNT(*) AS `data`, 'music_songs' as `value`, 'all' AS `hostname` FROM `music_songs`";
 		query += " ;";
 		
 		if(WebMyth.useScript) {
@@ -376,6 +377,8 @@ enyo.kind({ name: "welcome",
 				WebMyth.prefsCookie.MythXML_on = s.data;
 			} else if(s.value == "MythXML_key") {
 				WebMyth.prefsCookie.MythXML_key = s.data;
+			} else if(s.value == "music_songs") {
+				WebMyth.prefsCookie.music_songs = parseInt(s.data);
 			}
 			
 		}
@@ -400,7 +403,7 @@ enyo.kind({ name: "welcome",
 			}
 		}	
 		
-		//if(debug) this.log("updating prefs cookie: "+enyo.json.to(WebMyth.prefsCookie));
+		//if(debug) this.log("updating prefs cookie: "+enyo.json.stringify(WebMyth.prefsCookie));
 		
 		enyo.setCookie("webmyth2-prefs", enyo.json.stringify(WebMyth.prefsCookie));
 		

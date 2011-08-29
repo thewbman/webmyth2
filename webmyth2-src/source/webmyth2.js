@@ -164,6 +164,8 @@ enyo.kind({
 		enyo.setAllowedOrientation(WebMyth.prefsCookie.allowedOrientation);	
 		debug = WebMyth.prefsCookie.debug;
 		
+		enyo.keyboard.setResizesWindow(false);
+		
 		this.resizeHandler();
 		
 		WebMyth.dateFormatter = new enyo.g11n.DateFmt("EEEE, MMM d");

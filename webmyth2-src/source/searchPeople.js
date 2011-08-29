@@ -1253,15 +1253,26 @@ enyo.kind({ name: "searchPeople",
 		
 	},
 	getVideosResponse: function(inSender, inResponse) {
-		if(debug) this.log("getVideosResponse");
-		//if(debug) this.log("getVideosResponse: "+enyo.json.stringify(inResponse));
+		//if(debug) this.log("getVideosResponse");
+		if(debug) this.log("getVideosResponse: "+enyo.json.stringify(inResponse));
 		
+		var s = {};
 		
 		if(inResponse == " ]\n") {
 			//no matching searches
 		} else {
 			for(var i = 0; i < inResponse.length; i++) {
-				this.fullResultList.push(inResponse[i]);
+				s = {};
+				s = inResponse[i];
+			
+				if((s.title == "None")&&(s.subtitle == "None")) {
+					//blank using script
+				} else if ((s.title == "")&&(s.subtitle == "")){
+					//blank using plugin
+				} else {
+					if(debug) this.log("adding video with title: '"+s.title+"' and subtitle: '"+s.subtitle+"' ");
+					this.fullResultList.push(s);
+				}
 			}
 		}
 		

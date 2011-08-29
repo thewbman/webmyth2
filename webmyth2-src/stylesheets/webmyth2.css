@@ -144,6 +144,10 @@
 	color: black;
 }
 
+.searchInputWrapper {
+	border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+}
+
 .searchInputWrapper .enyo-input {
 	border-width: 6px 14px;
 }
@@ -311,11 +315,25 @@
 	background-color: rgba(0,0,0,0);
 }
 
-.remote .muteButton.selected {
+.remote .volumeDownButton {
+	background-image: url("../images/voldown-30x30.png");
+	background-color: rgba(0,0,0,0);
+}
+
+.remote .volumeUpButton {
+	background-image: url("../images/volup-30x30.png");
+	background-color: rgba(0,0,0,0);
+}
+
+.remote .muteButton.selected,
+.remote .volumeDownButton.selected,
+.remote .volumeUpButton.selected {
 	background-color: rgba(255,255,255,0.15);
 }
 
-.remote .muteButton.enyo-button-down {
+.remote .muteButton.enyo-button-down,
+.remote .volumeDownButton.enyo-button-down,
+.remote .volumeUpButton.enyo-button-down {
 	background-color: rgba(255,255,255,0.15);
 }
 
