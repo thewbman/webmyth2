@@ -194,6 +194,14 @@ enyo.kind({ name: "video",
 										{name: "releasedate", className: "value", flex: 1},
 										{content: "Release Date", className: "label"},
 									]},
+									{name: "fullepisodeItem", kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+										{name: "fullepisode", className: "value", flex: 1},
+										{content: "Episode", className: "label"},
+									]},
+									{name: "filenameItem", kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+										{name: "filename", className: "value", flex: 1},
+										{content: "Filename", className: "label"},
+									]},
 								]},
 								{name: "peopleRowGroup", kind: "RowGroup", caption: "People", components: [
 									{name: "peopleSpinnerItem", kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", pack: "center", align: "center", components: [
@@ -262,7 +270,7 @@ enyo.kind({ name: "video",
 		
 		this.resize(inViewMode);
 		
-		//this.$.programsVirtualList.punt();
+		this.$.programsVirtualList.punt();
 		//this.middleRevealTop();
 		this.rightRevealTop();
 		
@@ -1421,6 +1429,8 @@ enyo.kind({ name: "video",
 		this.$.category.setContent(row.category);
 		
 		this.$.releasedate.setContent(row.releasedate);
+		this.$.fullepisode.setContent(row.fullepisode);
+		this.$.filename.setContent(row.filename);
 		
 		//this.$.rightDetails.setContent(enyo.json.to(row));
 		

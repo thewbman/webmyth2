@@ -89,7 +89,7 @@ enyo.kind({ name: "guide",
 							
 							{name: "guideTimeVirtualList", kind: "VirtualList", onSetupRow: "getGuideTimeItem", flex: 1, components: [
 								{name: "guideProgramRow", kind2: "PrevNextBanner", kind: "Item", className: "guideProgramRow", layoutKind: "HFlexLayout", components: [
-									{name: "channelTitleWrapper", className: "channelTitle", onclick: "channelTitleSelect", components: [
+									{name: "channelTitleWrapper", kind: "Control", layoutKind: "VFlexLayout", align: "center", pack: "center", className: "channelTitle", onclick: "channelTitleSelect", components: [
 										{name: "channelTimeTitleIcon", kind: "Image", className: "channelTitleIcon"},
 										{name: "channelTimeTitle", content: "", className: "channelTitle"},
 									]},
@@ -97,39 +97,39 @@ enyo.kind({ name: "guide",
 										{name: "guidePreviousIcon", kind: "Image", className: "guidePreviousIcon"},
 									]},
 									
-									{name: "guideProgram0", kind: "VFlexBox", flex2: 1, className: "guideProgram", onclick: "guideProgram0select", components: [
+									{name: "guideProgram0", kind2: "VFlexBox", flex2: 1, className: "guideProgram", onclick: "guideProgram0select", components: [
 										{name: "guideProgramTitle0", content: "", className: "guideProgramTitle"},
 										{name: "guideProgramSubtitle0", content: "", className: "guideProgramSubtitle"},
 									]},
-									{name: "guideProgram1", kind: "VFlexBox", flex2: 1, className: "guideProgram", onclick: "guideProgram1select", components: [
+									{name: "guideProgram1", kind2: "VFlexBox", flex2: 1, className: "guideProgram", onclick: "guideProgram1select", components: [
 										{name: "guideProgramTitle1", content: "", className: "guideProgramTitle"},
 										{name: "guideProgramSubtitle1", content: "", className: "guideProgramSubtitle"},
 									]},
-									{name: "guideProgram2", kind: "VFlexBox", flex2: 1, className: "guideProgram", onclick: "guideProgram2select", components: [
+									{name: "guideProgram2", kind2: "VFlexBox", flex2: 1, className: "guideProgram", onclick: "guideProgram2select", components: [
 										{name: "guideProgramTitle2", content: "", className: "guideProgramTitle"},
 										{name: "guideProgramSubtitle2", content: "", className: "guideProgramSubtitle"},
 									]},
-									{name: "guideProgram3", kind: "VFlexBox", flex2: 1, className: "guideProgram", onclick: "guideProgram3select", components: [
+									{name: "guideProgram3", kind2: "VFlexBox", flex2: 1, className: "guideProgram", onclick: "guideProgram3select", components: [
 										{name: "guideProgramTitle3", content: "", className: "guideProgramTitle"},
 										{name: "guideProgramSubtitle3", content: "", className: "guideProgramSubtitle"},
 									]},
-									{name: "guideProgram4", kind: "VFlexBox", flex2: 1, className: "guideProgram", onclick: "guideProgram4select", components: [
+									{name: "guideProgram4", kind2: "VFlexBox", flex2: 1, className: "guideProgram", onclick: "guideProgram4select", components: [
 										{name: "guideProgramTitle4", content: "", className: "guideProgramTitle"},
 										{name: "guideProgramSubtitle4", content: "", className: "guideProgramSubtitle"},
 									]},
-									{name: "guideProgram5", kind: "VFlexBox", flex2: 1, className: "guideProgram", onclick: "guideProgram5select", components: [
+									{name: "guideProgram5", kind2: "VFlexBox", flex2: 1, className: "guideProgram", onclick: "guideProgram5select", components: [
 										{name: "guideProgramTitle5", content: "", className: "guideProgramTitle"},
 										{name: "guideProgramSubtitle5", content: "", className: "guideProgramSubtitle"},
 									]},
-									{name: "guideProgram6", kind: "VFlexBox", flex2: 1, className: "guideProgram", onclick: "guideProgram6select", components: [
+									{name: "guideProgram6", kind2: "VFlexBox", flex2: 1, className: "guideProgram", onclick: "guideProgram6select", components: [
 										{name: "guideProgramTitle6", content: "", className: "guideProgramTitle"},
 										{name: "guideProgramSubtitle6", content: "", className: "guideProgramSubtitle"},
 									]},
-									{name: "guideProgram7", kind: "VFlexBox", flex2: 1, className: "guideProgram", onclick: "guideProgram7select", components: [
+									{name: "guideProgram7", kind2: "VFlexBox", flex2: 1, className: "guideProgram", onclick: "guideProgram7select", components: [
 										{name: "guideProgramTitle7", content: "", className: "guideProgramTitle"},
 										{name: "guideProgramSubtitle7", content: "", className: "guideProgramSubtitle"},
 									]},
-									{name: "guideProgram8", kind: "VFlexBox", flex2: 1, className: "guideProgram", onclick: "guideProgram8select", components: [
+									{name: "guideProgram8", kind2: "VFlexBox", flex2: 1, className: "guideProgram", onclick: "guideProgram8select", components: [
 										{name: "guideProgramTitle8", content: "", className: "guideProgramTitle"},
 										{name: "guideProgramSubtitle8", content: "", className: "guideProgramSubtitle"},
 									]},
@@ -1423,7 +1423,14 @@ enyo.kind({ name: "guide",
 				iconUrl += row[0].chanid;
 			}
 		
-			this.$.channelTimeTitleIcon.setSrc(iconUrl);
+			
+			if(WebMyth.prefsCookie.showChannelIcons) {
+				this.$.channelTimeTitleIcon.setSrc(iconUrl);
+				this.$.channelTimeTitleIcon.show();
+			} else {
+				this.$.channelTimeTitleIcon.hide();
+			}
+			
 			
 			//if(debug) this.log("getGuideTimeItem row: "+enyo.json.stringify(row));
 			
@@ -1628,8 +1635,14 @@ enyo.kind({ name: "guide",
 				iconUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetChannelIcon?ChanId=";
 				iconUrl += row[0].chanid;
 			}
+			
+			if(WebMyth.prefsCookie.showChannelIcons) {
+				this.$.guideLabelChannelIcon.setSrc(iconUrl);
+				this.$.guideLabelChannelIcon.show();
+			} else {
+				this.$.guideLabelChannelIcon.hide();
+			}
 		
-			this.$.guideLabelChannelIcon.setSrc(iconUrl);
 			//this.$.guideLabelChannelTitle.setContent(row[0].channum + " - " + row[0].channame + " ["+WebMyth.dateFormatter.format(new Date(isoToJS(this.dayRange.starttimeISO)))+"]");
 			this.$.guideLabelChannelTitle.setContent(row[0].channum + " - " + row[0].channame);
 			
@@ -1722,7 +1735,6 @@ enyo.kind({ name: "guide",
 				//this.$.rightDetailsChannelIconWrapper.show();
 				
 			} else {
-				
 				//this.$.rightDetailsChannelIconWrapper.hide();
 			}
 			

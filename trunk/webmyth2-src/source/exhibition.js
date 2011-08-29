@@ -904,7 +904,13 @@ enyo.kind({ name: "exhibition",
 				iconUrl += row.chanid;
 			}
 			
-			this.$.upcomingRecordingIcon.setSrc(iconUrl);
+			if(WebMyth.prefsCookie.showChannelIcons) {
+				this.$.upcomingRecordingIcon.setSrc(iconUrl);
+				this.$.upcomingRecordingIconWrapper.show();
+			} else {
+				this.$.upcomingRecordingIconWrapper.hide();
+			}
+			
 			this.$.upcomingRecordingTitle.setContent(row.title);
 			
 			if((row.subtitle != "None")&&(row.subtitle != "")) {
@@ -1006,7 +1012,13 @@ enyo.kind({ name: "exhibition",
 				iconUrl += row.chanid;
 			}
 			
-			this.$.currentRecordingIcon.setSrc(iconUrl);
+			if(WebMyth.prefsCookie.showChannelIcons) {
+				this.$.currentRecordingIcon.setSrc(iconUrl);
+				this.$.currentRecordingIconWrapper.show();
+			} else {
+				this.$.currentRecordingIconWrapper.hide();
+			}
+			
 			this.$.currentRecordingTitle.setContent(row.title);
 			
 			if((row.subtitle != "None")&&(row.subtitle != "")) {

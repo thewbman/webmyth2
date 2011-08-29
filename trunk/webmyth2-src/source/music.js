@@ -74,7 +74,7 @@ enyo.kind({ name: "music",
 					{kind: "Spacer"},
 				]},
 				{content: $L("Loading")+"...", style: "text-align: center;"},
-				{content: $L("(This may take a long time)"), style: "text-align: center;"},
+				{name: "loadingPopupSubtitle", content: $L("(This may take a long time)"), style: "text-align: center;"},
 			]},
 			
 			{name: "musicDetailsPopup", kind: "Popup", scrim: true, dismissWithClick: true, dismissWithEscape: true, className: "musicDetailsPopup", components: [
@@ -1313,6 +1313,14 @@ enyo.kind({ name: "music",
 	getMusic: function() {
 		if(debug) this.log("getMusic");
 		
+		this.rawResultList.length = 0;
+		this.fullResultList.length = 0;
+		
+		this.getSomeMusic();
+		
+	},
+	getSomeMusic: function() {
+		
 		//this.$.scrim.show();
 		this.$.loadingPopup.openAtCenter();
 		this.$.spinnerLarge.show();
@@ -1327,7 +1335,9 @@ enyo.kind({ name: "music",
 		query += " LEFT OUTER JOIN music_albums ON music_songs.album_id = music_albums.album_id ";
 		query += " LEFT OUTER JOIN music_albumart ON music_songs.directory_id = music_albumart.directory_id ";
 		query += " GROUP BY song_id ";
+		query += " LIMIT "+this.fullResultList.length+",2000 ";
 		query += " ; ";
+		
 		
 		if(debug) this.log("music query is :"+query);
 		
@@ -1354,17 +1364,24 @@ enyo.kind({ name: "music",
 		if(debug) this.log("musicResponse");
 		//if(debug) this.log("musicResponse: "+enyo.json.stringify(inResponse));
 		
-		this.fullResultList.length = 0;
-		
 		if(inResponse == " ]\n") {
 			//no matching searches
 		} else {
-			this.rawResultList = inResponse;
+			var rawMusic = inResponse;
+			var cleanedMusic = cleanMusic(rawMusic);
 			
-			this.fullResultList = cleanMusic(this.rawResultList);
+			this.rawResultList = this.rawResultList.concat(rawMusic);
+			this.fullResultList = this.fullResultList.concat(cleanedMusic);
 		}
 		
-		this.getPlaylists();
+		if(debug) this.log("this.fullResultList.length: "+this.fullResultList.length);
+		
+		if(this.fullResultList.length < WebMyth.prefsCookie.music_songs) {
+			this.$.loadingPopupSubtitle.setContent("(Loaded "+this.fullResultList.length+" of "+WebMyth.prefsCookie.music_songs+" songs)");
+			this.getSomeMusic();
+		} else {
+			this.getPlaylists();
+		}
 		
 	},
 	musicFailure: function(inSender, inResponse) {
@@ -1557,7 +1574,7 @@ enyo.kind({ name: "music",
 		for(var i = 0; i < inList.length; i++) {
 			s = inList[i];
 		
-			if(s.artist_name.toUpperCase().indexOf(filterString) >=0) {
+			if(s.artist_name.toUpperCase().indexOf(filterString) >= 0) {
 				finalList.push(s);
 			} 
 		}	
@@ -1626,7 +1643,7 @@ enyo.kind({ name: "music",
 		for(var i = 0; i < inList.length; i++) {
 			s = inList[i];
 		
-			if(s.album_name.toUpperCase().indexOf(filterString) >=0) {
+			if(s.album_name.toUpperCase().indexOf(filterString) >= 0) {
 				finalList.push(s);
 			} 
 		}	
@@ -1725,11 +1742,11 @@ enyo.kind({ name: "music",
 		for(var i = 0; i < inList.length; i++) {
 			s = inList[i];
 		
-			if(s.name.toUpperCase().indexOf(filterString) >=0) {
+			if(s.name.toUpperCase().indexOf(filterString) >= 0) {
 				finalList.push(s);
-			} else if(s.artist_name.toUpperCase().indexOf(filterString) >=0) {
+			} else if(s.artist_name.toUpperCase().indexOf(filterString) >= 0) {
 				finalList.push(s);
-			} else if(s.album_name.toUpperCase().indexOf(filterString) >=0) {
+			} else if(s.album_name.toUpperCase().indexOf(filterString) >= 0) {
 				finalList.push(s);
 			} 
 		}	

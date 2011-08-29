@@ -8,6 +8,5 @@ Todo:
  - searchPeople video match - do sort/details
  - more g11n formating date/time?
  - filter search people
- - cleanup empty video response on search people
  
  

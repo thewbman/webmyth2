@@ -1490,13 +1490,13 @@ enyo.kind({ name: "recorded",
 		for(var i = 0; i < inList.length; i++) {
 			s = inList[i];
 		
-			if(s.title.toUpperCase().indexOf(filterString) >=0) {
+			if(s.title.toUpperCase().indexOf(filterString) >= 0) {
 				finalList.push(s);
-			} else if(s.subtitle.toUpperCase().indexOf(filterString) >=0) {
+			} else if(s.subtitle.toUpperCase().indexOf(filterString) >= 0) {
 				finalList.push(s);
-			} else if(s.category.toUpperCase().indexOf(filterString) >=0) {
+			} else if(s.category.toUpperCase().indexOf(filterString) >= 0) {
 				finalList.push(s);
-			} else if(s.channame.toUpperCase().indexOf(filterString) >=0) {
+			} else if(s.channame.toUpperCase().indexOf(filterString) >= 0) {
 				finalList.push(s);
 			} 
 		}	
