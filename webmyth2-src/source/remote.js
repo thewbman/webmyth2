@@ -42,6 +42,8 @@ enyo.kind({ name: "remote",
 		onDownloadFile: "",
 		onRemotePluginCommand: "",
 		onRemotePluginClose: "",
+		onMysqlPluginCommand: "",
+		onMysqlPluginExecute: "",
 	},
 	
 	components: [
@@ -702,9 +704,11 @@ enyo.kind({ name: "remote",
 		
 		this.frontendIndex = WebMyth.prefsCookie.frontendIndex;
 		
-		this.$.frontendNameInput.setValue(WebMyth.prefsCookie.frontends[this.frontendIndex].name);
-		this.$.frontendPortInput.setValue(WebMyth.prefsCookie.frontends[this.frontendIndex].port);
-		this.$.frontendAddressInput.setValue(WebMyth.prefsCookie.frontends[this.frontendIndex].address);
+		if(WebMyth.prefsCookie.frontends[this.frontendIndex]) {
+			this.$.frontendNameInput.setValue(WebMyth.prefsCookie.frontends[this.frontendIndex].name);
+			this.$.frontendPortInput.setValue(WebMyth.prefsCookie.frontends[this.frontendIndex].port);
+			this.$.frontendAddressInput.setValue(WebMyth.prefsCookie.frontends[this.frontendIndex].address);
+		}
 		
 		this.$.frontendsVirtualRepeater.render();
 		
@@ -913,7 +917,7 @@ enyo.kind({ name: "remote",
 		
 		//this.bannerMessage("Searching for frontends is not currently supported");
 		
-		var requestUrl = "http://"+WebMyth.prefsCookie.masterBackendIp+":6544/Myth/GetHosts";
+		var requestUrl = "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetHosts";
 		
 		this.$.getHostsService.setUrl(requestUrl);
 		this.$.getHostsService.call();
@@ -1424,9 +1428,11 @@ enyo.kind({ name: "remote",
 		
 					} else {
 					
-						this.volumeCountdown = setTimeout(enyo.bind(this,"queryVolume"), 500);
+						//this.volumeCountdown = setTimeout(enyo.bind(this,"queryVolume"), 500);
 						
 					}
+						
+					this.volumeCountdown = setTimeout(enyo.bind(this,"queryVolume"), 500);
 					
 					break;
 				case "Recorded":
@@ -1589,7 +1595,7 @@ enyo.kind({ name: "remote",
 		
 		this.playbackTotalTime = parseInt(parseInt(inResponse[0].length) * 60);
 		
-		this.volumeCountdown = setTimeout(enyo.bind(this,"queryVolume"), 500);
+		//this.volumeCountdown = setTimeout(enyo.bind(this,"queryVolume"), 500);
 
 	},
 	videoDetailsFailure: function(inSender, inResponse) {
@@ -1597,7 +1603,7 @@ enyo.kind({ name: "remote",
 		
 		this.playbackTotalTime = 3530;
 		
-		this.volumeCountdown = setTimeout(enyo.bind(this,"queryVolume"), 500);
+		//this.volumeCountdown = setTimeout(enyo.bind(this,"queryVolume"), 500);
 		
 	},
 	queryVolume: function() {

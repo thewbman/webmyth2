@@ -535,12 +535,19 @@ enyo.kind({ name: "exhibition",
 			
 					iconUrl += "http://"+WebMyth.prefsCookie.webserverName+"/mythweb/mythxml/GetChannelIcon?MythXMLKey=";
 					iconUrl += WebMyth.prefsCookie.MythXML_key+"&ChanId=";
-					iconUrl += row.chanid;
 					
+				} else if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
+			
+					iconUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Guide/GetChannelIcon?ChanId=";
+				
 				} else {
+					
 					iconUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetChannelIcon?ChanId=";
-					iconUrl += row.chanid;
+					
 				}
+				
+				iconUrl += row.chanid;
+					
 				
 				this.$.channelIcon.setSrc(iconUrl);
 				this.$.channelIconWrapper.show();
@@ -597,6 +604,7 @@ enyo.kind({ name: "exhibition",
 			
 		} else {
 			
+			//hopefully same in 0.25 DBSchemaVer
 			requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/xml";
 			
 		}
@@ -897,12 +905,18 @@ enyo.kind({ name: "exhibition",
 			
 				iconUrl += "http://"+WebMyth.prefsCookie.webserverName+"/mythweb/mythxml/GetChannelIcon?MythXMLKey=";
 				iconUrl += WebMyth.prefsCookie.MythXML_key+"&ChanId=";
-				iconUrl += row.chanid;
 					
+			} else if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
+			
+				iconUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Guide/GetChannelIcon?ChanId=";
+				
 			} else {
+				
 				iconUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetChannelIcon?ChanId=";
-				iconUrl += row.chanid;
+				
 			}
+			
+			iconUrl += row.chanid;
 			
 			if(WebMyth.prefsCookie.showChannelIcons) {
 				this.$.upcomingRecordingIcon.setSrc(iconUrl);
@@ -1005,12 +1019,18 @@ enyo.kind({ name: "exhibition",
 			
 				iconUrl += "http://"+WebMyth.prefsCookie.webserverName+"/mythweb/mythxml/GetChannelIcon?MythXMLKey=";
 				iconUrl += WebMyth.prefsCookie.MythXML_key+"&ChanId=";
-				iconUrl += row.chanid;
 					
+			} else if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
+			
+				iconUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Guide/GetChannelIcon?ChanId=";
+				
 			} else {
+			
 				iconUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetChannelIcon?ChanId=";
-				iconUrl += row.chanid;
+				
 			}
+			
+			iconUrl += row.chanid;
 			
 			if(WebMyth.prefsCookie.showChannelIcons) {
 				this.$.currentRecordingIcon.setSrc(iconUrl);

@@ -1001,23 +1001,24 @@ enyo.kind({ name: "music",
 		
 		var songUrl = "";
 			
-		if((WebMyth.prefsCookie.mythwebXml)&&(true)) {	
+		if((WebMyth.prefsCookie.mythwebXml)&&(false)) {	
 			//doesn't work for music?
 		
-			//songUrl += "http://"+WebMyth.prefsCookie.webserverName+"/mythweb/mythxml/GetMusic?MythXMLKey=";
-			//songUrl += WebMyth.prefsCookie.MythXML_key;
-			//songUrl += "&Id=";
-			//songUrl += row.song_id;
-			
-			songUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":6544/Myth/GetMusic?Id=";
-			songUrl += row.song_id;
+			songUrl += "http://"+WebMyth.prefsCookie.webserverName+"/mythweb/mythxml/GetMusic?MythXMLKey=";
+			songUrl += WebMyth.prefsCookie.MythXML_key;
+			songUrl += "&Id=";
 				
+		} else if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
+			
+			songUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Content/GetMusic?Id=";
+			
 		} else {
 			
-			songUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":6544/Myth/GetMusic?Id=";
-			songUrl += row.song_id;
+			songUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetMusic?Id=";
 			
 		}
+		
+		songUrl += row.song_id;
 		
 		this.selectedSong.songUrl = songUrl;
 		
@@ -1046,17 +1047,19 @@ enyo.kind({ name: "music",
 				albumArtUrl += "http://"+WebMyth.prefsCookie.webserverName+"/mythweb/mythxml/GetAlbumArt?MythXMLKey=";
 				albumArtUrl += WebMyth.prefsCookie.MythXML_key;
 				albumArtUrl += "&Id=";
-				albumArtUrl += row.albumart_id;
-				
-				//albumArtUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":6544/Myth/GetAlbumArt?Id=";
-				//albumArtUrl += row.albumart_id;
 					
+			} else if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
+			
+				albumArtUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Content/GetAlbumArt?Id=";
+				
 			} else {
 				
-				albumArtUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":6544/Myth/GetAlbumArt?Id=";
-				albumArtUrl += row.albumart_id;
+				albumArtUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetAlbumArt?Id=";
 				
 			}
+			
+			albumArtUrl += row.albumart_id;
+				
 			
 			//popup
 			/*
@@ -1161,23 +1164,24 @@ enyo.kind({ name: "music",
 			
 			var songUrl = "";
 				
-			if((WebMyth.prefsCookie.mythwebXml)&&(true)) {	
+			if((WebMyth.prefsCookie.mythwebXml)&&(false)) {	
 				//doesn't work for music?
 			
-				//songUrl += "http://"+WebMyth.prefsCookie.webserverName+"/mythweb/mythxml/GetMusic?MythXMLKey=";
-				//songUrl += WebMyth.prefsCookie.MythXML_key;
-				//songUrl += "&Id=";
-				//songUrl += row.song_id;
-				
-				songUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":6544/Myth/GetMusic?Id=";
-				songUrl += row.song_id;
+				songUrl += "http://"+WebMyth.prefsCookie.webserverName+"/mythweb/mythxml/GetMusic?MythXMLKey=";
+				songUrl += WebMyth.prefsCookie.MythXML_key;
+				songUrl += "&Id=";
 					
+			} else if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
+			
+				songUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Content/GetMusic?Id=";
+				
 			} else {
 				
-				songUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":6544/Myth/GetMusic?Id=";
-				songUrl += row.song_id;
+				songUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetMusic?Id=";
 				
 			}
+			
+			songUrl += row.song_id;
 			
 			if(inEvent.value == "Stream") {
 			
@@ -1666,17 +1670,19 @@ enyo.kind({ name: "music",
 				albumArtUrl += "http://"+WebMyth.prefsCookie.webserverName+"/mythweb/mythxml/GetAlbumArt?MythXMLKey=";
 				albumArtUrl += WebMyth.prefsCookie.MythXML_key;
 				albumArtUrl += "&Id=";
-				albumArtUrl += row.extraField;
-				
-				//albumArtUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":6544/Myth/GetAlbumArt?Id=";
-				//albumArtUrl += row.extraField;
 					
+			} else if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
+			
+				albumArtUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Content/GetAlbumArt?Id=";
+				
 			} else {
 				
-				albumArtUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":6544/Myth/GetAlbumArt?Id=";
-				albumArtUrl += row.extraField;
+				albumArtUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetAlbumArt?Id=";
 				
 			}
+			
+			albumArtUrl += row.extraField;
+				
 			
 			if((row.extraField == "None")||(row.extraField == "")) {
 				this.$.albumArt.hide();
@@ -1776,17 +1782,18 @@ enyo.kind({ name: "music",
 				albumArtUrl += "http://"+WebMyth.prefsCookie.webserverName+"/mythweb/mythxml/GetAlbumArt?MythXMLKey=";
 				albumArtUrl += WebMyth.prefsCookie.MythXML_key;
 				albumArtUrl += "&Id=";
-				albumArtUrl += row.albumart_id;
-				
-				//albumArtUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":6544/Myth/GetAlbumArt?Id=";
-				//albumArtUrl += row.albumart_id;
 					
+			} else if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
+			
+				albumArtUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Content/GetAlbumArt?Id=";
+				
 			} else {
 				
-				albumArtUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":6544/Myth/GetAlbumArt?Id=";
-				albumArtUrl += row.albumart_id;
+				albumArtUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetAlbumArt?Id=";
 				
 			}
+			
+			albumArtUrl += row.albumart_id;
 			
 			if((row.albumart_id == "None")||(row.albumart_id == "")) {
 				this.$.songAlbumArt.hide();
