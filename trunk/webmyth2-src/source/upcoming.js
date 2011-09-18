@@ -663,12 +663,17 @@ enyo.kind({ name: "upcoming",
 			
 				row.iconUrl = "http://"+WebMyth.prefsCookie.webserverName+"/mythweb/mythxml/GetChannelIcon?MythXMLKey=";
 				row.iconUrl += WebMyth.prefsCookie.MythXML_key+"&ChanId=";
-				row.iconUrl += row.chanid;
+				
+			} else if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
+			
+				row.iconUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Guide/GetChannelIcon?ChanId=";
 				
 			} else {
 				row.iconUrl = "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetChannelIcon?ChanId=";
-				row.iconUrl += row.chanid;
+				
 			}
+			
+			row.iconUrl += row.chanid;
 			
 			row.fulltime = row.starttime.replace("T"," ") + " - " + row.endtime.replace("T"," ");
 			
@@ -1012,12 +1017,18 @@ enyo.kind({ name: "upcoming",
 			
 					iconUrl += "http://"+WebMyth.prefsCookie.webserverName+"/mythweb/mythxml/GetChannelIcon?MythXMLKey=";
 					iconUrl += WebMyth.prefsCookie.MythXML_key+"&ChanId=";
-					iconUrl += row.chanid;
 					
+				} else if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
+			
+					iconUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Guide/GetChannelIcon?ChanId=";
+				
 				} else {
+					
 					iconUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetChannelIcon?ChanId=";
-					iconUrl += row.chanid;
+					
 				}
+				
+				iconUrl += row.chanid;
 				
 				this.$.channelIcon.setSrc(iconUrl);
 				this.$.channelIconWrapper.show();
@@ -1099,9 +1110,13 @@ enyo.kind({ name: "upcoming",
 				requestUrl += WebMyth.prefsCookie.MythXML_key;
 				requestUrl += "&StartTime=";
 					
+			} else if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
+			
+				requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Guide/GetProgramDetails?StartTime=";
+				
 			} else {
 				
-				requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":6544/Myth/GetProgramDetails?StartTime=";
+				requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetProgramDetails?StartTime=";
 				
 			}
 				
@@ -1128,12 +1143,18 @@ enyo.kind({ name: "upcoming",
 			
 					iconUrl += "http://"+WebMyth.prefsCookie.webserverName+"/mythweb/mythxml/GetChannelIcon?MythXMLKey=";
 					iconUrl += WebMyth.prefsCookie.MythXML_key+"&ChanId=";
-					iconUrl += row.chanid;
 					
+				} else if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
+			
+					iconUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Guide/GetChannelIcon?ChanId=";
+				
 				} else {
+				
 					iconUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetChannelIcon?ChanId=";
-					iconUrl += row.chanid;
-				}
+				
+				}	
+				
+				iconUrl += row.chanid;
 				
 				this.$.rightDetailsChannelIcon.setSrc(iconUrl);
 				this.$.rightDetailsChannelIconWrapper.show();

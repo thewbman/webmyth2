@@ -138,16 +138,14 @@ enyo.kind({
 			if(debug) this.log("we have cookie");
 			WebMyth.prefsCookie = enyo.json.parse(WebMyth.prefsCookieString);
 			
+			if(WebMyth.prefsCookie.DBSchemaVer == null) WebMyth.prefsCookie.DBSchemaVer = 0;
+			
 			if(WebMyth.prefsCookie.allowMetrix) setTimeout(enyo.bind(this,"submitMetrix"),500);
 			
 		} else {
 			if(debug) this.log("we don't have cookie");
 			WebMyth.prefsCookie = defaultCookie();
 			
-			/*
-			//for development
-			//
-			*/
 			
 			enyo.setCookie("webmyth2-prefs", enyo.json.stringify(WebMyth.prefsCookie));
 			
@@ -281,7 +279,7 @@ enyo.kind({
 	submitMetrix: function() {
 		if(debug) this.log("submitMetrix");
 		
-		WebMyth.Metrix.postDeviceData();
+		if(window.PalmSystem) WebMyth.Metrix.postDeviceData();
 		
 		if((WebMyth.prefsCookie.protoVer != "TBD")&&(WebMyth.prefsCookie.protoVerSubmitted == false)) {
                 WebMyth.Metrix.customCounts("ProtoVer", WebMyth.prefsCookie.protoVer, 1);
@@ -289,7 +287,7 @@ enyo.kind({
         }
 
 		
-		WebMyth.Metrix.checkBulletinBoard(1, false);
+		if(window.PalmSystem) WebMyth.Metrix.checkBulletinBoard(1, false);
 		
 	},
 	selectMenuButton: function(inSender) {

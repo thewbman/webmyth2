@@ -88,7 +88,9 @@ function defaultCookie() {
 		
 		allowMetrix: true, 
 		
-		debug: false
+		debug: false,
+		
+		DBSchemaVer: 0,
 		
 	};
 	

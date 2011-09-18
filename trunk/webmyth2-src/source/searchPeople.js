@@ -1391,12 +1391,19 @@ enyo.kind({ name: "searchPeople",
 			
 					iconUrl += "http://"+WebMyth.prefsCookie.webserverName+"/mythweb/mythxml/GetChannelIcon?MythXMLKey=";
 					iconUrl += WebMyth.prefsCookie.MythXML_key+"&ChanId=";
-					iconUrl += row.chanid;
+					
+				} else if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
+			
+					iconUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Guide/GetChannelIcon?ChanId=";
 					
 				} else {
+					
 					iconUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetChannelIcon?ChanId=";
-					iconUrl += row.chanid;
+					
 				}
+				
+				iconUrl += row.chanid;
+					
 				
 				this.$.channelIcon.setSrc(iconUrl);
 				this.$.channelIconWrapper.show();
@@ -1527,13 +1534,17 @@ enyo.kind({ name: "searchPeople",
 					requestUrl += WebMyth.prefsCookie.MythXML_key;
 					requestUrl += "&StartTime=";
 						
+				} else if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
+			
+					requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Guide/GetProgramDetails?StartTime=";
+					
 				} else {
 					
-					requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":6544/Myth/GetProgramDetails?StartTime=";
+					requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetProgramDetails?StartTime=";
 					
 				}
 				
-				requestUrl += row.starttime;
+				requestUrl += row.starttime.replace("T"," ");
 				requestUrl += "&ChanId=";
 				requestUrl += row.chanid;
 
@@ -1558,12 +1569,19 @@ enyo.kind({ name: "searchPeople",
 			
 					iconUrl += "http://"+WebMyth.prefsCookie.webserverName+"/mythweb/mythxml/GetChannelIcon?MythXMLKey=";
 					iconUrl += WebMyth.prefsCookie.MythXML_key+"&ChanId=";
-					iconUrl += row.chanid;
+					
+				} else if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
+			
+					iconUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Guide/GetChannelIcon?ChanId=";
 					
 				} else {
+					
 					iconUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetChannelIcon?ChanId=";
-					iconUrl += row.chanid;
+					
 				}
+				
+				iconUrl += row.chanid;
+					
 				
 				this.$.rightDetailsChannelIcon.setSrc(iconUrl);
 				//this.$.rightDetailsChannelIconWrapper.show();

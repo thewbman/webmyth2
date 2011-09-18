@@ -109,6 +109,7 @@ enyo.kind({ name: "welcome",
 			
 		} else {
 			
+			//still under /Myth/ in 0.25 DBSchemeVer
 			requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetConnectionInfo";
 			
 		}
@@ -297,6 +298,7 @@ enyo.kind({ name: "welcome",
 		query += " OR `value` = 'BackendServerPort' ";
 		query += " OR `value` = 'MythXML_on' ";
 		query += " OR `value` = 'MythXML_key' ";
+		query += " OR `value` = 'DBSchemaVer' ";
 		query += " UNION SELECT COUNT(*) AS `data`, 'music_songs' as `value`, 'all' AS `hostname` FROM `music_songs`";
 		query += " ;";
 		
@@ -359,7 +361,9 @@ enyo.kind({ name: "welcome",
 			} else if(s.value == "UserJobDesc3") {
 				WebMyth.prefsCookie.UserJobDesc3 = s.data;
 			} else if(s.value == "UserJobDesc4") {
-				WebMyth.prefsCookie.UserJobDesc4 = s.data;
+				WebMyth.prefsCookie.UserJobDesc3 = s.data;
+			} else if(s.value == "DBSchemaVer") {
+				WebMyth.prefsCookie.DBSchemaVer = s.data;
 			} else if(s.value == "MasterServerIP") {
 				WebMyth.prefsCookie.MasterServerIP = s.data;
 			} else if(s.value == "MasterServerPort") {
