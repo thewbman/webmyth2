@@ -251,13 +251,27 @@ enyo.kind({ name: "findbackends",
 		
 		this.$.searchingPopup.close();
 		
-		var valueNode = inResponse.getElementsByTagName("Value")[0];
+		var serverIP = "none";
 		
-		var serverIP = valueNode.childNodes[0].nodeValue;
+		try {
+			var valueNode = inResponse.getElementsByTagName("Value")[0];
+			serverIP = valueNode.childNodes[0].nodeValue;
+		} catch(e) {
+			//failed in pre-0.25 methods
+		}
+		
+		try {
+			var stringNode = inResponse.getElementsByTagName("String")[0];
+			serverIP = stringNode.childNodes[0].nodeValue;
+		} catch(e) {
+			//failed for 0.25 methods
+		}
 		
 		if(debug) this.log("Get MasterServerIP value of "+serverIP);
 		
-		this.confirmedHosts.push({address: serverIP});
+		if(serverIP != "none") {
+			this.confirmedHosts.push({address: serverIP});
+		}
 		
 		this.$.backendsVirtualRepeater.render();
 	

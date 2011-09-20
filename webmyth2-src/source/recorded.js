@@ -67,6 +67,8 @@ enyo.kind({ name: "recorded",
 			
 			{name: "streamVideoService", kind: "PalmService", service: "palm://com.palm.applicationManager/", method: "launch"},
 			{name: "getRecordedService", kind: "WebService", handleAs: "xml", onSuccess: "recordedResponse", onFailure: "recordedFailure"},
+			{name: "getRecorded25Service", kind: "WebService", handleAs: "xml", onSuccess: "recorded25Response", onFailure: "recorded25Failure"},
+			
 			{name: "getPeopleService", kind: "WebService", handleAs: "json", onSuccess: "peopleResponse", onFailure: "peopleFailure"},
 			{name: "getJobqueueService", kind: "WebService", handleAs: "json", onSuccess: "jobqueueResponse", onFailure: "jobqueueFailure"},
 			{name: "deleteRecordingService", kind: "WebService", handleAs: "txt", onSuccess: "deleteRecordingResponse", onFailure: "deleteRecordingFailure"},
@@ -1193,18 +1195,32 @@ enyo.kind({ name: "recorded",
 		
 		var requestUrl = "";
 		
-		if(WebMyth.prefsCookie.mythwebXml) {
+		if(false) {
+		
+			requestUrl += "http://192.168.1.105/dropbox/GetRecorded.xml";
+			this.$.getRecorded25Service.setUrl(requestUrl);
+			this.$.getRecorded25Service.call();
+			
+		} else if(WebMyth.prefsCookie.mythwebXml) {
 			
 			requestUrl += "http://"+WebMyth.prefsCookie.webserverName+"/mythweb/mythxml/GetRecorded?MythXMLKey=";
 			requestUrl += WebMyth.prefsCookie.MythXML_key;
 			
+			this.$.getRecordedService.setUrl(requestUrl);
+			this.$.getRecordedService.call();
+			
 		} else if(WebMyth.prefsCookie.DBSchemaVer > 1269){
 			
 			requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Dvr/GetRecorded";
+			this.$.getRecorded25Service.setUrl(requestUrl);
+			this.$.getRecorded25Service.call();
 			
 		} else {
 			
 			requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetRecorded";
+			
+			this.$.getRecordedService.setUrl(requestUrl);
+			this.$.getRecordedService.call();
 			
 		}
 		
@@ -1212,8 +1228,8 @@ enyo.kind({ name: "recorded",
 		
 		//if(debug) window.open(requestUrl);
 		
-		this.$.getRecordedService.setUrl(requestUrl);
-		this.$.getRecordedService.call();
+		//this.$.getRecordedService.setUrl(requestUrl);
+		//this.$.getRecordedService.call();
 	},
 	recordedResponse: function(inSender, inResponse) {
 		if(debug) this.log("recordedResponse");
@@ -1388,6 +1404,224 @@ enyo.kind({ name: "recorded",
 	},
 	recordedFailure: function(inSender, inResponse) {
 		this.error("recordedFailure");
+		
+		this.$.errorMessage.setContent("ERROR: Failed to get list of recorded programs from backend at '"+WebMyth.prefsCookie.masterBackendIp+"'");
+		
+		this.finishedGettingRecorded();
+	},
+	recorded25Response: function(inSender, inResponse) {
+		if(debug) this.log("recorded25Response");
+		
+		var xmlobject = inResponse;
+		
+		//Local variables
+		var topNode, topNodesCount, topSingleNode, programsNode, programsNode;
+		var singleProgramNode, singleProgramJson = {}, singleRecordedGroupJson = {}, singleRecordedTitleJson = {};
+		var singleProgramChildNode, singleProgramChannelChildNode, singleProgramRecordingChildNode;
+		var protoVer;
+		
+		
+		this.fullResultList.length = 0;
+		this.fullGroupsList.length = 0;
+		this.fullTitlesList.length = 0;
+		
+		try {
+			//Start parsing
+			topNode = xmlobject.getElementsByTagName("ProgramList")[0];
+			var topNodesCount = topNode.childNodes.length;
+			for(var i = 0; i < topNodesCount; i++) {
+				topSingleNode = topNode.childNodes[i];
+				//if(debug) this.log("topSingleNode.nodeName is "+topSingleNode.nodeName);
+				switch(topSingleNode.nodeName) {
+					case 'ProtoVer':
+						protoVer = topSingleNode.childNodes[0].nodeValue;
+						
+						if(WebMyth.prefsCookie.protoVer != protoVer) WebMyth.prefsCookie.protoVerSubmitted = false;
+						
+						WebMyth.prefsCookie.protoVer = protoVer;
+						
+						break;
+					case 'Programs':
+						//if(debug) this.log('Starting to parse Programs node');
+						//programsNode = topSingleNode.childNodes[0];
+						for(var j = 0; j < topSingleNode.childNodes.length; j++) {
+						//for(var j = 260; j < topSingleNode.childNodes.length; j++) {
+							programsSingleNode = topSingleNode.childNodes[j];
+							//if(debug) this.log("Node name is "+programsSingleNode.nodeName);
+							if(programsSingleNode.nodeName == 'Program') {
+								//if(debug) this.log('Inside Program if');
+								singleProgramNode = programsSingleNode;
+								
+								singleProgramJson = {};
+								singleRecordedGroupJson = {};
+								singleRecordedTitleJson = {};
+								
+								for(var l = 0; l < singleProgramNode.childNodes.length; l++) {
+									//if(debug) this.log('singleProgramChildNode.nodeName: '+singleProgramChildNode.nodeName);
+								
+									singleProgramChildNode = singleProgramNode.childNodes[l];
+									
+									switch(singleProgramChildNode.nodeName) {
+										case "StartTime":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.starttime = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "EndTime":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.endtime = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Title":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.title = singleProgramChildNode.childNodes[0].nodeValue;
+											if(singleProgramChildNode.childNodes[0]) singleRecordedTitleJson.title = singleProgramChildNode.childNodes[0].nodeValue;
+											if(singleProgramChildNode.childNodes[0]) singleRecordedTitleJson.label = singleProgramChildNode.childNodes[0].nodeValue;
+											
+											break;
+										case "SubTitle":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.subtitle = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Category":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.category = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "CatType":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.cattype = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Repeat":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.repeat = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "SeriesId":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.seriesid = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "ProgramId":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.programid = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Stars":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.stars = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "FileSize":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.filesize = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "LastModified":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.lastmodified = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "ProgramFlags":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.programflags = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Hostname":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.hostname = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Airdate":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.airdate = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "#text":
+											singleProgramJson.description = singleProgramChildNode.nodeValue;
+											break;
+										case "Inetref":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.inetref = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Season":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.season = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Episode":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.episode = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+											
+										case "Channel":
+											for(var m = 0; m < singleProgramChildNode.childNodes.length; m++) {
+												singleProgramChannelChildNode = singleProgramChildNode.childNodes[m];
+												//if(debug) this.log('singleProgramChannelChildNode.nodeName: '+singleProgramChannelChildNode.nodeName);
+												
+												switch(singleProgramChannelChildNode.nodeName) {
+													case "ChanId":
+														if(singleProgramChannelChildNode.childNodes[0]) singleProgramJson.chanid = singleProgramChannelChildNode.childNodes[0].nodeValue;
+														break;
+													case "ChanNum":
+														if(singleProgramChannelChildNode.childNodes[0]) singleProgramJson.channum = singleProgramChannelChildNode.childNodes[0].nodeValue;
+														break;
+													case "CallSign":
+														if(singleProgramChannelChildNode.childNodes[0]) singleProgramJson.callsign = singleProgramChannelChildNode.childNodes[0].nodeValue;
+														break;
+													case "ChannelName":
+														if(singleProgramChannelChildNode.childNodes[0]) singleProgramJson.channame = singleProgramChannelChildNode.childNodes[0].nodeValue;
+														break;
+												}
+											}
+											break;
+										case "Recording":
+											for(var m = 0; m < singleProgramChildNode.childNodes.length; m++) {
+												singleProgramRecordingChildNode = singleProgramChildNode.childNodes[m];
+												//if(debug) this.log('singleProgramRecordingChildNode.nodeName: '+singleProgramRecordingChildNode.nodeName);
+												
+												switch(singleProgramRecordingChildNode.nodeName) {
+													case "Status":
+														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.recstatus = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														break;
+													case "StartTs":
+														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.recstartts = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														break;
+													case "EndTs":
+														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.recendts = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														break;
+													case "RecordId":
+														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.recordid = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														break;
+													case "RecGroup":
+														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.recgroup = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														if(singleProgramRecordingChildNode.childNodes[0]) singleRecordedTitleJson.group = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														if(singleProgramRecordingChildNode.childNodes[0]) singleRecordedGroupJson.label = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														if(singleProgramRecordingChildNode.childNodes[0]) singleRecordedGroupJson.caption = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														if(singleProgramRecordingChildNode.childNodes[0]) singleRecordedGroupJson.group = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														break;
+													case "RecType":
+														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.rectype = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														break;
+												}
+											}
+											break;
+											
+										default:
+											if(debug) this.log('unknown singleProgramChildNode.nodeName: '+singleProgramChildNode.nodeName);
+											break;
+									}		
+								}
+										
+								
+								if(singleProgramJson.title == null) singleProgramJson.title = "[Unknown - Blank]";
+								if(singleProgramJson.subtitle == null) singleProgramJson.subtitle = "";
+								if(singleProgramJson.description == null) singleProgramJson.description = "";
+								
+								if(singleRecordedTitleJson.title == null) singleRecordedTitleJson.title = "[Unknown - Blank]";
+								if(singleRecordedTitleJson.label == null) singleRecordedTitleJson.label = "[Unknown - Blank]";
+								
+								this.fullResultList.push(singleProgramJson);
+								this.fullGroupsList.push(singleRecordedGroupJson);
+								this.fullTitlesList.push(singleRecordedTitleJson);
+
+								//this.log("Program json is ", enyo.json.stringify(singleProgramJson));
+									
+								
+							}
+						}
+				}
+			}
+		} catch(e) {
+			this.error(e);
+		}
+		
+		//this.log("this.fullTitlesList: ",enyo.json.stringify(this.fullTitlesList));
+		
+		this.groupsList = cleanTitleList(this.fullGroupsList,"");
+		this.groupsList.splice(0,0,{label: "All", group: "", value: "", caption: "All"});
+		
+		this.titlesList = cleanTitleList(this.fullTitlesList,WebMyth.prefsCookie.recGroup);
+		
+		if(debug) this.log("completed recorded XML parsing with "+this.fullResultList.length+" total items");
+		
+		this.$.errorMessage.setContent("");
+		
+		this.leftRevealTop();
+		
+		this.finishedGettingRecorded();
+	},
+	recorded25Failure: function(inSender, inResponse) {
+		this.error("recorded25Failure");
 		
 		this.$.errorMessage.setContent("ERROR: Failed to get list of recorded programs from backend at '"+WebMyth.prefsCookie.masterBackendIp+"'");
 		

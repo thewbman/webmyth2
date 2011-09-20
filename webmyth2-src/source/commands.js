@@ -682,7 +682,7 @@ var recstatusDecode = function(recstatusInt) {
 				newStatusText = $L("Will Record");
 			break;
 			case 0:		
-				newStatusText = $L("Unknown");
+				newStatusText = " "+$L("No matching recording rule");
 			break;
 			case 1:		
 				newStatusText = $L("Force Don't Record");
