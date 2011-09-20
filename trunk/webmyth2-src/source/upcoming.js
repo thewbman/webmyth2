@@ -53,6 +53,8 @@ enyo.kind({ name: "upcoming",
 			
 			{name: "getUpcomingService", kind: "WebService", handleAs: "json", onSuccess: "upcomingResponse", onFailure: "upcomingFailure"},
 			{name: "getProgramDetailsService", kind: "WebService", handleAs: "xml", onSuccess: "getProgramDetailsResponse", onFailure: "getProgramDetailsFailure"},
+			{name: "getProgramDetails25Service", kind: "WebService", handleAs: "xml", onSuccess: "getProgramDetails25Response", onFailure: "getProgramDetailsFailure"},
+			
 			{name: "getPeopleService", kind: "WebService", handleAs: "json", onSuccess: "peopleResponse", onFailure: "peopleFailure"},
 			
 			{name: "loadingPopup", kind: "Popup", scrim: true, dismissWithClick: true, dismissWithEscape: true, components: [
@@ -1132,8 +1134,14 @@ enyo.kind({ name: "upcoming",
 			this.$.rightDetailsChannelIcon.hide();
 			this.$.detailsSpinner.show();
 			
-			this.$.getProgramDetailsService.setUrl(requestUrl);
-			this.$.getProgramDetailsService.call();
+			if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
+				//this.$.getProgramDetails25Service.setUrl("http://192.168.1.105/dropbox/GetProgramDetails.xml");
+				this.$.getProgramDetails25Service.setUrl(requestUrl);
+				this.$.getProgramDetails25Service.call();
+			} else {
+				this.$.getProgramDetailsService.setUrl(requestUrl);
+				this.$.getProgramDetailsService.call();
+			}
 			
 			if(WebMyth.prefsCookie.showChannelIcons) {
 			
@@ -1330,7 +1338,147 @@ enyo.kind({ name: "upcoming",
 		}
 		
 		this.detailsProgram = s;
-		var row = s;
+		
+		this.updateDetails();
+		
+	},
+	getProgramDetails25Response: function(inSender, inResponse) {
+		if(debug) this.log("getProgramDetails25Response");
+		
+		var xmlobject = inResponse;
+		
+			
+		//Local variables
+		var topNode, topSingleNode;
+		var channelChildNode, recordingChildNode;
+		
+		
+		var s = {};
+		
+		//Start parsing
+		topNode = xmlobject.getElementsByTagName("Program")[0];
+		for(var i = 0; i < topNode.childNodes.length; i++) {
+			topSingleNode = topNode.childNodes[i];
+			switch(topSingleNode.nodeName) {
+				case 'StartTime':
+					if(topSingleNode.childNodes[0]) s.starttime = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'EndTime':
+					if(topSingleNode.childNodes[0]) s.endtime = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'Title':
+					if(topSingleNode.childNodes[0]) s.title = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'SubTitle':
+					if(topSingleNode.childNodes[0]) s.subtitle = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'Category':
+					if(topSingleNode.childNodes[0]) s.category = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'CatType':
+					if(topSingleNode.childNodes[0]) s.cattype = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'Repeat':
+					if(topSingleNode.childNodes[0]) s.repeat = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'SeriesId':
+					if(topSingleNode.childNodes[0]) s.seriesid = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'ProgramId':
+					if(topSingleNode.childNodes[0]) s.programid = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'Airdate':
+					if(topSingleNode.childNodes[0]) s.airdate = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case "#text":
+					s.description = topSingleNode.nodeValue;
+					break;
+				case "Channel":
+					for(var j = 0; j < topSingleNode.childNodes.length; j++) {
+						channelChildNode = topSingleNode.childNodes[j];
+						
+						switch(channelChildNode.nodeName) {
+							case "ChanId":
+								if(channelChildNode.childNodes[0]) s.chanid = channelChildNode.childNodes[0].nodeValue;
+								break;
+							case "ChanNum":
+								if(channelChildNode.childNodes[0]) s.channum = channelChildNode.childNodes[0].nodeValue;
+								if(channelChildNode.childNodes[0]) s.channumInt = parseInt(channelChildNode.childNodes[0].nodeValue);
+								break;
+							case "CallSign":
+								if(channelChildNode.childNodes[0]) s.callsign = channelChildNode.childNodes[0].nodeValue;
+								break;
+							case "ChannelName":
+								if(channelChildNode.childNodes[0]) s.channame = channelChildNode.childNodes[0].nodeValue;
+								break;
+						}
+					}
+					break;
+					
+				case "Recording":
+					for(var j = 0; j < topSingleNode.childNodes.length; j++) {
+						recordingChildNode = topSingleNode.childNodes[j];
+						
+						switch(recordingChildNode.nodeName) {
+							case "Status":
+								if(recordingChildNode.childNodes[0]) s.recstatus = parseInt(recordingChildNode.childNodes[0].nodeValue);
+								if(recordingChildNode.childNodes[0]) s.recstatustext = recstatusDecode(recordingChildNode.childNodes[0].nodeValue);
+								break;
+							case "Priority":
+								if(recordingChildNode.childNodes[0]) s.recpriority = recordingChildNode.childNodes[0].nodeValue;
+								break;
+							case "StartTs":
+								if(recordingChildNode.childNodes[0]) s.recstartts = recordingChildNode.childNodes[0].nodeValue;
+								break;
+							case "EndTs":
+								if(recordingChildNode.childNodes[0]) s.recendts = recordingChildNode.childNodes[0].nodeValue;
+								break;
+							case "RecordId":
+								if(recordingChildNode.childNodes[0]) s.recordid = recordingChildNode.childNodes[0].nodeValue;
+								break;
+						}
+					}
+					break;
+					
+			}
+		}
+			
+		if(s.title == null) s.title = "";
+		if(s.subtitle == null) s.subtitle = "";
+		if(s.description == null) s.description = "";
+		
+		if(s.recstatus == 0) s.recordid = null;
+		if(s.recstatustext == null) s.recstatustext = recstatusDecode(-20);
+					
+		
+		
+		if(debug) this.log("full guide details json is: ", enyo.json.stringify(s)); 
+					
+		this.detailsProgram = s;
+		
+		this.updateDetails();
+		
+	},
+	getProgramDetailsFailure: function(inSender, inResponse) {
+		this.error("getProgramDetailsFailure");
+		
+		this.$.detailsSpinner.hide();
+		
+		if(WebMyth.prefsCookie.showChannelIcons) {
+			this.$.rightDetailsChannelIcon.show();		
+			this.$.rightDetailsChannelIconWrapper.show();
+		} else {
+			this.$.rightDetailsChannelIconWrapper.hide();
+		}
+		
+		this.bannerMessage("ERROR: Failed to get program details from backend at '"+WebMyth.prefsCookie.masterBackendIp+"'");
+
+	},
+	updateDetails: function() {
+		if(debug) this.log("updateDetails");
+		
+		
+		var row = this.detailsProgram;
 		
 		
 		var nowDate = new Date();
@@ -1368,22 +1516,6 @@ enyo.kind({ name: "upcoming",
 		} else {
 			this.$.rightDetailsChannelIconWrapper.hide();
 		}
-		
-	},
-	getProgramDetailsFailure: function(inSender, inResponse) {
-		this.error("getProgramDetailsFailure");
-		
-		this.$.detailsSpinner.hide();
-		
-		if(WebMyth.prefsCookie.showChannelIcons) {
-			this.$.rightDetailsChannelIcon.show();		
-			this.$.rightDetailsChannelIconWrapper.show();
-		} else {
-			this.$.rightDetailsChannelIconWrapper.hide();
-		}
-		
-		this.bannerMessage("ERROR: Failed to get program details from backend at '"+WebMyth.prefsCookie.masterBackendIp+"'");
-
 	},
 	getPeople: function() {
 		if(debug) this.log("getPeople");

@@ -54,7 +54,11 @@ enyo.kind({ name: "guide",
 	components: [
 			
 			{name: "getGuideService", kind: "WebService", handleAs: "xml", onSuccess: "getGuideResponse", onFailure: "getGuideFailure"},
+			{name: "getGuide25Service", kind: "WebService", handleAs: "xml", onSuccess: "getGuide25Response", onFailure: "getGuide25Failure"},
+			
 			{name: "getProgramDetailsService", kind: "WebService", handleAs: "xml", onSuccess: "getProgramDetailsResponse", onFailure: "getProgramDetailsFailure"},
+			{name: "getProgramDetails25Service", kind: "WebService", handleAs: "xml", onSuccess: "getProgramDetails25Response", onFailure: "getProgramDetailsFailure"},
+			
 			{name: "getPeopleService", kind: "WebService", handleAs: "json", onSuccess: "peopleResponse", onFailure: "peopleFailure"},
 			
 			{name: "loadingPopup", kind: "Popup", scrim: true, dismissWithClick: true, dismissWithEscape: true, components: [
@@ -1111,9 +1115,14 @@ enyo.kind({ name: "guide",
 		
 		if(debug) this.log("guide requestUrl :"+requestUrl);
 		
-		this.$.getGuideService.setUrl(requestUrl);
-		this.$.getGuideService.call();
-		
+		if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
+			//this.$.getGuide25Service.setUrl("http://192.168.1.105/dropbox/GetProgramGuide.xml");
+			this.$.getGuide25Service.setUrl(requestUrl);
+			this.$.getGuide25Service.call();
+		} else {
+			this.$.getGuideService.setUrl(requestUrl);
+			this.$.getGuideService.call();
+		}
 		
 	},
 	getGuideResponse: function(inSender, inResponse) {
@@ -1325,6 +1334,237 @@ enyo.kind({ name: "guide",
 	},
 	getGuideFailure: function(inSender, inResponse) {
 		this.error("getGuideFailure");
+		
+		this.$.errorMessage.setContent("ERROR: Failed to get list of upcoming programs from backend at '"+WebMyth.prefsCookie.masterBackendIp+"'");
+		
+		this.finishedGettingGuide();
+	},
+	getGuide25Response: function(inSender, inResponse) {
+		//if(debug) this.log("getGuide25Response: "+enyo.json.stringify(inResponse));
+		if(debug) this.log("getGuide25Response");
+		
+		this.fullResultList.length = 0;
+		
+		var xmlobject = inResponse;
+		
+		//Local variables
+		var topNode, topNodesCount, topSingleNode, channelsNode, programGuideSingleNode;
+		var singleChannelNode, singleChannelChildNode, singleChannelJson;
+		var programsNode, singleProgramNode, singleProgramJson;
+		var singleProgramChildNode, singleRecordingChildNode;
+		//var starttime, endtime, StartChanId, EndChanId, NumOfChannels, Count, AsOf, Version, ProtoVer;
+		var newChannelList = [];
+		
+		
+		//Time used for sorting recent channels
+		var nowTimeJS = new Date();	//defaults to now
+		var nowTimeISO = dateJSToISO(nowTimeJS);
+		
+		
+		var channelCount = 0;
+		var programsList = [];
+		
+		
+		var s = {};
+		
+		
+		if(debug) this.log("About to start parsing guide data");
+		
+		
+		//Start parsing
+		topNode = xmlobject.getElementsByTagName("ProgramGuide")[0];
+		var topNodesCount = topNode.childNodes.length;
+		for(var i = 0; i < topNodesCount; i++) {
+			topSingleNode = topNode.childNodes[i];
+			switch(topSingleNode.nodeName) {
+				case 'StartTime':
+					//starttime = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'EndTime':
+					//endtime = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'StartChanId':
+					//StartChanId = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'EndChanId':
+					//EndChanId = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'NumOfChannels':
+					//NumOfChannels = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'Count':
+					//Count = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'AsOf':
+					//AsOf = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'Version':
+					//Version = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'ProtoVer':
+					var protoVer = topSingleNode.childNodes[0].nodeValue;
+						
+					if(WebMyth.prefsCookie.protoVer != protoVer) WebMyth.prefsCookie.protoVerSubmitted = false;
+						
+					WebMyth.prefsCookie.protoVer = protoVer;
+					break;
+				case 'Channels':
+					
+					if(debug) this.log('Starting to parse Channels node');
+					
+					
+					channelsNode = topSingleNode;
+					for(var j = 0; j < channelsNode.childNodes.length; j++) {
+						programGuideSingleNode = channelsNode.childNodes[j];
+						if(debug) this.log("node name is "+programGuideSingleNode.nodeName);
+						if(programGuideSingleNode.nodeName == 'Channel') {
+							if(debug) this.log('inside channel if');
+							singleChannelNode = programGuideSingleNode;
+							
+							singleChannelJson = {};
+							
+							for(var k = 0; k < singleChannelNode.childNodes.length; k++) {
+								singleChannelChildNode = singleChannelNode.childNodes[k];
+								
+								//if(debug) this.log("singleChannelChildNode.nodeName: "+singleChannelChildNode.nodeName);
+								
+								switch(singleChannelChildNode.nodeName) {
+									case "ChanId":
+										if(singleChannelChildNode.childNodes[0]) singleChannelJson.chanid = singleChannelChildNode.childNodes[0].nodeValue;
+										break;
+									case "ChanNum":
+										if(singleChannelChildNode.childNodes[0]) singleChannelJson.channum = singleChannelChildNode.childNodes[0].nodeValue;
+										if(singleChannelChildNode.childNodes[0]) singleChannelJson.channumInt = parseInt(singleChannelChildNode.childNodes[0].nodeValue);
+										break;	
+									case "ChannelName":
+										if(singleChannelChildNode.childNodes[0]) singleChannelJson.channame = singleChannelChildNode.childNodes[0].nodeValue;
+										break;
+									case "CallSign":
+										if(singleChannelChildNode.childNodes[0]) singleChannelJson.callsign = singleChannelChildNode.childNodes[0].nodeValue;
+										break;
+									case "Programs":
+										for(var l = 0; l < singleChannelChildNode.childNodes.length; l++) {
+											if(singleChannelChildNode.childNodes[l].nodeName == "Program") {
+												singleProgramJson = {};
+												
+												singleProgramNode = singleChannelChildNode.childNodes[l];
+												
+												singleProgramJson.chanid = singleChannelJson.chanid;
+												singleProgramJson.channum = singleChannelJson.channum;
+												singleProgramJson.channumInt = singleChannelJson.channumInt;
+												singleProgramJson.channame = singleChannelJson.channame;
+												singleProgramJson.callsign = singleChannelJson.callsign;
+												
+												singleProgramJson.recpriority = 0;
+												singleProgramJson.recstatus = 0;
+												singleProgramJson.recstartts = "1900-01-01T00:00:00";
+												singleProgramJson.recendts = "1900-01-01T00:00:00";
+												
+												for(var m = 0; m < singleProgramNode.childNodes.length; m++) {
+													singleProgramChildNode = singleProgramNode.childNodes[m];
+													
+													switch(singleProgramChildNode.nodeName) {
+														case "StartTime":
+															if(singleProgramChildNode.childNodes[0]) singleProgramJson.starttime = singleProgramChildNode.childNodes[0].nodeValue;
+															break;
+														case "EndTime":
+															if(singleProgramChildNode.childNodes[0]) singleProgramJson.endtime = singleProgramChildNode.childNodes[0].nodeValue;
+															break;
+														case "Title":
+															if(singleProgramChildNode.childNodes[0]) singleProgramJson.title = singleProgramChildNode.childNodes[0].nodeValue;
+															break;
+														case "Category":
+															if(singleProgramChildNode.childNodes[0]) singleProgramJson.category = singleProgramChildNode.childNodes[0].nodeValue;
+															break;
+														case "CatType":
+															if(singleProgramChildNode.childNodes[0]) singleProgramJson.cattype = singleProgramChildNode.childNodes[0].nodeValue;
+															break;
+														case "Repeat":
+															if(singleProgramChildNode.childNodes[0]) singleProgramJson.repeat = singleProgramChildNode.childNodes[0].nodeValue;
+															break;
+														case "Recording":
+															for(var n = 0; n < singleProgramChildNode.childNodes.length; n++) {
+																singleRecordingChildNode = singleProgramChildNode.childNodes[n];
+																
+																switch(singleRecordingChildNode.nodeName) {
+																	case "Status":
+																		if(singleRecordingChildNode.childNodes[0]) singleProgramJson.recstatus = singleRecordingChildNode.childNodes[0].nodeValue;
+																		break;
+																	case "Priority":
+																		if(singleRecordingChildNode.childNodes[0]) singleProgramJson.recpriority = singleRecordingChildNode.childNodes[0].nodeValue;
+																		break;
+																	case "StartTs":
+																		if(singleRecordingChildNode.childNodes[0]) singleProgramJson.recstartts = singleRecordingChildNode.childNodes[0].nodeValue;
+																		break;
+																	case "EndTs":
+																		if(singleRecordingChildNode.childNodes[0]) singleProgramJson.recendts = singleRecordingChildNode.childNodes[0].nodeValue;
+																		break;
+																}
+															}
+															
+															
+															break;
+													}
+												}
+												
+												singleProgramJson.recstatusText = recstatusDecode(singleProgramJson.recstatus);
+									
+												programsList.push(singleProgramJson);
+											}
+										}
+										break;
+								}
+							}
+								
+							
+							programsList.sort(sort_by("starttime", false));
+							
+							this.fullResultList[channelCount] = programsList.concat([]);
+						
+							programsList.length = 0;
+						
+							channelCount++;
+							
+						}
+					}
+					
+					//if(debug) this.log('Done parsing ProgramGuide');
+					
+					if(debug) this.log("full json is: ", enyo.json.stringify(this.fullResultList));
+					//if(debug) this.log("channels json is %j", this.channelList);
+					
+					/*
+					if((this.channelList.length == 0)&&(newChannelList.length>0)) {
+						if(debug) this.log("Didn't find any channels - adding now");
+						this.channelList = newChannelList;
+						
+						this.channelList.sort(sort_by('channumInt', false));
+						
+						this.updateChannelListCookie();
+						
+					} 
+					
+					if(debug) this.log("Finished updating channels (if needed)");
+					
+					*/
+					
+					
+					break;
+				default:
+					//if(debug) this.log("node name is "+topSingleNode.nodeName);
+					break;
+			}
+		}
+		
+		
+		if(debug) this.log("completed upcoming parsing with "+this.fullResultList.length+" total channels");
+		
+		this.$.errorMessage.setContent("");
+		
+		this.finishedGettingGuide();
+	},
+	getGuide25Failure: function(inSender, inResponse) {
+		this.error("getGuide25Failure");
 		
 		this.$.errorMessage.setContent("ERROR: Failed to get list of upcoming programs from backend at '"+WebMyth.prefsCookie.masterBackendIp+"'");
 		
@@ -1736,9 +1976,14 @@ enyo.kind({ name: "guide",
 			this.$.rightDetailsChannelIcon.hide();
 			this.$.detailsSpinner.show();
 			
-			this.$.getProgramDetailsService.setUrl(requestUrl);
-			this.$.getProgramDetailsService.call();
-			
+			if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
+				//this.$.getProgramDetails25Service.setUrl("http://192.168.1.105/dropbox/GetProgramDetails.xml");
+				this.$.getProgramDetails25Service.setUrl(requestUrl);
+				this.$.getProgramDetails25Service.call();
+			} else {
+				this.$.getProgramDetailsService.setUrl(requestUrl);
+				this.$.getProgramDetailsService.call();
+			}
 			
 			if(WebMyth.prefsCookie.showChannelIcons) {
 		
@@ -1939,7 +2184,148 @@ enyo.kind({ name: "guide",
 		}
 		
 		this.detailsProgram = s;
-		var row = s;
+		
+		this.updateDetails();
+		
+	},
+	getProgramDetails25Response: function(inSender, inResponse) {
+		if(debug) this.log("getProgramDetails25Response");
+		
+		var xmlobject = inResponse;
+		
+			
+		//Local variables
+		var topNode, topSingleNode;
+		var channelChildNode, recordingChildNode;
+		
+		
+		var s = {};
+		
+		//Start parsing
+		topNode = xmlobject.getElementsByTagName("Program")[0];
+		for(var i = 0; i < topNode.childNodes.length; i++) {
+			topSingleNode = topNode.childNodes[i];
+			switch(topSingleNode.nodeName) {
+				case 'StartTime':
+					if(topSingleNode.childNodes[0]) s.starttime = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'EndTime':
+					if(topSingleNode.childNodes[0]) s.endtime = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'Title':
+					if(topSingleNode.childNodes[0]) s.title = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'SubTitle':
+					if(topSingleNode.childNodes[0]) s.subtitle = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'Category':
+					if(topSingleNode.childNodes[0]) s.category = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'CatType':
+					if(topSingleNode.childNodes[0]) s.cattype = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'Repeat':
+					if(topSingleNode.childNodes[0]) s.repeat = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'SeriesId':
+					if(topSingleNode.childNodes[0]) s.seriesid = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'ProgramId':
+					if(topSingleNode.childNodes[0]) s.programid = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'Airdate':
+					if(topSingleNode.childNodes[0]) s.airdate = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case "#text":
+					s.description = topSingleNode.nodeValue;
+					break;
+				case "Channel":
+					for(var j = 0; j < topSingleNode.childNodes.length; j++) {
+						channelChildNode = topSingleNode.childNodes[j];
+						
+						switch(channelChildNode.nodeName) {
+							case "ChanId":
+								if(channelChildNode.childNodes[0]) s.chanid = channelChildNode.childNodes[0].nodeValue;
+								break;
+							case "ChanNum":
+								if(channelChildNode.childNodes[0]) s.channum = channelChildNode.childNodes[0].nodeValue;
+								if(channelChildNode.childNodes[0]) s.channumInt = parseInt(channelChildNode.childNodes[0].nodeValue);
+								break;
+							case "CallSign":
+								if(channelChildNode.childNodes[0]) s.callsign = channelChildNode.childNodes[0].nodeValue;
+								break;
+							case "ChannelName":
+								if(channelChildNode.childNodes[0]) s.channame = channelChildNode.childNodes[0].nodeValue;
+								break;
+						}
+					}
+					break;
+					
+				case "Recording":
+					for(var j = 0; j < topSingleNode.childNodes.length; j++) {
+						recordingChildNode = topSingleNode.childNodes[j];
+						
+						switch(recordingChildNode.nodeName) {
+							case "Status":
+								if(recordingChildNode.childNodes[0]) s.recstatus = parseInt(recordingChildNode.childNodes[0].nodeValue);
+								if(recordingChildNode.childNodes[0]) s.recstatustext = recstatusDecode(recordingChildNode.childNodes[0].nodeValue);
+								break;
+							case "Priority":
+								if(recordingChildNode.childNodes[0]) s.recpriority = recordingChildNode.childNodes[0].nodeValue;
+								break;
+							case "StartTs":
+								if(recordingChildNode.childNodes[0]) s.recstartts = recordingChildNode.childNodes[0].nodeValue;
+								break;
+							case "EndTs":
+								if(recordingChildNode.childNodes[0]) s.recendts = recordingChildNode.childNodes[0].nodeValue;
+								break;
+							case "RecordId":
+								if(recordingChildNode.childNodes[0]) s.recordid = recordingChildNode.childNodes[0].nodeValue;
+								break;
+						}
+					}
+					break;
+				
+			}
+		}
+			
+		if(s.title == null) s.title = "";
+		if(s.subtitle == null) s.subtitle = "";
+		if(s.description == null) s.description = "";
+		
+		if(s.recstatus == 0) s.recordid = null;
+		if(s.recstatustext == null) s.recstatustext = recstatusDecode(-20);
+					
+		
+		
+		if(debug) this.log("full guide details json is: ", enyo.json.stringify(s)); 
+					
+		this.detailsProgram = s;
+		
+		this.updateDetails();
+		
+		
+		
+	},
+	getProgramDetailsFailure: function(inSender, inResponse) {
+		this.error("getProgramDetailsFailure");
+		
+		this.$.detailsSpinner.hide();
+		
+		if(WebMyth.prefsCookie.showChannelIcons) {
+			this.$.rightDetailsChannelIcon.show();		
+			this.$.rightDetailsChannelIconWrapper.show();
+		} else {
+			this.$.rightDetailsChannelIconWrapper.hide();
+		}
+		
+		this.bannerMessage("ERROR: Failed to get program details from backend at '"+WebMyth.prefsCookie.masterBackendIp+"'");
+
+	},
+	updateDetails: function() {
+		if(debug) this.log("updateDetails");
+		
+		var row = this.detailsProgram;
 		
 		
 		var nowDate = new Date();
@@ -1977,22 +2363,6 @@ enyo.kind({ name: "guide",
 		} else {
 			this.$.rightDetailsChannelIconWrapper.hide();
 		}
-		
-	},
-	getProgramDetailsFailure: function(inSender, inResponse) {
-		this.error("getProgramDetailsFailure");
-		
-		this.$.detailsSpinner.hide();
-		
-		if(WebMyth.prefsCookie.showChannelIcons) {
-			this.$.rightDetailsChannelIcon.show();		
-			this.$.rightDetailsChannelIconWrapper.show();
-		} else {
-			this.$.rightDetailsChannelIconWrapper.hide();
-		}
-		
-		this.bannerMessage("ERROR: Failed to get program details from backend at '"+WebMyth.prefsCookie.masterBackendIp+"'");
-
 	},
 	getPeople: function() {
 		if(debug) this.log("getPeople");

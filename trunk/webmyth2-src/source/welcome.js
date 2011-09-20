@@ -361,7 +361,7 @@ enyo.kind({ name: "welcome",
 			} else if(s.value == "UserJobDesc3") {
 				WebMyth.prefsCookie.UserJobDesc3 = s.data;
 			} else if(s.value == "UserJobDesc4") {
-				WebMyth.prefsCookie.UserJobDesc3 = s.data;
+				WebMyth.prefsCookie.UserJobDesc4 = s.data;
 			} else if(s.value == "DBSchemaVer") {
 				WebMyth.prefsCookie.DBSchemaVer = s.data;
 			} else if(s.value == "MasterServerIP") {

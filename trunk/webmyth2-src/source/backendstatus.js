@@ -423,10 +423,18 @@ enyo.kind({ name: "backendstatus",
 		
 		var requestUrl = "";
 		
-		if(WebMyth.prefsCookie.mythwebXml) {
+		if(false) {
+		
+			requestUrl += "http://192.168.1.105/dropbox/GetStatus.xml";
+			
+		} else if(WebMyth.prefsCookie.mythwebXml) {
 			
 			requestUrl += "http://"+WebMyth.prefsCookie.webserverName+"/mythweb/mythxml/xml?MythXMLKey=";
 			requestUrl += WebMyth.prefsCookie.MythXML_key;
+			
+		} else if(WebMyth.prefsCookie.DBSchemaVer > 1269){
+			
+			requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Status/GetStatus";
 			
 		} else {
 			
