@@ -1,0 +1,16 @@
+Todo:
+ - searchtitle/people carousels
+ - music carousel
+ - skip the/a/an sort
+ - sort lists
+ - search guide
+ - guide recent/favorite channels
+ - searchPeople video match - do sort/details
+ - more g11n formating date/time?
+ - filter search people
+ - fix exhibition mode
+ - dashboard remote
+ - note remote setup in preferences
+ 
+ 
+ - new XML - https://github.com/MythTV/mythtv/commit/856b61b5378c4b6d8bd60638f86606e7603654ef  use DBschemever >1269
