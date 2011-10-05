@@ -22,6 +22,8 @@ enyo.depends(
 		
 	"source/findbackends.js",
 	
+	"source/dashboardkind.js",
+	
 	"source/Base64.js",
 	"source/htmlEncode.js",
 	

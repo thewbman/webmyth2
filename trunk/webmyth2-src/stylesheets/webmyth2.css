@@ -1090,3 +1090,79 @@
 .upcomingRecordingWrapper{
 	text-align: center;
 }
+
+
+.Dashboardkind {
+	background-color: #353233;
+	color: white;
+}
+
+.Dashboardkind .dashboardPane{
+	margin-top: -20px;
+	padding-top: -10px;
+}
+
+.Dashboardkind .dashboardButton{
+	height: 30px;
+	min-width: 40px;
+	margin: -12px 2px 2px 2px;
+	padding: 6px 0px;
+	
+    border-style: solid;
+    border-color: #000000;
+	border-radius: 4px;
+	border-width: 1px;
+
+	text-align: center;
+	vertical-align: middle;
+}
+
+.Dashboardkind .dashboardButton.dashboardText{
+	padding: 10px 0px 2px 0px; 
+}
+
+.Dashboardkind .dashboardButton.dashboardLeft {
+	background: url('../images/left-30x30.png') center center no-repeat; 
+}
+
+.Dashboardkind .dashboardButton.dashboardRight {
+	background: url('../images/right-30x30.png') center center no-repeat; 
+}
+
+.Dashboardkind .dashboardButton.dashboardUp {
+	background: url('../images/up-30x30.png') center center no-repeat; 
+}
+
+.Dashboardkind .dashboardButton.dashboardDown {
+	background: url('../images/down-30x30.png') center center no-repeat; 
+}
+
+.Dashboardkind .dashboardButton.dashboardBack {
+	background: url('../images/jumpback-30x30.png') center center no-repeat; 
+	width: 53px;
+}
+
+.Dashboardkind .dashboardButton.dashboardForward {
+	background: url('../images/jumpforward-30x30.png') center center no-repeat; 
+	width: 53px;
+}
+
+.Dashboardkind .dashboardButton.dashboardPause {
+	background: url('../images/pause-30x30.png') center center no-repeat; 
+	width: 53px;
+}
+
+.Dashboardkind .dashboardButton.dashboardMute {
+	background: url('../images/mute-30x30.png') center center no-repeat;
+	width: 53px; 
+}
+
+.Dashboardkind .dashboardButton.dashboardVolup {
+	background: url('../images/volup-30x30.png') center center no-repeat;
+	width: 53px; 
+}
+
+.Dashboardkind .dashboardButton.dashboardVoldown {
+	background: url('../images/voldown-30x30.png') center center no-repeat; 
+	width: 53px;
+}

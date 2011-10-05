@@ -1,4 +1,22 @@
-/* adsf*/
+/*
+ *   WebMyth2 - A webOS app for controlling a MythTV frontend on tablets. 
+ *   http://code.google.com/p/webmyth2/
+ *   Copyright (C) 2011  Wes Brown
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License along
+ *   with this program; if not, write to the Free Software Foundation, Inc.,
+ *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
 
 WebMyth = {};
 
@@ -26,7 +44,7 @@ enyo.kind({
 	pluginIsReady: false,
 		
 	components: [
-		{kind: "ApplicationEvents", onLoad: "appLoaded", onUnload: "appUnloaded", onError: "appError", onWindowActivated: "windowActivated", onWindowDeactivated: "windowDeactivated", onKeyup: "keypressHandler", onKeydown: "keypressHandler", onKeypress: "keypressHandler", onBack: "backHandler"},
+		{kind: "ApplicationEvents", onLoad: "appLoaded", onUnload: "appUnloaded", onError: "appError", onWindowActivated: "windowActivated", onWindowDeactivated: "windowDeactivated", onKeyup: "keypressHandler", onKeydown: "keypressHandler", onKeypress: "keypressHandler", onBack: "backHandler", onWindowParamsChange: "windowParamsChangeHandler"},
 		
 		{name: "plugin", kind: "enyo.Hybrid", executable: "webmyth_service", onPluginReady: "pluginReady", onPluginConnected: "pluginConnected", onPluginDisconnected: "pluginDisconnected"},
 		
@@ -139,6 +157,7 @@ enyo.kind({
 			WebMyth.prefsCookie = enyo.json.parse(WebMyth.prefsCookieString);
 			
 			if(WebMyth.prefsCookie.DBSchemaVer == null) WebMyth.prefsCookie.DBSchemaVer = 0;
+			if(WebMyth.prefsCookie.ignoreArticlesSort == null) WebMyth.prefsCookie.ignoreArticlesSort = true;
 			
 			if(WebMyth.prefsCookie.allowMetrix) setTimeout(enyo.bind(this,"submitMetrix"),500);
 			
@@ -175,6 +194,12 @@ enyo.kind({
 		WebMyth.fulldateFormatter = new enyo.g11n.DateFmt("MMM d, yyyy");
 		WebMyth.datetimeFormatter = new enyo.g11n.DateFmt("MMM d, yyyy HH:mm");
 		WebMyth.locale = enyo.g11n.currentLocale();
+		
+		if(WebMyth.prefsCookie.ignoreArticlesSort) {
+			WebMyth.primer = ignoreArticlesFunction;
+		} else {
+			WebMyth.primer = sameFunction;
+		}
 		
 		setTimeout(enyo.bind(this,"activate"),1);
 	
@@ -815,6 +840,12 @@ enyo.kind({
 	},
 	appUnloaded: function() {
 		if(debug) this.log("appUnloaded");
+		
+		try {
+			this.dashWindow.close();
+		} catch(e) {
+			if(debug) this.log(e);
+		}
 	},
 	appError: function() {
 		if(debug) this.log("appError");
@@ -823,11 +854,19 @@ enyo.kind({
 		if(debug) this.log("windowActivated");
 		
 		this.$[this.currentPane].activate(this.viewMode);
+		
+		try {
+			this.dashWindow.close();
+		} catch(e) {
+			if(debug) this.log(e);
+		}
 	},
 	windowDeactivated: function() {
 		if(debug) this.log("windowDeactivated");
 		
 		this.$[this.currentPane].deactivate(this.viewMode);
+		
+		if((WebMyth.prefsCookie.remoteDashboard)&&(WebMyth.prefsCookie.frontends[WebMyth.prefsCookie.frontendIndex])) this.dashWindow = enyo.windows.openDashboard("dashboard.html", "dashWindowName", WebMyth.prefsCookie, {clickableWhenLocked: true});
 		
 		//if(this.appMode == "exhibition") window.close();
 	},
@@ -908,6 +947,20 @@ enyo.kind({
 		};
 		
 		return true;
+	},
+	windowParamsChangeHandler: function() {
+		if(debug) this.log("main windowParamsChangeHandler: "+enyo.json.stringify(enyo.windowParams))
+		
+		if(enyo.windowParams.dashboardRemoteIndex) {
+			WebMyth.prefsCookie.dashboardRemoteIndex = enyo.windowParams.dashboardRemoteIndex;
+			this.savePreferences();
+		} else if(enyo.windowParams.remoteJump) {
+			this.$.remote.sendJump(enyo.windowParams.remoteJump);
+			this.$.remote.dashboardDisconnect();
+		} else if(enyo.windowParams.remoteKey) {
+			this.$.remote.sendKey(enyo.windowParams.remoteKey);
+			this.$.remote.dashboardDisconnect();
+		}
 	},
 	resizeHandler: function() {
 		if(debug) this.log("doing resize to "+document.body.clientWidth+"x"+document.body.clientHeight);
