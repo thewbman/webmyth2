@@ -1,4 +1,22 @@
-/* adsf*/
+/*
+ *   WebMyth2 - A webOS app for controlling a MythTV frontend on tablets. 
+ *   http://code.google.com/p/webmyth2/
+ *   Copyright (C) 2011  Wes Brown
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License along
+ *   with this program; if not, write to the Free Software Foundation, Inc.,
+ *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
 
 
 
@@ -39,6 +57,9 @@ enyo.kind({ name: "preferences",
 				]},
 				{name: "imagesMenu", kind: "HFlexBox", align: "center", pack: "center", className: "menuItem", flex: 1, onclick: "selectMenuButton", components: [
 					{content: $L("Images")},
+				]},
+				{name: "sortMenu", kind: "HFlexBox", align: "center", pack: "center", className: "menuItem", flex: 1, onclick: "selectMenuButton", components: [
+					{content: $L("Sort")},
 				]},
 				{name: "remoteMenu", kind: "HFlexBox", align: "center", pack: "center", className: "menuItem", flex: 1, onclick: "selectMenuButton", components: [
 					{content: $L("Remote")},
@@ -171,6 +192,12 @@ enyo.kind({ name: "preferences",
 							{name: "forceScriptScreenshots", kind: "ToggleButton"},
 						]},
 					]},
+					{name: "sortRowGroup", kind: "RowGroup", caption: "Sort", components: [
+						{kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+							{content: "Ignore 'a', 'an', 'the' when sorting", flex: 1},
+							{name: "ignoreArticlesSort", kind: "ToggleButton"},
+						]},	
+					]},	
 					{name: "remoteRowGroup", kind: "RowGroup", caption: "Remote", components: [
 						{kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
 							{name: "remoteHeader", kind: "ListSelector", label: "Remote Header", flex: 1, items: [
@@ -195,7 +222,7 @@ enyo.kind({ name: "preferences",
 							{content: "Start remote after LiveTV start", flex: 1},
 							{name: "livetvJumpRemote", kind: "ToggleButton"},
 						]},
-						{kind: "Item", showing: false, align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+						{kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
 							{content: "Dashboard Remote", flex: 1},
 							{name: "remoteDashboard", kind: "ToggleButton"},
 						]},
@@ -260,6 +287,7 @@ enyo.kind({ name: "preferences",
 		this.$.mysqlMenu.removeClass("selected");
 		this.$.webserverMenu.removeClass("selected");
 		this.$.imagesMenu.removeClass("selected");
+		this.$.sortMenu.removeClass("selected");
 		this.$.remoteMenu.removeClass("selected");
 		this.$.orientationMenu.removeClass("selected");
 		this.$.metrixMenu.removeClass("selected");
@@ -269,6 +297,7 @@ enyo.kind({ name: "preferences",
 		this.$.databaseRowGroup.show();
 		this.$.webserverRowGroup.show();
 		this.$.imagesRowGroup.show();
+		this.$.sortRowGroup.show();
 		this.$.remoteRowGroup.show();
 		this.$.orientationRowGroup.show();
 		this.$.metrixRowGroup.show();
@@ -299,6 +328,8 @@ enyo.kind({ name: "preferences",
 		this.$.showVideoListImages.setState(WebMyth.prefsCookie.showVideoListImages);
 		this.$.showVideoDetailsImage.setState(WebMyth.prefsCookie.showVideoDetailsImage);
 		this.$.forceScriptScreenshots.setState(WebMyth.prefsCookie.forceScriptScreenshots);
+		
+		this.$.ignoreArticlesSort.setState(WebMyth.prefsCookie.ignoreArticlesSort);
 		
 		this.$.remoteHeader.setValue(WebMyth.prefsCookie.remoteHeader);
 		this.$.remoteVibrate.setState(WebMyth.prefsCookie.remoteVibrate);
@@ -378,6 +409,7 @@ enyo.kind({ name: "preferences",
 		this.$.mysqlMenu.removeClass("selected");
 		this.$.webserverMenu.removeClass("selected");
 		this.$.imagesMenu.removeClass("selected");
+		this.$.sortMenu.removeClass("selected");
 		this.$.remoteMenu.removeClass("selected");
 		this.$.orientationMenu.removeClass("selected");
 		this.$.metrixMenu.removeClass("selected");
@@ -387,6 +419,7 @@ enyo.kind({ name: "preferences",
 		this.$.databaseRowGroup.hide();
 		this.$.webserverRowGroup.hide();
 		this.$.imagesRowGroup.hide();
+		this.$.sortRowGroup.hide();
 		this.$.remoteRowGroup.hide();
 		this.$.orientationRowGroup.hide();
 		this.$.metrixRowGroup.hide();
@@ -401,6 +434,7 @@ enyo.kind({ name: "preferences",
 				this.$.databaseRowGroup.show();
 				this.$.webserverRowGroup.show();
 				this.$.imagesRowGroup.show();
+				this.$.sortRowGroup.show();
 				this.$.remoteRowGroup.show();
 				this.$.orientationRowGroup.show();
 				this.$.metrixRowGroup.show();
@@ -426,6 +460,11 @@ enyo.kind({ name: "preferences",
 				this.$.imagesMenu.addClass("selected");
 				
 				this.$.imagesRowGroup.show();
+				break;
+			case "sort":
+				this.$.sortMenu.addClass("selected");
+				
+				this.$.sortRowGroup.show();
 				break;
 			case "remote":
 				this.$.remoteMenu.addClass("selected");
@@ -550,6 +589,8 @@ enyo.kind({ name: "preferences",
 		WebMyth.prefsCookie.showVideoDetailsImage = this.$.showVideoDetailsImage.getState();
 		WebMyth.prefsCookie.forceScriptScreenshots = this.$.forceScriptScreenshots.getState();
 		
+		WebMyth.prefsCookie.ignoreArticlesSort = this.$.ignoreArticlesSort.getState();
+		
 		WebMyth.prefsCookie.remoteHeader = this.$.remoteHeader.getValue();
 		WebMyth.prefsCookie.remoteVibrate = this.$.remoteVibrate.getState();
 		WebMyth.prefsCookie.remoteFullscreen = this.$.remoteFullscreen.getState();
@@ -575,6 +616,12 @@ enyo.kind({ name: "preferences",
 		} else {
 			WebMyth.useScript = false;
 			WebMyth.useScriptRemote = false;
+		}
+		
+		if(WebMyth.prefsCookie.ignoreArticlesSort) {
+			WebMyth.primer = ignoreArticlesFunction;
+		} else {
+			WebMyth.primer = sameFunction;
 		}
 		
 		enyo.setAllowedOrientation(WebMyth.prefsCookie.allowedOrientation);	

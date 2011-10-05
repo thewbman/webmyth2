@@ -1,4 +1,22 @@
-/* adsf*/
+/*
+ *   WebMyth2 - A webOS app for controlling a MythTV frontend on tablets. 
+ *   http://code.google.com/p/webmyth2/
+ *   Copyright (C) 2011  Wes Brown
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License along
+ *   with this program; if not, write to the Free Software Foundation, Inc.,
+ *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
 
 
 enyo.kind({ name: "recorded",
@@ -1370,10 +1388,10 @@ enyo.kind({ name: "recorded",
 						
 						//this.log("this.fullTitlesList: ",enyo.json.stringify(this.fullTitlesList));
 						
-						this.groupsList = cleanTitleList(this.fullGroupsList,"");
+						this.groupsList = cleanTitleList(this.fullGroupsList,"", sameFunction);
 						this.groupsList.splice(0,0,{label: "All", group: "", value: "", caption: "All"});
 		
-						this.titlesList = cleanTitleList(this.fullTitlesList,WebMyth.prefsCookie.recGroup);
+						this.titlesList = cleanTitleList(this.fullTitlesList,WebMyth.prefsCookie.recGroup, WebMyth.primer);
 						
 						//if(debug) this.log("fullResultList full json is ", enyo.json.stringify(this.fullResultList));
 						//if(debug) this.log("groupsList full json is ", enyo.json.stringify(this.groupsList));
@@ -1607,10 +1625,10 @@ enyo.kind({ name: "recorded",
 		
 		//this.log("this.fullTitlesList: ",enyo.json.stringify(this.fullTitlesList));
 		
-		this.groupsList = cleanTitleList(this.fullGroupsList,"");
+		this.groupsList = cleanTitleList(this.fullGroupsList,"", sameFunction);
 		this.groupsList.splice(0,0,{label: "All", group: "", value: "", caption: "All"});
 		
-		this.titlesList = cleanTitleList(this.fullTitlesList,WebMyth.prefsCookie.recGroup);
+		this.titlesList = cleanTitleList(this.fullTitlesList,WebMyth.prefsCookie.recGroup, WebMyth.primer);
 		
 		if(debug) this.log("completed recorded XML parsing with "+this.fullResultList.length+" total items");
 		
@@ -1642,7 +1660,7 @@ enyo.kind({ name: "recorded",
 		this.titlesList.length = 0;
 		this.middleResultList.length = 0;
 		
-		this.titlesList = cleanTitleList(this.fullTitlesList,WebMyth.prefsCookie.recGroup);
+		this.titlesList = cleanTitleList(this.fullTitlesList,WebMyth.prefsCookie.recGroup, WebMyth.primer);
 		this.middleResultList = trimList(this.fullResultList,"recgroup",WebMyth.prefsCookie.recGroup);
 		
 		this.$.recGroupSelector.setValue(WebMyth.prefsCookie.recGroup);
@@ -1679,31 +1697,31 @@ enyo.kind({ name: "recorded",
 		
 		switch(sort){
 			case "Category [Asc]":
-				this.resultList.sort(triple_sort_by('category', 'title', 'recstartts', false));
+				this.resultList.sort(triple_sort_by('category', 'title', 'recstartts', false, WebMyth.primer));
 				break;
 			case "Category [Desc]":
-				this.resultList.sort(triple_sort_by('category', 'title', 'recstartts', true));
+				this.resultList.sort(triple_sort_by('category', 'title', 'recstartts', true, WebMyth.primer));
 				break;
 			case "Date [Asc]":
-				this.resultList.sort(double_sort_by('recstartts', 'title', false));
+				this.resultList.sort(double_sort_by('recstartts', 'title', false, WebMyth.primer));
 				break;
 			case "Date [Desc]":
-				this.resultList.sort(double_sort_by('recstartts', 'title', true));
+				this.resultList.sort(double_sort_by('recstartts', 'title', true, WebMyth.primer));
 				break;
 			case "Original Airdate [Asc]":
-				this.resultList.sort(triple_sort_by('airdate', 'title', 'recstartts', false));
+				this.resultList.sort(triple_sort_by('airdate', 'title', 'recstartts', false, WebMyth.primer));
 				break;
 			case "Original Airdate [Desc]":
-				this.resultList.sort(triple_sort_by('airdate', 'title', 'recstartts', true));
+				this.resultList.sort(triple_sort_by('airdate', 'title', 'recstartts', true, WebMyth.primer));
 				break;
 			case "Title [Asc]":
-				this.resultList.sort(double_sort_by('title', 'recstartts', false));
+				this.resultList.sort(double_sort_by('title', 'recstartts', false, WebMyth.primer));
 				break;
 			case "Title [Desc]":
-				this.resultList.sort(double_sort_by('title', 'recstartts', true));
+				this.resultList.sort(double_sort_by('title', 'recstartts', true, WebMyth.primer));
 				break;
 			default: 
-				this.resultList.sort(double_sort_by('recstartts', 'title', true));
+				this.resultList.sort(double_sort_by('recstartts', 'title', true, WebMyth.primer));
 				break;
 
 		}
@@ -1884,16 +1902,16 @@ enyo.kind({ name: "recorded",
 				var b = WebMyth.fulldateFormatter.format(new Date(isoToJS(r1.airdate+"T00:00:00")));
 				break;
 			case "Title [Asc]":
-				var a = r0 && r0.title;
-				var b = r1.title;
+				var a = r0 && WebMyth.primer(r0.title);
+				var b = WebMyth.primer(r1.title);
 				break;
 			case "Title [Desc]":
-				var a = r0 && r0.title;
-				var b = r1.title;
+				var a = r0 && WebMyth.primer(r0.title);
+				var b = WebMyth.primer(r1.title);
 				break;
 			default: 
-				var a = r0 && r0.title;
-				var b = r1.title;
+				var a = r0 && WebMyth.primer(r0.title);
+				var b = WebMyth.primer(r1.title);
 				break;
 
 		}

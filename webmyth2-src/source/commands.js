@@ -1,4 +1,22 @@
-/* adsf*/
+/*
+ *   WebMyth2 - A webOS app for controlling a MythTV frontend on tablets. 
+ *   http://code.google.com/p/webmyth2/
+ *   Copyright (C) 2011  Wes Brown
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License along
+ *   with this program; if not, write to the Free Software Foundation, Inc.,
+ *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
 
 var lotsOfText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sollicitudin malesuada felis quis dapibus. Maecenas ac ipsum at nunc euismod tincidunt. Phasellus laoreet dictum arcu, id cursus lorem malesuada ut. Curabitur ornare, arcu quis hendrerit auctor, ligula purus luctus purus, at fermentum neque orci a velit. In sed sapien diam. Maecenas ut diam non ligula luctus auctor. Donec id urna vel urna tempor accumsan at et justo. Morbi iaculis pharetra neque. Quisque quis porttitor sapien. Duis vulputate ultricies enim, sit amet euismod elit imperdiet id. Morbi nec nisl lacus, sit amet vehicula justo. Nullam iaculis, velit adipiscing varius egestas, turpis purus aliquet augue, eu gravida augue lorem quis purus.Proin commodo egestas dui eget eleifend. Suspendisse potenti. Nulla nec neque ut tortor porttitor semper quis nec sem. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Morbi vehicula purus ut ante placerat accumsan a consectetur tortor. Vestibulum faucibus congue elit non consequat. Ut ultrices suscipit erat id ultrices. Morbi facilisis tempus purus vel malesuada. Vivamus tincidunt, sapien quis tristique adipiscing, risus nisl convallis dui, sit amet pellentesque turpis nunc elementum augue. Nulla facilisis, nulla et accumsan fringilla, dui nunc luctus massa, ut interdum mi urna a nisl.Nullam in mi vel diam posuere gravida at a augue. Aenean gravida, felis ut rutrum sagittis, turpis enim egestas massa, non accumsan velit mi eu lectus. Cras at nisl et mi varius euismod id vitae leo. Suspendisse potenti. Nunc vel tortor urna. Praesent euismod laoreet turpis non dignissim. Curabitur neque sapien, iaculis sed venenatis sed, congue ac lorem. Nam pretium, mi a gravida mollis, dui mi blandit leo, sed ullamcorper nibh lacus id turpis. Quisque at elit tristique diam accumsan aliquet. Proin a orci in arcu sollicitudin gravida a sed lectus. Pellentesque lorem tortor, ultricies in feugiat mattis, dignissim ac nisl. Cras et nulla sit amet velit porttitor blandit at a tellus. In hac habitasse platea dictumst. Integer massa lacus, mattis at pharetra non, pharetra eu massa. Donec dictum justo et tellus pulvinar ac mollis arcu accumsan. Nullam elementum mi eu lacus euismod ultricies tempus arcu vestibulum. Phasellus egestas ullamcorper lorem, eu cursus arcu mollis ut. Phasellus sollicitudin lobortis dui a viverra. Cras sit amet ante ligula, sit amet iaculis urna. Aenean vitae nunc nec orci euismod aliquet et eget enim.Maecenas porttitor nunc eu nisl congue mattis. Nullam vel hendrerit turpis. Praesent posuere consectetur est, quis dignissim ipsum vestibulum ac. Duis quis elit augue. Fusce eleifend, ligula eu aliquam molestie, urna lorem consectetur nisi, consectetur sodales justo nisl iaculis urna. Maecenas sed bibendum velit. Pellentesque faucibus eleifend purus id tempus. Aliquam erat volutpat. Vestibulum eget metus dui, sed pharetra turpis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aliquam erat volutpat. Cras elementum mi fringilla velit fringilla tincidunt.Phasellus volutpat, augue vitae feugiat tempor, turpis velit congue velit, sed ultrices tortor turpis sed libero. Praesent condimentum rutrum metus vel facilisis. Morbi sollicitudin orci et augue pharetra sit amet suscipit orci volutpat. Integer et turpis id mauris volutpat sagittis eu vel risus. Morbi egestas, diam a ultrices consectetur, ligula eros luctus ligula, quis placerat tortor arcu eu mi. Proin vitae enim sed lorem dapibus vestibulum congue ut nulla. Sed eu mauris vitae ante sagittis faucibus. Praesent mi leo, porta blandit interdum vitae, bibendum facilisis dui. Nulla facilisi. Duis quis lacinia libero. Proin vel dolor diam, non dapibus sapien. Integer non porta quam. Nulla viverra urna sit amet urna pulvinar quis faucibus metus posuere. Donec placerat dapibus dui a vehicula.";
 
@@ -92,6 +110,8 @@ function defaultCookie() {
 		
 		DBSchemaVer: 0,
 		
+		ignoreArticlesSort: true,
+		
 	};
 	
 	return newCookieObject;
@@ -182,6 +202,30 @@ var triple_sort_by = function(field1, field2, field3, reverse, primer){
 	   return 0;
 
    }
+};
+
+var ignoreArticlesFunction = function(field){
+
+	var response;
+	
+	if(field.substring(0,4) == "The ") {
+		response = field.substring(4)+", The";
+	} else if(field.substring(0,2) == "A ") {
+		response = field.substring(2)+", A";
+	} else if(field.substring(0,3) == "An ") {
+		response = field.substring(3)+", An";
+	} else {
+		response = field;
+	} 
+	
+	return response;
+
+};
+
+var sameFunction = function(field){
+
+	return field;
+
 };
 
 var guide_sort_by = function(field, reverse, primer){
@@ -290,13 +334,13 @@ var cleanListGroup = function(fullList,filterField,extraField) {
 	
 };
 
-var cleanTitleList = function(fullList, inGroup) {
+var cleanTitleList = function(fullList, inGroup, primer) {
 
 	var finalList = [];
 	
 	var i, j = -1, s = {}, currentLabel = 'asdf', currentGroup = 'asdf';
 	
-	fullList.sort(double_sort_by('label', 'group', false));
+	fullList.sort(double_sort_by('label', 'group', false, primer));
 	
 	//console.log("finished sorting cleanTitleList");
 	
