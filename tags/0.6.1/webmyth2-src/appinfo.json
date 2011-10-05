@@ -1,0 +1,15 @@
+{
+	"title": "WebMyth2",
+	"id": "com.thewbman.webmyth2",
+	"version": "0.6.1",
+	"vendor": "thewbman",
+	"vendor_email": "webmyth.help@gmail.com",
+	"vendor_url": "http://code.google.com/p/webmyth2/",
+	"type": "web",
+	"main": "device.html",
+	"icon": "webmyth2-48x48-2.png",
+	"keywords" : [ "WebMyth2", "video", "audio", "media", "music" ],
+	"dockMode": true,
+	"uiRevision": 2,
+	"plug-ins": true
+}

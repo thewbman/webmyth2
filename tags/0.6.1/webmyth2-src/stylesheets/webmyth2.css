@@ -1,0 +1,1168 @@
+/* General */
+
+.webmyth2 {
+	background-color: #191C26;
+	background-colors: #004A7F;
+}
+
+.welcome,
+.remote,
+.left .enyo-vflexbox,
+.middle .enyo-vflexbox,
+.right .enyo-vflexbox,
+.backendstatus,
+.backendlog,
+.setupschedule,
+.preferences,
+.help,
+.changelog,
+.findbackends {
+	background-color: #191C26;
+	background-image: url("../images/list-bg.png");
+	color: #F2F2F2;
+}
+
+.headerTitle  {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	color: white;
+	text-align: center;
+}
+
+.webmyth2 .enyo-spacer {
+	-webkit-box-flex: 1;
+}
+
+.webmyth2 .enyo-drawer {
+	overflow: visible;
+}
+
+.webmyth2 .enyo-toolbar,
+.guide .left .enyo-toolbar,
+.upcoming .middle .enyo-toolbar,
+.recorded .middle .enyo-toolbar,
+.webmyth2 .middle .enyo-toolbar,
+.music .enyo-toolbar {
+	background-color: #0B0B3B;
+	min-height: 58px;
+}
+
+.recordedCarousel .enyo-toolbar,
+.upcomingCarousel .enyo-toolbar,
+.videoCarousel .enyo-toolbar {
+	background-color: #1d0739;
+}
+
+.leftMenu {
+	background-color: #bbbbbb;
+	z-index: 30;
+	font-size: 14px;
+	text-align: center;
+	width: 124px;
+}
+
+.leftMenu  .menuItem{
+	border-top: thin solid white;
+	border-bottom: thin solid white;
+	flex: 1;
+	color: white;
+	background-color: black;
+	padding: auto;
+}
+
+.leftMenu  .menuItem.selected {
+	color: black;
+	background-color: white;
+}
+
+.webmyth2 .enyo-group.labeled {
+	-webkit-border-image2: url("../images/group-labeled.png") 36 14 14 14 repeat repeat;
+}
+
+.topMenu {
+	background-color: #bbbbbb;
+	z-index: 30;
+	font-size: 14px;
+	text-align: center;
+	height: 30px;
+}
+
+.topMenu  .menuItem{
+	border-left: thin solid white;
+	border-right: thin solid white;
+	-webkit-box-flex: 1;
+	color: white;
+	background-color: black;
+	padding: auto;
+}
+
+.topMenu  .menuItem.selected{
+	color: black;
+	background-color: white;
+}
+
+.enyo-menu-button-header-client {
+	text-align: center;
+}
+
+.enyo-nouveau.enyo-header {
+	background-colorasdf: #004A7F;
+	background-imageasdf: url('../images/page-header-gradient.png');
+}
+
+.value {
+	font-size: 14px;
+	margin-top: -3px;
+	margin-bottom: -3px;
+}
+
+.label {
+	text-transform: uppercase;
+	color:rgb(31,117,191);
+	font-size: 12px;
+	padding-top: 2px;
+}
+
+.smallerFont {
+	font-size: 14px;
+}
+
+.truncating {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.remote .enyo-input-input,
+.preferences .enyo-input-input {
+	color: #F2F2F2;
+}
+
+.remote .enyo-input-focus .enyo-input-input,
+.preferences .enyo-input-focus .enyo-input-input {
+	color: black;
+}
+
+.searchInputWrapper {
+	border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.searchInputWrapper .enyo-input {
+	border-width: 6px 14px;
+}
+
+.searchInputWrapper .enyo-input-focus {
+	-webkit-border-image: none;
+	background-color: rgba(255, 255, 255, 0.1);
+	color: #F2F2F2;
+}
+
+.searchInputWrapper .enyo-input-input {
+	color: #F2F2F2;
+	font-style: italic;
+}
+
+.imageView {
+	background-color: black;
+}
+
+.searchClear {
+	margin-top: 2px;
+	margin-right: 4px;
+	height: 22px;
+}
+
+.searchInputWrapper {
+	border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.webmyth2 .enyo-tabbutton,
+.webmyth2 .enyo-tabbutton.enyo-first,
+.webmyth2 .enyo-tabbutton.enyo-middle,
+.webmyth2 .enyo-tabbutton.enyo-last {
+	background-color: #090989;
+	-webkit-border-image: url("../images/radiobutton.png") 74 17 482 17;
+}
+
+.webmyth2 .enyo-tabbutton.enyo-button-down,
+.webmyth2 .enyo-tabbutton.enyo-first.enyo-button-down,
+.webmyth2 .enyo-tabbutton.enyo-middle.enyo-button-down,
+.webmyth2 .enyo-tabbutton.enyo-last.enyo-button-down,
+.webmyth2 .enyo-tabbutton.enyo-button-depressed,
+.webmyth2 .enyo-tabbutton.enyo-first.enyo-button-depressed,
+.webmyth2 .enyo-tabbutton.enyo-middle.enyo-button-depressed,
+.webmyth2 .enyo-tabbutton.enyo-last.enyo-button-depressed {
+	background-color: #090989;
+	-webkit-border-image: url("../images/radiobutton.png") 111 17 445 17;
+}
+
+.webmyth2 .enyo-radiobutton {
+	background-color: #090989;
+}
+
+.topMenuItem div{
+	margin-left: -17px;
+	margin-right: -17px;
+}
+
+.sortPopupMenu {
+	min-width: 240px;
+}
+
+.enyo-header{
+	height: 56px;
+}
+
+.enyo-header .enyo-header-inner{
+	padding: 2px;
+	width: 100%;
+}
+
+.enyo-header .enyo-header-inner div{
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.webmyth2 .remote .enyo-slider-progress {
+	margin: 10px 0px;
+}
+
+/* Welcome */
+.welcome .enyo-nouveau.enyo-header {
+	max-height: 54px;
+}
+
+/* Remote */
+.remote .slidingPane .left {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.remote .remoteScreenshot{
+	width: 300px;
+}
+
+.remote .frontendItem.selected {
+	background-color: rgba(255,255,255,0.15);
+}
+
+.remote .frontendAddressAndPort,
+.searchHostsPopup .frontendAddressAndPort {
+	text-align: right;
+	font-size: 14px;
+	font-size: italic;
+}
+
+.remote .flickNavButton {
+	background-image: url("../images/arrows-200x200-clear.png");
+	height: 200px;
+}
+
+.remote .flickNavButton.enyo-button-down {
+	background-image: url("../images/arrows-200x200.png");
+	height: 200px;
+}
+
+.remote .upNavButton {
+	background-image: url("../images/up.png");
+	background-color: rgba(0,0,0,0);
+}
+
+.remote .upNavButton.enyo-button-down {
+	background-color: rgba(255,255,255,0.15);
+}
+
+.remote .rightNavButton {
+	background-image: url("../images/right.png");
+	background-color: rgba(0,0,0,0);
+}
+
+.remote .rightNavButton.enyo-button-down {
+	background-color: rgba(255,255,255,0.15);
+}
+
+.remote .downNavButton {
+	background-image: url("../images/down.png");
+	background-color: rgba(0,0,0,0);
+}
+
+.remote .downNavButton.enyo-button-down {
+	background-color: rgba(255,255,255,0.15);
+}
+
+.remote .leftNavButton {
+	background-image: url("../images/left.png");
+	background-color: rgba(0,0,0,0);
+}
+
+.remote .leftNavButton.enyo-button-down {
+	background-color: rgba(255,255,255,0.15);
+}
+
+.remote .selectNavButton {
+	background-image: url("../images/record.png");
+	background-color: rgba(0,0,0,0);
+}
+
+.remote .selectNavButton.enyo-button-down {
+	background-color: rgba(255,255,255,0.15);
+}
+
+.remote .muteButton {
+	background-image: url("../images/mute-30x30.png");
+	background-color: rgba(0,0,0,0);
+}
+
+.remote .volumeDownButton {
+	background-image: url("../images/voldown-30x30.png");
+	background-color: rgba(0,0,0,0);
+}
+
+.remote .volumeUpButton {
+	background-image: url("../images/volup-30x30.png");
+	background-color: rgba(0,0,0,0);
+}
+
+.remote .muteButton.selected,
+.remote .volumeDownButton.selected,
+.remote .volumeUpButton.selected {
+	background-color: rgba(255,255,255,0.15);
+}
+
+.remote .muteButton.enyo-button-down,
+.remote .volumeDownButton.enyo-button-down,
+.remote .volumeUpButton.enyo-button-down {
+	background-color: rgba(255,255,255,0.15);
+}
+
+.remote .playbackButtonsWrapper {
+	margin2: -26px;
+}
+
+.remote .jumpBackButton {
+	background-image: url("../images/jumpback.png");
+	background-color: rgba(0,0,0,0);
+}
+
+.remote .jumpBackButton.enyo-button-down {
+	background-color: rgba(255,255,255,0.15);
+}
+
+.remote .pauseButton {
+	background-image: url("../images/pause.png");
+	background-color: rgba(0,0,0,0);
+}
+
+.remote .pauseButton.enyo-button-down {
+	background-color: rgba(255,255,255,0.15);
+}
+
+.remote .jumpForwardButton {
+	background-image: url("../images/jumpforward.png");
+	background-color: rgba(0,0,0,0);
+}
+
+.remote .jumpForwardButton.enyo-button-down {
+	background-color: rgba(255,255,255,0.15);
+}
+
+.remote .slidingPane .enyo-input-focus {
+	-webkit-border-image: none;
+	color: #191C26;
+}
+
+.remote .slidingPane .enyo-input-input {
+	height: 1px;
+	font-size: 1px;
+	color: #191C26;
+}
+
+/* Preferences */
+.preferences .label {
+	text-transform: uppercase;
+	color:rgb(31,117,191);
+	font-size: 14px;
+	padding-top: 7px;
+}
+
+
+/* Recorded */
+.enyo-item.programList {
+	padding-top: 0px;
+}
+
+.programTitles,
+.programDates,
+.fullPeopleList,
+.artistsList,
+.albumsList {
+	font-size: 16px;
+}
+
+.programTitles.selected {
+	background-color: rgba(255,255,255,0.15);
+}
+
+.programList.selected {
+	background-color: rgba(255,255,255,0.15);
+}
+
+.programList.selected .enyo-hflexbox .enyo-vflexbox{
+	background-color: rgba(0,0,0,0);
+}
+
+.programList.Deleted {
+	text-decoration: line-through;
+}
+
+.programList .title {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size: 18px;
+	height: 24px;
+	width: 100%;
+}
+
+.programList .listScreenshotWrapper {
+	height: 64px;
+	width: 100px;
+	padding-top: 4px;
+} 
+
+.programList .listScreenshot {
+	height: 100%;
+	max-width: 100px;
+}
+
+.programList .row1 {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size: 13px;
+	padding-left: 2px;
+	height: 16px;
+	width: 100%;
+}
+
+.programList .row2 {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size: 13px;
+	padding-left: 6px;
+	height: 16px;
+	width: 100%;
+}
+
+.programList .row3 {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size: 13px;
+	padding-left: 10px;
+	height: 16px;
+	width: 100%;
+}
+
+.programList .row4 {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size: 13px;
+	padding-left: 14px;
+	height: 17px;
+	width: 100%;
+}
+
+.largeScreenshot {
+	padding: 5px 0px 0px 0px;
+	max-height: 160px;
+}
+
+.recordedCarousel,
+.upcomingCarousel,
+.videoCarousel {
+	background-color2: #111111;
+	background-color: #000000;
+}
+
+.recordedCarousel .enyo-menu-button-header-client,
+.upcomingCarousel .enyo-menu-button-header-client,
+.videoCarousel .enyo-menu-button-header-client {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.recordedCarousel .enyo-footer {
+	background-image: none;
+}
+
+.tablet .carouselScreenshot {
+	width: 200%;
+	height: auto;
+}
+
+.large-phone .carouselScreenshot {
+	width: 150%;
+	height: auto;
+}
+
+.phone .carouselScreenshot {
+	width: 100%;
+	height: auto;
+}
+
+.headerSubtitle,
+.carouselSubtitle,
+.carouselDate {
+	font-size: 14px;
+	height: 24px;
+	color:#a9a9a9;
+	text-align: center;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.carouselDescription {
+	font-size: 13px;
+	height: 54px;
+	color:#a9a9a9;
+	text-align: center;
+	background-color: rgba(0,0,0,0);
+}
+
+.description {
+	min-height: 19px;
+	font-size: 14px;
+}
+
+.recStatusText {
+	text-align: center;
+}
+
+.homeCommandIcon {
+	background-image: url('../images/53-house@2x.png');
+	width: 44px;
+	height: 44px;
+	margin: 3px;
+}
+
+.backCommandIcon {
+	background-image: url('../images/menu-icon-return.png');
+	width: 32px;
+	height: 32px;
+	margin: 9px 0px 9px 2px;
+}
+
+.backCommandIconSpacer {
+	width: 32px;
+	height: 32px;
+	margin: 9px 2px 9px 0px;
+}
+
+.settingsCommandIcon {
+	background-image: url('../images/menu-icon-settings.png');
+	width: 32px;
+	height: 32px;
+	margin: 9px 0px 9px 2px;
+}
+
+.sortPopupMenu2 {
+	min-width: 260px;
+}
+
+.sortPopupMenu2 .enyo-popup-inner, 
+.sortPopupMenu2 .enyo-scroller-scrollee {
+	min-width: 240px;
+}
+
+.playPopupMenu {
+
+}
+
+.morePopupMenu {
+
+}
+
+/* Upcoming */
+.programDates.selected {
+	background-color: rgba(255,255,255,0.15);
+}
+
+.programList .channelIconWrapper {
+	height: 48px;
+	width: 64px;
+	padding-top: 4px;
+} 
+
+.programList .channelIconWrapper .channelIcon {
+	height: 100%;
+	padding-top: 2px;
+	max-width: 58px;
+}
+
+.largeChannelIcon {
+	padding: 5px 5px 0px 5px;
+	width: 80px;
+}
+
+.detailsSpinner {
+	margin: 18px 5px 15px 5px;
+	height: 32px;
+}
+
+.groupVirtualRepeater {
+	border: 0;
+	padding: 0;
+}
+
+/* Changelog */
+.changelog .enyo-view,
+.help .helpContent {
+	padding: 5px;
+	margin: 5px;
+}
+
+/* Search People */
+.fullPeopleList.selected {
+	background-color: rgba(255,255,255,0.15);
+}
+
+/* Music */
+.artistsList.selected,
+.albumsList.selected,
+.songsList.selected {
+	background-color: rgba(255,255,255,0.15);
+}
+
+.albumsList {
+	min-height: 50px;
+}
+.albumsList.hasAlbumArt {
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+.albumsList .albumArt {
+	width: 48px;
+	height: 48px;
+	margin-right: 4px;
+	margin-top: 2px;
+}
+
+.musicDetailsPopup {
+	width: 320px;
+	height: 380px;
+}
+
+.musicDetailsPopup .enyo-item {
+	padding: 2px;
+	font-size: 14px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.musicDetailsPopup .enyo-item.detailsAlbumArtItem{
+	height: 210px;
+}
+
+.musicDetailsPopup .enyo-item.detailsPlayButtonsItem{
+	height2: 30px;
+}
+
+.detailsAlbumArt {
+	width: 200px;
+	height: 200px;
+}
+
+.songsList.enyo-item,
+.enyo-item.songsList {
+	padding: 0px 10px;
+}
+
+.songsList .enyo-vflexbox {
+	background-color: rgba(0,0,0,0);
+}
+
+.songsList .songAlbumArt {
+	width: 56px;
+	height: 56px;
+	margin-right: 4px;
+	margin-top: 6px;
+}
+
+.songsList .songName {
+	font-size: 16px;
+	height: 18px;
+	padding-left: 2px;
+}
+
+.songsList .songArtist {
+	font-size: 13px;
+	height: 16px;
+	padding-left: 6px;
+}
+
+.songsList .songAlbum {
+	font-size: 13px;
+	height: 16px;
+	padding-left: 10px;
+}
+
+.songsList .songTrack {
+	font-size: 13px;
+	height: 16px;
+	padding-left: 14px;
+}
+
+/* Status */
+.backendstatus .statusMenu,
+.backendlog .logMenu,
+.preferences .preferencesMenu,
+.setupschedule .setupscheduleMenu,
+.help .helpMenu   {
+	z-index: 30;
+	font-size: 14px;
+	text-align: center;
+	width: 150px;
+}
+
+.backendstatus .statusMenu .menuItem,
+.backendlog .logMenu .menuItem,
+.preferences .preferencesMenu .menuItem,
+.setupschedule .setupscheduleMenu .menuItem,
+.help .helpMenu .menuItem {
+	border-top2: thin solid white;
+	border-bottom2: thin solid white;
+	-webkit-box-flex: 1;
+	color: black;
+	background-color2: black;
+	padding: auto;
+	text-align: center;
+	-webkit-border-image: url("../images/radiobutton.png") 74 17 482 17;
+	-webkit-border-image2: url(../images/radiobutton-heritage.png) 150 2 400 1;
+	background-color: #090989;
+	border: 1px;
+	margin: -1px;
+}
+
+.backendstatus .statusMenu .menuItem.selected,
+.backendlog .logMenu .menuItem.selected,
+.preferences .preferencesMenu .menuItem.selected,
+.setupschedule .setupscheduleMenu .menuItem.selected,
+.help .helpMenu .menuItem.selected {
+	color: white;
+	background-color2: white;
+	text-align: center;
+	-webkit-border-image: url("../images/radiobutton.png") 111 17 445 17;
+	-webkit-border-image2: url(../images/radiobutton-heritage.png) 200 2 350 1;
+	background-color: #090989;
+}
+
+.backendstatus .encodersProgram,
+.exhibition .encodersProgram {
+	font-size: 14px;
+	text-align: right;
+}
+
+.backendstatus .scheduledSubtitle,
+.exhibition .scheduledSubtitle {
+	font-size: 14px;
+	padding-left: 5px;
+}
+
+.backendstatus .scheduledRecstartts,
+.exhibition .scheduledRecstartts {
+	font-size: 14px;
+	text-align: right;
+	font-style: italic;
+}
+
+.backendstatus .scheduledEncoder,
+.exhibition .scheduledEncoder {
+	font-size: 14px;
+	text-align: right;
+	font-style: italic;
+}
+
+.backendstatus .jobqueueStarttime,
+.exhibition .jobqueueStarttime {
+	font-size: 14px;
+	padding-left: 5px;
+}
+
+.backendstatus .jobqueueType,
+.exhibition .jobqueueType {
+	font-size: 14px;
+	text-align: right;
+	font-style: italic;
+}
+
+.backendstatus .jobqueueStatus,
+.exhibition .jobqueueStatus {
+	font-size: 14px;
+	text-align: right;
+	font-style: italic;
+}
+
+.backendstatus .jobqueueComments,
+.exhibition .jobqueueComments {
+	text-align: right;
+}
+
+.backendstatus .storageFree {
+	font-size: 14px;
+	text-align: right;
+	font-style: italic;
+}
+
+.backendstatus .storageUsed {
+	font-size: 14px;
+	text-align: right;
+	font-style: italic;
+}
+
+.backendstatus .storageTotal {
+	font-size: 14px;
+	text-align: right;
+	font-style: italic;
+}
+
+.backendstatus .encodersDescription,
+.exhibition .encodersDescription {
+	font-size: 14px;
+}
+
+.backendlog .title {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size: 18px;
+	height: 24px;
+	width: 100%;
+}
+
+.backendlog .row1 {
+	font-size: 13px;
+	padding-left: 4px;
+}
+
+.backendlog .row2 {
+	font-size: 13px;
+	padding-left: 8px;
+}
+
+/* Guide */
+.guide .channelTitle {
+	width: 40px;
+	font-size: 12px;
+	text-align: center;
+}
+
+.guide .channelTitleIcon {
+	width: 28px;
+	margin-top: 4px;
+}
+
+.guide .topGuideTimeLabelRow {
+	padding-left: 0px;
+	padding-right: 0px;
+	border-bottom: 3px solid black;
+	background-color: #191C26;
+	height: 31px;
+	z-index: 30;
+}
+
+.guide .topGuideChannelLabelRow {
+	padding-left: 0px;
+	padding-right: 0px;
+	border-bottom: 3px solid black;
+	background-color: #191C26;
+	height2: 31px;
+	z-index: 30;
+}
+
+.guide .topGuideTimeLabelRow .guideLabel,
+.guide .topGuideChannelLabelRow .guideLabelChannelTitle {
+	text-align: center;
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.guide .guideProgramRow,
+.guide .guideChannelProgramRow {
+	padding: 0px 0px 0px 0px;
+	height: 48px;
+}
+
+.guide .guideProgram {
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+	border-right: 1px solid black;
+	border-left: 1px solid black;
+	-webkit-box-flex: 1;
+	width: 0px;
+}
+
+.guide .guideProgram.length-0,
+.guide .guideProgram.length-5 { -webkit-box-flex: 5; }
+
+.guide .guideProgram.length-10 { -webkit-box-flex: 10; }
+
+.guide .guideProgram.length-15 { -webkit-box-flex: 15; }
+
+.guide .guideProgram.length-20 { -webkit-box-flex: 20; }
+
+.guide .guideProgram.length-25 { -webkit-box-flex: 25; }
+
+.guide .guideProgram.length-30 { -webkit-box-flex: 30; }
+
+.guide .guideProgram.length-35 { -webkit-box-flex: 35; }
+
+.guide .guideProgram.length-40 { -webkit-box-flex: 40; }
+
+.guide .guideProgram.length-45 { -webkit-box-flex: 45; }
+
+.guide .guideProgram.length-50 { -webkit-box-flex: 50; }
+
+.guide .guideProgram.length-55 { -webkit-box-flex: 55; }
+
+.guide .guideProgram.length-60 { -webkit-box-flex: 60; }
+
+.guide .guideProgram.length-65 { -webkit-box-flex: 65; }
+
+.guide .guideProgram.length-70 { -webkit-box-flex: 70; }
+
+.guide .guideProgram.length-75 { -webkit-box-flex: 75; }
+
+.guide .guideProgram.length-80 { -webkit-box-flex: 80; }
+
+.guide .guideProgram.length-85 { -webkit-box-flex: 85; }
+
+.guide .guideProgram.length-90 { -webkit-box-flex: 90; }
+
+.guide .guideProgram.length-95 { -webkit-box-flex: 95; }
+
+.guide .guideProgram.length-100 { -webkit-box-flex: 100; }
+
+.guide .guideProgram.length-105 { -webkit-box-flex: 105; }
+
+.guide .guideProgram.length-110 { -webkit-box-flex: 110; }
+
+.guide .guideProgram.length-115 { -webkit-box-flex: 115; }
+
+.guide .guideProgram.length-120 { -webkit-box-flex: 120; }
+
+.guide .guideProgram,
+.guide .channelProgram {
+	background-color: rgba(255,255,255,0.25);
+	type: matches some recording rule
+}
+
+.guide .guideProgram.recstatus_-1,
+.guide .guideProgram.recstatus_-2,
+.guide .channelProgram.recstatus_-1,
+.guide .channelProgram.recstatus_-2 {
+	background-color: green;
+	type: will record, currently recording;
+}
+
+.guide .guideProgram.recstatus_7,
+.guide .channelProgram.recstatus_7 {
+	background-color: red;
+	type: conflicting;
+}
+
+.guide .guideProgram.recstatus_-20,
+.guide .channelProgram.recstatus_-20 {
+	background-color: #191C26;
+	type: no matching recording rule;
+}
+
+.guide .guideProgram .guideProgramTitle,
+.guide .channelProgram .channelProgramTitle {
+	font-size: 16px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	margin-left: 1px;
+}
+
+.guide .guideProgram .guideProgramSubtitle,
+.guide .channelProgram .channelProgramSubtitle {
+	font-size: 12px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	margin-left: 1px;
+}
+
+.guide .guideLabelChannelIcon {
+	margin-left: 10px;
+	margin-right: 10px;
+	width: 40px;
+	font-size: 16px;
+	text-align: center;
+}
+
+.guide .guideNextWrapper,
+.guide .guidePreviousWrapper{
+	width: 10px;
+}
+
+.guide .guidePreviousWrapper.activated{
+	background-image: url("../images/guidePrevious.png");
+}
+
+.guide .guideNextWrapper.activated{
+	background-image: url("../images/guideNext.png");
+}
+
+.guide .channelTime {
+	width: 40px;
+	font-size: 16px;
+	text-align: center;
+	margin-right: 10px;
+	margin-left: 10px;
+}
+
+.guide .channelTimeStart,
+.guide .channelTimeMiddle,
+.guide .channelTimeEnd {
+	font-size: 13px;
+	height: 15px;
+}
+
+.guide .channelProgram {
+	border: 1px solid black;
+	-webkit-box-flex: 1;
+	width: 0px;
+}
+
+.video .videoImageWrapper {
+	width: 80px;
+	height: 100px;
+	padding-top: 5px;
+}
+
+.video .videoImageWrapper .videoImage {
+	height: 100%;
+}
+
+.video .detailsCoverart {
+	width: 240px;
+}
+
+.tablet .carouselVideoImage {
+	width: auto;
+	height: 535px;
+}
+
+.large-phone .carouselVideoImage {
+	width: auto;
+	height: 400px;
+}
+
+.phone .carouselVideoImage {
+	width: auto;
+	height: 260px;
+}
+
+.setupschedule .checkBoxLeftSpacer {
+	width: 15px;
+}
+
+.setupschedule .enyo-picker-label {
+	width: 0px;
+	padding: 0px;
+}
+
+.currentRecordingWrapper,
+.upcomingRecordingWrapper{
+	text-align: center;
+}
+
+
+.Dashboardkind {
+	background-color: #353233;
+	color: white;
+}
+
+.Dashboardkind .dashboardPane{
+	margin-top: -20px;
+	padding-top: -10px;
+}
+
+.Dashboardkind .dashboardButton{
+	height: 30px;
+	min-width: 40px;
+	margin: -12px 2px 2px 2px;
+	padding: 6px 0px;
+	
+    border-style: solid;
+    border-color: #000000;
+	border-radius: 4px;
+	border-width: 1px;
+
+	text-align: center;
+	vertical-align: middle;
+}
+
+.Dashboardkind .dashboardButton.dashboardText{
+	padding: 10px 0px 2px 0px; 
+}
+
+.Dashboardkind .dashboardButton.dashboardLeft {
+	background: url('../images/left-30x30.png') center center no-repeat; 
+}
+
+.Dashboardkind .dashboardButton.dashboardRight {
+	background: url('../images/right-30x30.png') center center no-repeat; 
+}
+
+.Dashboardkind .dashboardButton.dashboardUp {
+	background: url('../images/up-30x30.png') center center no-repeat; 
+}
+
+.Dashboardkind .dashboardButton.dashboardDown {
+	background: url('../images/down-30x30.png') center center no-repeat; 
+}
+
+.Dashboardkind .dashboardButton.dashboardBack {
+	background: url('../images/jumpback-30x30.png') center center no-repeat; 
+	width: 53px;
+}
+
+.Dashboardkind .dashboardButton.dashboardForward {
+	background: url('../images/jumpforward-30x30.png') center center no-repeat; 
+	width: 53px;
+}
+
+.Dashboardkind .dashboardButton.dashboardPause {
+	background: url('../images/pause-30x30.png') center center no-repeat; 
+	width: 53px;
+}
+
+.Dashboardkind .dashboardButton.dashboardMute {
+	background: url('../images/mute-30x30.png') center center no-repeat;
+	width: 53px; 
+}
+
+.Dashboardkind .dashboardButton.dashboardVolup {
+	background: url('../images/volup-30x30.png') center center no-repeat;
+	width: 53px; 
+}
+
+.Dashboardkind .dashboardButton.dashboardVoldown {
+	background: url('../images/voldown-30x30.png') center center no-repeat; 
+	width: 53px;
+}
