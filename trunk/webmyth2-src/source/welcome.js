@@ -19,6 +19,8 @@ enyo.kind({ name: "welcome",
 	
 	components: [
 	
+		{name: "streamVideoService", kind: "PalmService", service: "palm://com.palm.applicationManager/", method: "launch"},
+			
 		{name: "getConnectionInfoService", kind: "WebService", handleAs: "xml", onSuccess: "connectionInfoResponse", onFailure: "connectionInfoFailure"},
 		{name: "getSettingsService", kind: "WebService", handleAs: "json", onSuccess: "settingsResponse", onFailure: "settingsFailure"},
 			
@@ -79,6 +81,11 @@ enyo.kind({ name: "welcome",
 					{name: "help", kind: "Button", width: "290px", content: "Help", onclick: "selectButton"},
 					{flex: 1},
 				]},
+				//{kind: "HFlexBox", components: [
+					//{flex: 1},
+					//{name: "stream", kind: "Button", width: "290px", content: "Stream", onclick: "streamButton"},
+					//{flex: 1},
+				//]},
 				//kind: "HFlexBox", components: [
 					//flex: 1},
 					//name: "exhibition", kind: "Button", width: "290px", content: "Exhibition", onclick: "selectButton"},
@@ -192,6 +199,17 @@ enyo.kind({ name: "welcome",
 		if(debug) this.log("selectButton with "+inSender.getName());
 		this.doSelectMode(inSender.getName());
 	},
+	streamButton: function(inSender) {
+		if(debug) this.log("streamButton with "+inSender.getName());
+		
+		var filenameRequestUrl = "http://192.168.1.105:6544/Content/GetFile?StorageGroup=Streaming&FileName=1311_20120424195600.mpg.480x272_512kV_64kA.m3u8";
+		
+		if(window.PalmSystem) {
+			this.$.streamVideoService.call({id: "com.palm.app.videoplayer", target: filenameRequestUrl, params: {target: filenameRequestUrl}});
+		} else {
+			window.open(filenameRequestUrl);
+		}
+	},
 	headerIconClick: function() {
 		if(debug) this.log("headerIconClick");
 		
@@ -211,53 +229,132 @@ enyo.kind({ name: "welcome",
 		var xmlobject = inResponse;
 		
 		//Local variables
-		var topNode, topNodesCount, topSingleNode, infoNode, databaseNode, databaseChildNode;
+		var topNode, topNodesCount, topSingleNode, infoNode, databaseNode, versionNode, versionChildNode;
 		var singleHostJson = {};
 		var Count;
 	
 	
 		//Start parsing
 		topNode = xmlobject.getElementsByTagName("GetConnectionInfoResponse")[0];
-		var topNodesCount = topNode.childNodes.length;
-		for(var i = 0; i < topNodesCount; i++) {
-			topSingleNode = topNode.childNodes[i];
-			switch(topSingleNode.nodeName) {
-				case 'Info':
-					infoNode = topSingleNode;
-					
-					for(var j = 0; j < infoNode.childNodes.length; j++) {
-						switch(infoNode.childNodes[j].nodeName) {
-							case 'Database':
-								databaseChildNode = infoNode.childNodes[j];
-								
-								for(var k = 0; k < databaseChildNode.childNodes.length; k++) {
-									switch(databaseChildNode.childNodes[k].nodeName) {
-										case 'Host':
-											WebMyth.prefsCookie.databaseHost = databaseChildNode.childNodes[k].childNodes[0].nodeValue;
-										  break;
-										case 'Port':
-											WebMyth.prefsCookie.databasePort = databaseChildNode.childNodes[k].childNodes[0].nodeValue;
-										  break;
-										case 'UserName':
-											WebMyth.prefsCookie.databaseUsername = databaseChildNode.childNodes[k].childNodes[0].nodeValue;
-										  break;
-										case 'Password':
-											WebMyth.prefsCookie.databasePassword = databaseChildNode.childNodes[k].childNodes[0].nodeValue;
-										  break;
-										case 'Name':
-											WebMyth.prefsCookie.databaseName = databaseChildNode.childNodes[k].childNodes[0].nodeValue;
-										  break;
+		if(topNode)
+		{
+			if(debug) this.log("parsing connection info as < 0.25");
+			
+			var topNodesCount = topNode.childNodes.length;
+			for(var i = 0; i < topNodesCount; i++) {
+				topSingleNode = topNode.childNodes[i];
+				switch(topSingleNode.nodeName) {
+					case 'Info':
+						infoNode = topSingleNode;
+						
+						for(var j = 0; j < infoNode.childNodes.length; j++) {
+							switch(infoNode.childNodes[j].nodeName) {
+								case 'Database':
+									databaseNode = infoNode.childNodes[j];
+									
+									for(var k = 0; k < databaseNode.childNodes.length; k++) {
+										switch(databaseNode.childNodes[k].nodeName) {
+											case 'Host':
+												WebMyth.prefsCookie.databaseHost = databaseNode.childNodes[k].childNodes[0].nodeValue;
+											  break;
+											case 'Port':
+												WebMyth.prefsCookie.databasePort = databaseNode.childNodes[k].childNodes[0].nodeValue;
+											  break;
+											case 'UserName':
+												WebMyth.prefsCookie.databaseUsername = databaseNode.childNodes[k].childNodes[0].nodeValue;
+											  break;
+											case 'Password':
+												WebMyth.prefsCookie.databasePassword = databaseNode.childNodes[k].childNodes[0].nodeValue;
+											  break;
+											case 'Name':
+												WebMyth.prefsCookie.databaseName = databaseNode.childNodes[k].childNodes[0].nodeValue;
+											  break;
+										}
 									}
-								}
-							
-							  break;
-							  
+								
+								  break;
+								  
+							}
 						}
-					}
-				
-				  break;
+					
+					  break;
+				}
 			}
-		}	
+		}
+		else
+		{
+			//0.25
+			topNode = xmlobject.getElementsByTagName("ConnectionInfo")[0];
+			
+			if(debug) this.log("parsing connection info as 0.25");
+			
+			var topNodesCount = topNode.childNodes.length;
+			for(var i = 0; i < topNodesCount; i++) {
+				topSingleNode = topNode.childNodes[i];
+				switch(topSingleNode.nodeName) {
+					case 'Version':
+			
+						versionNode = topSingleNode;
+					
+						//if(debug) this.log("inside version node of length: "+versionNode.childNodes.length);
+						
+						for(var k = 0; k < versionNode.childNodes.length; k++) {
+							switch(versionNode.childNodes[k].nodeName) {
+								case 'Version':
+									//WebMyth.prefsCookie.databaseHost = versionNode.childNodes[k].childNodes[0].nodeValue;
+								  break;
+								case 'Branch':
+									//WebMyth.prefsCookie.databasePort = versionNode.childNodes[k].childNodes[0].nodeValue;
+								  break;
+								case 'Protocol':
+									WebMyth.prefsCookie.protoVer = versionNode.childNodes[k].childNodes[0].nodeValue;
+								  break;
+								case 'Binary':
+									WebMyth.prefsCookie.mythBinaryVer = versionNode.childNodes[k].childNodes[0].nodeValue;
+								  break;
+								case 'Schema':
+									WebMyth.prefsCookie.DBSchemaVer = versionNode.childNodes[k].childNodes[0].nodeValue;
+								  break;
+							}
+						}
+							
+					  break;
+					case 'Database':
+						
+						databaseNode = topSingleNode;
+					
+						//if(debug) this.log("inside database node of length: "+databaseNode.childNodes.length);
+						
+						for(var j = 0; j < databaseNode.childNodes.length; j++) {
+							switch(databaseNode.childNodes[j].nodeName) {
+								case 'Host':
+									WebMyth.prefsCookie.databaseHost = databaseNode.childNodes[j].childNodes[0].nodeValue;
+								  break;
+								case 'Port':
+									WebMyth.prefsCookie.databasePort = databaseNode.childNodes[j].childNodes[0].nodeValue;
+								  break;
+								case 'UserName':
+									WebMyth.prefsCookie.databaseUsername = databaseNode.childNodes[j].childNodes[0].nodeValue;
+								  break;
+								case 'Password':
+									WebMyth.prefsCookie.databasePassword = databaseNode.childNodes[j].childNodes[0].nodeValue;
+								  break;
+								case 'Name':
+									WebMyth.prefsCookie.databaseName = databaseNode.childNodes[j].childNodes[0].nodeValue;
+								  break;
+							}
+						}
+								 
+					
+					  break;
+					default:
+						
+						if(debug) this.log("inside other node: "+topSingleNode.nodeName);
+					  break;
+				}
+			}
+			
+		}
 			
 			
 		//if(debug) this.log("new DB settings: "+WebMyth.prefsCookie.databaseHost+WebMyth.prefsCookie.databasePort+WebMyth.prefsCookie.databaseUsername+WebMyth.prefsCookie.databaseName);

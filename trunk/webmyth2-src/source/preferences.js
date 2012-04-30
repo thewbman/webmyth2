@@ -160,6 +160,11 @@ enyo.kind({ name: "preferences",
 							]},
 						]},
 						{kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+							{name: "webmythPythonFile", kind: "Input", autoCapitalize: "lowercase", flex: 1, components: [
+								{content: "Script File", className: "label"},
+							]},
+						]},
+						{kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
 							{content: "Use MythWeb for XML", flex: 1},
 							{name: "mythwebXml", kind: "ToggleButton", onChange: "mythwebXmlToggle"},
 						]},
@@ -168,10 +173,9 @@ enyo.kind({ name: "preferences",
 								{content: "XML Key", className: "label"},
 							]},
 						]},
-						{kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
-							{name: "webmythPythonFile", kind: "Input", autoCapitalize: "lowercase", flex: 1, components: [
-								{content: "Script File", className: "label"},
-							]},
+						{name: "UpcomingXmlItem", kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+							{content: "Use XML services for upcoming", flex: 1},
+							{name: "upcomingXml", kind: "ToggleButton", onChange: "upcomingXmlToggle"},
 						]},
 					]},
 					{name: "imagesRowGroup", kind: "RowGroup", caption: "Images", components: [
@@ -323,6 +327,7 @@ enyo.kind({ name: "preferences",
 		this.$.MythXML_key.setValue(WebMyth.prefsCookie.MythXML_key);
 		this.$.webmythPythonFile.setValue(WebMyth.prefsCookie.webmythPythonFile);
 		this.$.allowDownloads.setState(WebMyth.prefsCookie.allowDownloads);
+		this.$.upcomingXml.setState(WebMyth.prefsCookie.upcomingXml);
 		
 		this.$.showChannelIcons.setState(WebMyth.prefsCookie.showChannelIcons);
 		this.$.showVideoListImages.setState(WebMyth.prefsCookie.showVideoListImages);
@@ -349,6 +354,12 @@ enyo.kind({ name: "preferences",
 			this.$.MythXML_keyItem.show();
 		} else {
 			this.$.MythXML_keyItem.hide();
+		}
+		
+		if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
+			this.$.UpcomingXmlItem.show();
+		} else {
+			this.$.UpcomingXmlItem.hide();
 		}
 		
 		//this.manualMasterBackendToggle();
@@ -583,6 +594,7 @@ enyo.kind({ name: "preferences",
 		WebMyth.prefsCookie.MythXML_key = this.$.MythXML_key.getValue();
 		WebMyth.prefsCookie.webmythPythonFile = this.$.webmythPythonFile.getValue();
 		WebMyth.prefsCookie.allowDownloads = this.$.allowDownloads.getState();
+		WebMyth.prefsCookie.upcomingXml = this.$.upcomingXml.getState();
 		
 		WebMyth.prefsCookie.showChannelIcons = this.$.showChannelIcons.getState();
 		WebMyth.prefsCookie.showVideoListImages = this.$.showVideoListImages.getState();

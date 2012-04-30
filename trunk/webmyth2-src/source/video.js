@@ -198,6 +198,10 @@ enyo.kind({ name: "video",
 										{name: "fullepisode", className: "value", flex: 1},
 										{content: "Episode", className: "label"},
 									]},
+									{name: "hostnameItem", kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
+										{name: "hostname", className: "value", flex: 1},
+										{content: "Hostname", className: "label"},
+									]},
 									{name: "filenameItem", kind: "Item", align: "center", tapHighlight: false, layoutKind: "HFlexLayout", components: [
 										{name: "filename", className: "value", flex: 1},
 										{content: "Filename", className: "label"},
@@ -1430,6 +1434,7 @@ enyo.kind({ name: "video",
 		
 		this.$.releasedate.setContent(row.releasedate);
 		this.$.fullepisode.setContent(row.fullepisode);
+		this.$.hostname.setContent(row.host);
 		this.$.filename.setContent(row.filename);
 		
 		//this.$.rightDetails.setContent(enyo.json.to(row));
