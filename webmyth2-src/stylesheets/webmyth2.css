@@ -983,7 +983,9 @@
 }
 
 .guide .guideProgram.recstatus_-20,
-.guide .channelProgram.recstatus_-20 {
+.guide .channelProgram.recstatus_-20,
+.guide .guideProgram.recstatus_0,
+.guide .channelProgram.recstatus_0 {
 	background-color: #191C26;
 	type: no matching recording rule;
 }

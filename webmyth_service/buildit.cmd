@@ -17,7 +17,7 @@ set STATIC_LIBS=libmysqlclient.a
 set MIDFILE=webmyth_service.o
 
 @rem Name your output executable
-set OUTFILE=webmyth_service
+set OUTFILE=webmyth_service_ARM
 
 if %PRE% equ 0 if %PIXI% equ 0 goto :END
 
@@ -37,7 +37,9 @@ if %PIXI% equ 1 (
 
 echo %DEVICEOPTS%
 
-arm-none-linux-gnueabi-g++ %DEVICEOPTS% -o %OUTFILE% %SRC% %STATIC_LIBS% "-I%PALMPDK%\include" "-I%PALMPDK%\include\SDL" "-L%PALMPDK%\device\lib" -Wl,--allow-shlib-undefined %LIBS%
+set PALMPDK=C:/Users/wes/Dropbox/development/PalmPDK
+
+arm-none-linux-gnueabi-g++ %DEVICEOPTS% -o %OUTFILE% %SRC% %STATIC_LIBS% "-I%PALMPDK%/include" "-I%PALMPDK%/include/SDL" "-L%PALMPDK%/device/lib" -Wl,--allow-shlib-undefined %LIBS%
 
 @rem arm-none-linux-gnueabi-g++ -o %OUTFILE% %MIDFILE% 
 

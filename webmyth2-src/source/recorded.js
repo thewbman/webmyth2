@@ -768,8 +768,8 @@ enyo.kind({ name: "recorded",
 				row.screenshotUrl = "http://"+WebMyth.prefsCookie.webserverName+"/"+WebMyth.prefsCookie.webmythPythonFile+"?op=getPremadeImage&chanid=";
 				row.screenshotUrl += row.chanid + "&starttime=" + row.recstartts.replace("T"," ");
 			} else if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
-				var screenshotUrl = "http://"+getBackendIP(WebMyth.prefsCookie.backends,row.hostname,WebMyth.prefsCookie.masterBackendIp)+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Content/GetPreviewImage?ChanId=";
-				screenshotUrl += row.chanid + "&StartTime=" + row.recstartts.replace("T"," ");
+				row.screenshotUrl = "http://"+getBackendIP(WebMyth.prefsCookie.backends,row.hostname,WebMyth.prefsCookie.masterBackendIp)+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Content/GetPreviewImage?ChanId=";
+				row.screenshotUrl += row.chanid + "&StartTime=" + row.recstarttsutc.replace("T"," ");
 			} else {
 				row.screenshotUrl = "http://"+getBackendIP(WebMyth.prefsCookie.backends,row.hostname,WebMyth.prefsCookie.masterBackendIp)+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetPreviewImage?ChanId=";
 				row.screenshotUrl += row.chanid + "&StartTime=" + row.recstartts.replace("T"," ");
@@ -847,18 +847,18 @@ enyo.kind({ name: "recorded",
 		
 		
 		if(WebMyth.prefsCookie.forceScriptScreenshots) {
-			var screenshotUrl = "http://"+WebMyth.prefsCookie.webserverName+"/"+WebMyth.prefsCookie.webmythPythonFile+"?op=getPremadeImage&chanid=";
-			screenshotUrl += row.chanid + "&starttime=" + row.recstartts.replace("T"," ");
+			row.screenshotUrl = "http://"+WebMyth.prefsCookie.webserverName+"/"+WebMyth.prefsCookie.webmythPythonFile+"?op=getPremadeImage&chanid=";
+			row.screenshotUrl += row.chanid + "&starttime=" + row.recstartts.replace("T"," ");
 		} else if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
-			var screenshotUrl = "http://"+getBackendIP(WebMyth.prefsCookie.backends,row.hostname,WebMyth.prefsCookie.masterBackendIp)+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Content/GetPreviewImage?ChanId=";
-			screenshotUrl += row.chanid + "&StartTime=" + row.recstartts.replace("T"," ");
+			row.screenshotUrl = "http://"+getBackendIP(WebMyth.prefsCookie.backends,row.hostname,WebMyth.prefsCookie.masterBackendIp)+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Content/GetPreviewImage?ChanId=";
+			row.screenshotUrl += row.chanid + "&StartTime=" + row.recstarttsutc.replace("T"," ");
 		} else {
-			var screenshotUrl = "http://"+getBackendIP(WebMyth.prefsCookie.backends,row.hostname,WebMyth.prefsCookie.masterBackendIp)+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetPreviewImage?ChanId=";
-			screenshotUrl += row.chanid + "&StartTime=" + row.recstartts.replace("T"," ");
+			row.screenshotUrl = "http://"+getBackendIP(WebMyth.prefsCookie.backends,row.hostname,WebMyth.prefsCookie.masterBackendIp)+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetPreviewImage?ChanId=";
+			row.screenshotUrl += row.chanid + "&StartTime=" + row.recstartts.replace("T"," ");
 		} 
 		
 			
-		this.$.recordedImageView.setCenterSrc(screenshotUrl);
+		this.$.recordedImageView.setCenterSrc(row.screenshotUrl);
 		this.$.recordedImageView.render();
 		this.$.recordedPane.selectViewByName("recordedImageView");
 	},
@@ -1229,7 +1229,7 @@ enyo.kind({ name: "recorded",
 			
 		} else if(WebMyth.prefsCookie.DBSchemaVer > 1269){
 			
-			requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Dvr/GetRecorded";
+			requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Dvr/GetRecordedList";
 			this.$.getRecorded25Service.setUrl(requestUrl);
 			this.$.getRecorded25Service.call();
 			
@@ -1305,8 +1305,10 @@ enyo.kind({ name: "recorded",
 											"repeat": singleProgramNode.getAttributeNode("repeat").nodeValue, 
 						//					"stars": singleProgramNode.getAttributeNode("stars").nodeValue, 
 											"endtime": singleProgramNode.getAttributeNode("endTime").nodeValue, 
+											"endtimeutc": singleProgramNode.getAttributeNode("endTime").nodeValue, 
 						//					"airdate": singleProgramNode.getAttributeNode("airdate").nodeValue, 
 											"starttime": singleProgramNode.getAttributeNode("startTime").nodeValue,
+											"starttimeutc": singleProgramNode.getAttributeNode("startTime").nodeValue,
 											"lastmodified": singleProgramNode.getAttributeNode("lastModified").nodeValue, 
 											"starttimehourminute": singleProgramNode.getAttributeNode("startTime").nodeValue.substring(11,16),
 											"endtimehourminute": singleProgramNode.getAttributeNode("endTime").nodeValue.substring(11,16)
@@ -1349,6 +1351,7 @@ enyo.kind({ name: "recorded",
 						//						singleProgramJson.playgroup = singleProgramChildNode.getAttributeNode("playGroup").nodeValue;
 												singleProgramJson.recstatus = singleProgramChildNode.getAttributeNode("recStatus").nodeValue;
 												singleProgramJson.recstartts = singleProgramChildNode.getAttributeNode("recStartTs").nodeValue;
+												singleProgramJson.recstarttsutc = singleProgramChildNode.getAttributeNode("recStartTs").nodeValue;
 												singleProgramJson.recgroup = singleProgramChildNode.getAttributeNode("recGroup").nodeValue;
 						//						singleProgramJson.dupmethod = singleProgramChildNode.getAttributeNode("dupMethod").nodeValue;
 												singleProgramJson.rectype = singleProgramChildNode.getAttributeNode("recType").nodeValue;
@@ -1481,10 +1484,10 @@ enyo.kind({ name: "recorded",
 									
 									switch(singleProgramChildNode.nodeName) {
 										case "StartTime":
-											if(singleProgramChildNode.childNodes[0]) singleProgramJson.starttime = singleProgramChildNode.childNodes[0].nodeValue;
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.starttimeutc = singleProgramChildNode.childNodes[0].nodeValue;
 											break;
 										case "EndTime":
-											if(singleProgramChildNode.childNodes[0]) singleProgramJson.endtime = singleProgramChildNode.childNodes[0].nodeValue;
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.endtimeutc = singleProgramChildNode.childNodes[0].nodeValue;
 											break;
 										case "Title":
 											if(singleProgramChildNode.childNodes[0]) singleProgramJson.title = singleProgramChildNode.childNodes[0].nodeValue;
@@ -1522,11 +1525,14 @@ enyo.kind({ name: "recorded",
 										case "ProgramFlags":
 											if(singleProgramChildNode.childNodes[0]) singleProgramJson.programflags = singleProgramChildNode.childNodes[0].nodeValue;
 											break;
-										case "Hostname":
+										case "HostName":
 											if(singleProgramChildNode.childNodes[0]) singleProgramJson.hostname = singleProgramChildNode.childNodes[0].nodeValue;
 											break;
 										case "Airdate":
 											if(singleProgramChildNode.childNodes[0]) singleProgramJson.airdate = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Description":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.description = singleProgramChildNode.childNodes[0].nodeValue;
 											break;
 										case "#text":
 											singleProgramJson.description = singleProgramChildNode.nodeValue;
@@ -1572,10 +1578,10 @@ enyo.kind({ name: "recorded",
 														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.recstatus = singleProgramRecordingChildNode.childNodes[0].nodeValue;
 														break;
 													case "StartTs":
-														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.recstartts = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.recstarttsutc = singleProgramRecordingChildNode.childNodes[0].nodeValue;
 														break;
 													case "EndTs":
-														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.recendts = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.recendtsutc = singleProgramRecordingChildNode.childNodes[0].nodeValue;
 														break;
 													case "RecordId":
 														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.recordid = singleProgramRecordingChildNode.childNodes[0].nodeValue;
@@ -1607,6 +1613,11 @@ enyo.kind({ name: "recorded",
 								
 								if(singleRecordedTitleJson.title == null) singleRecordedTitleJson.title = "[Unknown - Blank]";
 								if(singleRecordedTitleJson.label == null) singleRecordedTitleJson.label = "[Unknown - Blank]";
+								
+								singleProgramJson.starttime = dateJSToISO(dateFromUtc(new Date(isoToJS(singleProgramJson.starttimeutc.replace(" ","T")))));
+								singleProgramJson.endtime = dateJSToISO(dateFromUtc(new Date(isoToJS(singleProgramJson.endtimeutc.replace(" ","T")))));
+								singleProgramJson.recstartts = dateJSToISO(dateFromUtc(new Date(isoToJS(singleProgramJson.recstarttsutc.replace(" ","T")))));
+								singleProgramJson.recendts = dateJSToISO(dateFromUtc(new Date(isoToJS(singleProgramJson.recendtsutc.replace(" ","T")))));
 								
 								this.fullResultList.push(singleProgramJson);
 								this.fullGroupsList.push(singleRecordedGroupJson);
@@ -1805,7 +1816,7 @@ enyo.kind({ name: "recorded",
 				screenshotUrl += row.chanid + "&starttime=" + row.recstartts.replace("T"," ");
 			} else if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
 				var screenshotUrl = "http://"+getBackendIP(WebMyth.prefsCookie.backends,row.hostname,WebMyth.prefsCookie.masterBackendIp)+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Content/GetPreviewImage?ChanId=";
-				screenshotUrl += row.chanid + "&StartTime=" + row.recstartts.replace("T"," ");
+				screenshotUrl += row.chanid + "&StartTime=" + row.recstarttsutc.replace("T"," ");
 			} else {
 				var screenshotUrl = "http://"+getBackendIP(WebMyth.prefsCookie.backends,row.hostname,WebMyth.prefsCookie.masterBackendIp)+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetPreviewImage?ChanId=";
 				screenshotUrl += row.chanid + "&StartTime=" + row.recstartts.replace("T"," ");
@@ -1952,7 +1963,7 @@ enyo.kind({ name: "recorded",
 				screenshotUrl += row.chanid + "&starttime=" + row.recstartts.replace("T"," ");
 			} else if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
 				var screenshotUrl = "http://"+getBackendIP(WebMyth.prefsCookie.backends,row.hostname,WebMyth.prefsCookie.masterBackendIp)+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Content/GetPreviewImage?ChanId=";
-				screenshotUrl += row.chanid + "&StartTime=" + row.recstartts.replace("T"," ");
+				screenshotUrl += row.chanid + "&StartTime=" + row.recstarttsutc.replace("T"," ");
 			} else {
 				var screenshotUrl = "http://"+getBackendIP(WebMyth.prefsCookie.backends,row.hostname,WebMyth.prefsCookie.masterBackendIp)+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetPreviewImage?ChanId=";
 				screenshotUrl += row.chanid + "&StartTime=" + row.recstartts.replace("T"," ");

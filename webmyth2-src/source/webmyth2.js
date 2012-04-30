@@ -158,6 +158,7 @@ enyo.kind({
 			
 			if(WebMyth.prefsCookie.DBSchemaVer == null) WebMyth.prefsCookie.DBSchemaVer = 0;
 			if(WebMyth.prefsCookie.ignoreArticlesSort == null) WebMyth.prefsCookie.ignoreArticlesSort = true;
+			if(WebMyth.prefsCookie.upcomingXml == null) WebMyth.prefsCookie.upcomingXml = false;
 			
 			if(WebMyth.prefsCookie.allowMetrix) setTimeout(enyo.bind(this,"submitMetrix"),500);
 			

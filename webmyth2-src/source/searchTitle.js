@@ -1170,18 +1170,21 @@ enyo.kind({ name: "searchTitle",
 				requestUrl += "http://"+WebMyth.prefsCookie.webserverName+"/mythweb/mythxml/GetProgramDetails?Details=1&MythXMLKey=";
 				requestUrl += WebMyth.prefsCookie.MythXML_key;
 				requestUrl += "&StartTime=";
+				requestUrl += row.starttime;
 					
 			} else if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
 				
 				requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Guide/GetProgramDetails?StartTime=";
+				row.starttimeutc = dateJSToISO(dateToUtc(new Date(isoToJS(row.starttime.replace(" ","T")))));
+				requestUrl += row.starttimeutc;
 				
 			} else {
 				
 				requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetProgramDetails?StartTime=";
+				requestUrl += row.starttime;
 				
 			}
 				
-			requestUrl += row.starttime;
 			requestUrl += "&ChanId=";
 			requestUrl += row.chanid;
 
@@ -1425,10 +1428,10 @@ enyo.kind({ name: "searchTitle",
 			topSingleNode = topNode.childNodes[i];
 			switch(topSingleNode.nodeName) {
 				case 'StartTime':
-					if(topSingleNode.childNodes[0]) s.starttime = topSingleNode.childNodes[0].nodeValue;
+					if(topSingleNode.childNodes[0]) s.starttimeutc = topSingleNode.childNodes[0].nodeValue;
 					break;
 				case 'EndTime':
-					if(topSingleNode.childNodes[0]) s.endtime = topSingleNode.childNodes[0].nodeValue;
+					if(topSingleNode.childNodes[0]) s.endtimeutc = topSingleNode.childNodes[0].nodeValue;
 					break;
 				case 'Title':
 					if(topSingleNode.childNodes[0]) s.title = topSingleNode.childNodes[0].nodeValue;
@@ -1456,6 +1459,9 @@ enyo.kind({ name: "searchTitle",
 					break;
 				case "#text":
 					s.description = topSingleNode.nodeValue;
+					break;
+				case "Description":
+					if(topSingleNode.childNodes[0]) s.description = topSingleNode.childNodes[0].nodeValue;
 					break;
 				case "Channel":
 					for(var j = 0; j < topSingleNode.childNodes.length; j++) {
@@ -1492,7 +1498,7 @@ enyo.kind({ name: "searchTitle",
 								if(recordingChildNode.childNodes[0]) s.recpriority = recordingChildNode.childNodes[0].nodeValue;
 								break;
 							case "StartTs":
-								if(recordingChildNode.childNodes[0]) s.recstartts = recordingChildNode.childNodes[0].nodeValue;
+								if(recordingChildNode.childNodes[0]) s.recstarttsutc = recordingChildNode.childNodes[0].nodeValue;
 								break;
 							case "EndTs":
 								if(recordingChildNode.childNodes[0]) s.recendts = recordingChildNode.childNodes[0].nodeValue;
@@ -1513,7 +1519,10 @@ enyo.kind({ name: "searchTitle",
 		
 		if(s.recstatus == 0) s.recordid = null;
 		if(s.recstatustext == null) s.recstatustext = recstatusDecode(-20);
-					
+		
+		s.starttime = dateJSToISO(dateFromUtc(new Date(isoToJS(s.starttimeutc.replace(" ","T")))));
+		s.endtime = dateJSToISO(dateFromUtc(new Date(isoToJS(s.endtimeutc.replace(" ","T")))));
+		s.recstartts = dateJSToISO(dateFromUtc(new Date(isoToJS(s.recstarttsutc.replace(" ","T")))));
 		
 		
 		if(debug) this.log("full guide details json is: ", enyo.json.stringify(s)); 

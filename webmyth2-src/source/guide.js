@@ -1057,6 +1057,9 @@ enyo.kind({ name: "guide",
 		
 		var requestUrl = "";
 		
+		var nowTimeJS = new Date();	//defaults to now
+		var nowTimeISO = dateJSToISO(nowTimeJS);
+		
 		if(WebMyth.prefsCookie.mythwebXml) {
 			
 			requestUrl += "http://"+WebMyth.prefsCookie.webserverName+"/mythweb/mythxml/GetProgramGuide?Details=0&MythXMLKey=";
@@ -1066,19 +1069,27 @@ enyo.kind({ name: "guide",
 			
 			requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Guide/GetProgramGuide?Details=0";
 			
+			nowTimeISO = dateJSToISO(dateToUtc(new Date(isoToJS(nowTimeISO.replace(" ","T")))));
+			this.timeISO = dateJSToISO(dateToUtc(new Date(isoToJS(this.timeISO.replace(" ","T")))));
+								
+			
 		} else {
 			
-			requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetProgramGuide?Details=0";
+			requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetProgramGuide?";
 			
 		}
 		
-		var nowTimeJS = new Date();	//defaults to now
-		var nowTimeISO = dateJSToISO(nowTimeJS);
 		
 		this.nowTimeRange = guideTimeRange(nowTimeISO, this.viewMode);
 		this.timeRange = guideTimeRange(this.timeISO, this.viewMode);
 		
 		this.dayRange = guideDayRange(this.timeRange.starttimeISO);
+		
+		if(WebMyth.prefsCookie.DBSchemaVer > 1269){
+			this.dayRange.starttimeISO = dateJSToISO(dateToUtc(new Date(isoToJS(this.dayRange.starttimeISO.replace(" ","T")))));
+			this.dayRange.endtimeISO = dateJSToISO(dateToUtc(new Date(isoToJS(this.dayRange.endtimeISO.replace(" ","T")))));
+		}
+		
 		
 		if(debug) this.log("time range objects are: "+enyo.json.stringify(this.nowTimeRange)+" and "+enyo.json.stringify(this.timeRange)+" and "+enyo.json.stringify(this.dayRange));
 		
@@ -1099,7 +1110,8 @@ enyo.kind({ name: "guide",
 		} else if(this.currentMode == "Channel") {
 			requestUrl += "&StartTime="+this.dayRange.starttimeISO;							
 			requestUrl += "&EndTime="+this.dayRange.endtimeISO;							
-			requestUrl += "&NumOfChannels=1";
+			requestUrl += "&NumOfChannels=1";						
+			requestUrl += "&NumChannels=1";
 			requestUrl += "&StartChanId="+this.chanid;
 			//this.$.leftHeaderDetails.setContent("Channel");
 			this.$.leftHeaderDetails.setContent("Channel ["+WebMyth.dateFormatter.format(new Date(isoToJS(this.dayRange.starttimeISO)))+"]");
@@ -1113,9 +1125,30 @@ enyo.kind({ name: "guide",
 			this.currentMode = "Now";
 		}
 		
+		
+		
 		if(debug) this.log("guide requestUrl :"+requestUrl);
 		
+		
 		if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
+			nowTimeISO = dateJSToISO(dateFromUtc(new Date(isoToJS(nowTimeISO.replace(" ","T")))));
+			this.timeISO = dateJSToISO(dateFromUtc(new Date(isoToJS(this.timeISO.replace(" ","T")))));
+			
+			//time should always be local after request
+			this.nowTimeRange = guideTimeRange(nowTimeISO, this.viewMode);
+			this.timeRange = guideTimeRange(this.timeISO, this.viewMode);
+			
+			
+			if(this.currentMode == "Time") {
+				this.$.leftHeaderDetails.setContent(WebMyth.datetimeFormatter.format(new Date(isoToJS(this.timeISO))));
+			} else if(this.currentMode == "Now") {
+				this.$.leftHeaderDetails.setContent("Now ["+WebMyth.datetimeFormatter.format(new Date(isoToJS(this.timeISO)))+"]");
+			} else if(this.currentMode == "Channel") {
+				this.$.leftHeaderDetails.setContent("Channel ["+WebMyth.dateFormatter.format(new Date(isoToJS(this.dayRange.starttimeISO)))+"]");
+			} else {					
+				this.$.leftHeaderDetails.setContent("Now");
+			}
+			
 			//this.$.getGuide25Service.setUrl("http://192.168.1.105/dropbox/GetProgramGuide.xml");
 			this.$.getGuide25Service.setUrl(requestUrl);
 			this.$.getGuide25Service.call();
@@ -1417,8 +1450,8 @@ enyo.kind({ name: "guide",
 					for(var j = 0; j < channelsNode.childNodes.length; j++) {
 						programGuideSingleNode = channelsNode.childNodes[j];
 						if(debug) this.log("node name is "+programGuideSingleNode.nodeName);
-						if(programGuideSingleNode.nodeName == 'Channel') {
-							if(debug) this.log('inside channel if');
+						if(programGuideSingleNode.nodeName == 'ChannelInfo') {
+							if(debug) this.log('inside ChannelInfo');
 							singleChannelNode = programGuideSingleNode;
 							
 							singleChannelJson = {};
@@ -1465,10 +1498,10 @@ enyo.kind({ name: "guide",
 													
 													switch(singleProgramChildNode.nodeName) {
 														case "StartTime":
-															if(singleProgramChildNode.childNodes[0]) singleProgramJson.starttime = singleProgramChildNode.childNodes[0].nodeValue;
+															if(singleProgramChildNode.childNodes[0]) singleProgramJson.starttimeutc = singleProgramChildNode.childNodes[0].nodeValue;
 															break;
 														case "EndTime":
-															if(singleProgramChildNode.childNodes[0]) singleProgramJson.endtime = singleProgramChildNode.childNodes[0].nodeValue;
+															if(singleProgramChildNode.childNodes[0]) singleProgramJson.endtimeutc = singleProgramChildNode.childNodes[0].nodeValue;
 															break;
 														case "Title":
 															if(singleProgramChildNode.childNodes[0]) singleProgramJson.title = singleProgramChildNode.childNodes[0].nodeValue;
@@ -1494,7 +1527,8 @@ enyo.kind({ name: "guide",
 																		if(singleRecordingChildNode.childNodes[0]) singleProgramJson.recpriority = singleRecordingChildNode.childNodes[0].nodeValue;
 																		break;
 																	case "StartTs":
-																		if(singleRecordingChildNode.childNodes[0]) singleProgramJson.recstartts = singleRecordingChildNode.childNodes[0].nodeValue;
+																		if(singleRecordingChildNode.childNodes[0]) singleProgramJson.recstarttsutc = singleRecordingChildNode.childNodes[0].nodeValue;
+																		if(singleRecordingChildNode.childNodes[0]) singleProgramJson.recstartts = dateJSToISO(dateFromUtc(new Date(isoToJS(singleProgramJson.recstarttsutc.replace(" ","T")))));
 																		break;
 																	case "EndTs":
 																		if(singleRecordingChildNode.childNodes[0]) singleProgramJson.recendts = singleRecordingChildNode.childNodes[0].nodeValue;
@@ -1506,6 +1540,10 @@ enyo.kind({ name: "guide",
 															break;
 													}
 												}
+												
+												singleProgramJson.starttime = dateJSToISO(dateFromUtc(new Date(isoToJS(singleProgramJson.starttimeutc.replace(" ","T")))));
+												singleProgramJson.endtime = dateJSToISO(dateFromUtc(new Date(isoToJS(singleProgramJson.endtimeutc.replace(" ","T")))));
+								
 												
 												singleProgramJson.recstatusText = recstatusDecode(singleProgramJson.recstatus);
 									
@@ -1669,7 +1707,7 @@ enyo.kind({ name: "guide",
 				
 			} else if(WebMyth.prefsCookie.DBSchemaVer > 1269){
 			
-				row.iconUrl = "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Guide/GetChannelIcon?ChanId=";
+				iconUrl = "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Guide/GetChannelIcon?ChanId=";
 				
 			} else {
 			
@@ -1850,7 +1888,7 @@ enyo.kind({ name: "guide",
 						this.$.guideProgramTitle8.setContent(column.title);
 						this.$.guideProgramSubtitle8.setContent(column.subtitle);
 						
-						this.$.guideProgram4.addClass("recstatus_"+column.recstatus);
+						this.$.guideProgram8.addClass("recstatus_"+column.recstatus);
 						
 						if(column.endtime.substring(0,16) > this.timeRange.trueendtimeISO.substring(0,16)) {
 							this.$.guideProgram8.addClass("length-"+isoTimeDifference(column.starttime,this.timeRange.trueendtimeISO));
@@ -1953,18 +1991,20 @@ enyo.kind({ name: "guide",
 				requestUrl += "http://"+WebMyth.prefsCookie.webserverName+"/mythweb/mythxml/GetProgramDetails?Details=1&MythXMLKey=";
 				requestUrl += WebMyth.prefsCookie.MythXML_key;
 				requestUrl += "&StartTime=";
+				requestUrl += row.starttime.replace(" ","T");
 					
 			} else if(WebMyth.prefsCookie.DBSchemaVer > 1269){
 			
 				requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Guide/GetProgramDetails?StartTime=";
+				requestUrl += row.starttimeutc.replace(" ","T");
 				
 			} else {
 				
 				requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetProgramDetails?StartTime=";
+				requestUrl += row.starttime.replace(" ","T");
 				
 			}
 				
-			requestUrl += row.starttime.replace(" ","T");
 			requestUrl += "&ChanId=";
 			requestUrl += row.chanid;
 
@@ -2207,10 +2247,10 @@ enyo.kind({ name: "guide",
 			topSingleNode = topNode.childNodes[i];
 			switch(topSingleNode.nodeName) {
 				case 'StartTime':
-					if(topSingleNode.childNodes[0]) s.starttime = topSingleNode.childNodes[0].nodeValue;
+					if(topSingleNode.childNodes[0]) s.starttimeutc = topSingleNode.childNodes[0].nodeValue;
 					break;
 				case 'EndTime':
-					if(topSingleNode.childNodes[0]) s.endtime = topSingleNode.childNodes[0].nodeValue;
+					if(topSingleNode.childNodes[0]) s.endtimeutc = topSingleNode.childNodes[0].nodeValue;
 					break;
 				case 'Title':
 					if(topSingleNode.childNodes[0]) s.title = topSingleNode.childNodes[0].nodeValue;
@@ -2238,6 +2278,9 @@ enyo.kind({ name: "guide",
 					break;
 				case "#text":
 					s.description = topSingleNode.nodeValue;
+					break;
+				case "Description":
+					if(topSingleNode.childNodes[0]) s.description = topSingleNode.childNodes[0].nodeValue;
 					break;
 				case "Channel":
 					for(var j = 0; j < topSingleNode.childNodes.length; j++) {
@@ -2274,7 +2317,8 @@ enyo.kind({ name: "guide",
 								if(recordingChildNode.childNodes[0]) s.recpriority = recordingChildNode.childNodes[0].nodeValue;
 								break;
 							case "StartTs":
-								if(recordingChildNode.childNodes[0]) s.recstartts = recordingChildNode.childNodes[0].nodeValue;
+								if(recordingChildNode.childNodes[0]) s.recstarttsutc = recordingChildNode.childNodes[0].nodeValue;
+								if(recordingChildNode.childNodes[0]) s.recstartts = dateJSToISO(dateFromUtc(new Date(isoToJS(s.recstarttsutc.replace(" ","T")))));
 								break;
 							case "EndTs":
 								if(recordingChildNode.childNodes[0]) s.recendts = recordingChildNode.childNodes[0].nodeValue;
@@ -2288,6 +2332,10 @@ enyo.kind({ name: "guide",
 				
 			}
 		}
+			
+		s.starttime = dateJSToISO(dateFromUtc(new Date(isoToJS(s.starttimeutc.replace(" ","T")))));
+		s.endtime = dateJSToISO(dateFromUtc(new Date(isoToJS(s.endtimeutc.replace(" ","T")))));
+								
 			
 		if(s.title == null) s.title = "";
 		if(s.subtitle == null) s.subtitle = "";

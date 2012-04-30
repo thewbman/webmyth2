@@ -262,7 +262,13 @@ enyo.kind({ name: "findbackends",
 		
 		try {
 			var stringNode = inResponse.getElementsByTagName("String")[0];
-			serverIP = stringNode.childNodes[0].nodeValue;
+			for(var j = 0; j < stringNode.childNodes.length; j++) {
+				switch(stringNode.childNodes[j].nodeName) {
+					case "Value":
+						serverIP = stringNode.childNodes[j].childNodes[0].nodeValue;
+					  break;
+				}
+			}
 		} catch(e) {
 			//failed for 0.25 methods
 		}

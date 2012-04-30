@@ -52,6 +52,9 @@ enyo.kind({ name: "upcoming",
 	components: [
 			
 			{name: "getUpcomingService", kind: "WebService", handleAs: "json", onSuccess: "upcomingResponse", onFailure: "upcomingFailure"},
+			{name: "getUpcoming25Service", kind: "WebService", handleAs: "xml", onSuccess: "upcoming25Response", onFailure: "upcoming25Failure"},
+			{name: "getConflicting25Service", kind: "WebService", handleAs: "xml", onSuccess: "conflicting25Response", onFailure: "conflicting25Failure"},
+			
 			{name: "getProgramDetailsService", kind: "WebService", handleAs: "xml", onSuccess: "getProgramDetailsResponse", onFailure: "getProgramDetailsFailure"},
 			{name: "getProgramDetails25Service", kind: "WebService", handleAs: "xml", onSuccess: "getProgramDetails25Response", onFailure: "getProgramDetailsFailure"},
 			
@@ -668,9 +671,10 @@ enyo.kind({ name: "upcoming",
 				
 			} else if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
 			
-				row.iconUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Guide/GetChannelIcon?ChanId=";
+				row.iconUrl = "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Guide/GetChannelIcon?ChanId=";
 				
 			} else {
+			
 				row.iconUrl = "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetChannelIcon?ChanId=";
 				
 			}
@@ -817,7 +821,13 @@ enyo.kind({ name: "upcoming",
 		this.$.loadingPopup.openAtCenter();
 		this.$.spinnerLarge.show();
 		
-		if(WebMyth.useScript){
+		if((WebMyth.prefsCookie.upcomingXml)&& (WebMyth.prefsCookie.DBSchemaVer > 1269)){
+		
+			var requestUrl = "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Dvr/GetUpcomingList";
+			this.$.getUpcoming25Service.setUrl(requestUrl);
+			this.$.getUpcoming25Service.call();
+			
+		} else if(WebMyth.useScript){
 			
 			var requestUrl = "http://"+WebMyth.prefsCookie.webserverName+"/"+WebMyth.prefsCookie.webmythPythonFile;
 			requestUrl += "?op=getPending";				//matches any recording rule
@@ -868,6 +878,462 @@ enyo.kind({ name: "upcoming",
 		this.error("upcomingFailure");
 		
 		this.$.errorMessage.setContent("ERROR: Failed to get list of upcoming programs from backend at '"+WebMyth.prefsCookie.masterBackendIp+"'");
+		
+		this.finishedGettingUpcoming();
+	},
+	upcoming25Response: function(inSender, inResponse) {
+		if(debug) this.log("upcoming25Response");
+		
+		this.fullResultList.length = 0;
+		this.fullDatesList.length = 0;
+		
+		var xmlobject = inResponse;
+		
+		//Local variables
+		var topNode, topNodesCount, topSingleNode, programsNode, programsNode;
+		var singleProgramNode, singleProgramJson = {}, singleRecordedGroupJson = {}, singleRecordedTitleJson = {};
+		var singleProgramChildNode, singleProgramChannelChildNode, singleProgramRecordingChildNode;
+		var protoVer;
+		
+		
+		this.fullResultList.length = 0;
+		
+		try {
+			//Start parsing
+			topNode = xmlobject.getElementsByTagName("ProgramList")[0];
+			var topNodesCount = topNode.childNodes.length;
+			for(var i = 0; i < topNodesCount; i++) {
+				topSingleNode = topNode.childNodes[i];
+				//if(debug) this.log("topSingleNode.nodeName is "+topSingleNode.nodeName);
+				switch(topSingleNode.nodeName) {
+					case 'ProtoVer':
+						protoVer = topSingleNode.childNodes[0].nodeValue;
+						
+						if(WebMyth.prefsCookie.protoVer != protoVer) WebMyth.prefsCookie.protoVerSubmitted = false;
+						
+						WebMyth.prefsCookie.protoVer = protoVer;
+						
+						break;
+					case 'Programs':
+						//if(debug) this.log('Starting to parse Programs node');
+						//programsNode = topSingleNode.childNodes[0];
+						for(var j = 0; j < topSingleNode.childNodes.length; j++) {
+						//for(var j = 260; j < topSingleNode.childNodes.length; j++) {
+							programsSingleNode = topSingleNode.childNodes[j];
+							//if(debug) this.log("Node name is "+programsSingleNode.nodeName);
+							if(programsSingleNode.nodeName == 'Program') {
+								//if(debug) this.log('Inside Program if');
+								singleProgramNode = programsSingleNode;
+								
+								singleProgramJson = {};
+								singleRecordedGroupJson = {};
+								singleRecordedTitleJson = {};
+								
+								for(var l = 0; l < singleProgramNode.childNodes.length; l++) {
+									//if(debug) this.log('singleProgramChildNode.nodeName: '+singleProgramChildNode.nodeName);
+								
+									singleProgramChildNode = singleProgramNode.childNodes[l];
+									
+									switch(singleProgramChildNode.nodeName) {
+										case "StartTime":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.starttimeutc = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "EndTime":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.endtimeutc = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Title":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.title = singleProgramChildNode.childNodes[0].nodeValue;
+											if(singleProgramChildNode.childNodes[0]) singleRecordedTitleJson.title = singleProgramChildNode.childNodes[0].nodeValue;
+											if(singleProgramChildNode.childNodes[0]) singleRecordedTitleJson.label = singleProgramChildNode.childNodes[0].nodeValue;
+											
+											break;
+										case "SubTitle":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.subtitle = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Category":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.category = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "CatType":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.cattype = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Repeat":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.repeat = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "SeriesId":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.seriesid = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "ProgramId":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.programid = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Stars":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.stars = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "FileSize":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.filesize = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "LastModified":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.lastmodified = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "ProgramFlags":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.programflags = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "HostName":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.hostname = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Airdate":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.airdate = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Description":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.description = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "#text":
+											singleProgramJson.description = singleProgramChildNode.nodeValue;
+											break;
+										case "Inetref":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.inetref = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Season":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.season = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Episode":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.episode = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+											
+										case "Channel":
+											for(var m = 0; m < singleProgramChildNode.childNodes.length; m++) {
+												singleProgramChannelChildNode = singleProgramChildNode.childNodes[m];
+												//if(debug) this.log('singleProgramChannelChildNode.nodeName: '+singleProgramChannelChildNode.nodeName);
+												
+												switch(singleProgramChannelChildNode.nodeName) {
+													case "ChanId":
+														if(singleProgramChannelChildNode.childNodes[0]) singleProgramJson.chanid = singleProgramChannelChildNode.childNodes[0].nodeValue;
+														break;
+													case "ChanNum":
+														if(singleProgramChannelChildNode.childNodes[0]) singleProgramJson.channum = singleProgramChannelChildNode.childNodes[0].nodeValue;
+														break;
+													case "CallSign":
+														if(singleProgramChannelChildNode.childNodes[0]) singleProgramJson.callsign = singleProgramChannelChildNode.childNodes[0].nodeValue;
+														break;
+													case "ChannelName":
+														if(singleProgramChannelChildNode.childNodes[0]) singleProgramJson.channame = singleProgramChannelChildNode.childNodes[0].nodeValue;
+														break;
+												}
+											}
+											break;
+										case "Recording":
+											for(var m = 0; m < singleProgramChildNode.childNodes.length; m++) {
+												singleProgramRecordingChildNode = singleProgramChildNode.childNodes[m];
+												//if(debug) this.log('singleProgramRecordingChildNode.nodeName: '+singleProgramRecordingChildNode.nodeName);
+												
+												switch(singleProgramRecordingChildNode.nodeName) {
+													case "Status":
+														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.recstatus = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														break;
+													case "StartTs":
+														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.recstarttsutc = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														break;
+													case "EndTs":
+														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.recendtsutc = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														break;
+													case "RecordId":
+														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.recordid = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														break;
+													case "RecGroup":
+														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.recgroup = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														if(singleProgramRecordingChildNode.childNodes[0]) singleRecordedTitleJson.group = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														if(singleProgramRecordingChildNode.childNodes[0]) singleRecordedGroupJson.label = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														if(singleProgramRecordingChildNode.childNodes[0]) singleRecordedGroupJson.caption = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														if(singleProgramRecordingChildNode.childNodes[0]) singleRecordedGroupJson.group = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														break;
+													case "RecType":
+														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.rectype = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														break;
+													case "EncoderId":
+														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.encoderid = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														break;
+												}
+											}
+											break;
+											
+										default:
+											if(debug) this.log('unknown singleProgramChildNode.nodeName: '+singleProgramChildNode.nodeName);
+											break;
+									}		
+								}
+										
+								
+								if(singleProgramJson.title == null) singleProgramJson.title = "[Unknown - Blank]";
+								if(singleProgramJson.subtitle == null) singleProgramJson.subtitle = "";
+								if(singleProgramJson.description == null) singleProgramJson.description = "";
+								
+								if(singleRecordedTitleJson.title == null) singleRecordedTitleJson.title = "[Unknown - Blank]";
+								if(singleRecordedTitleJson.label == null) singleRecordedTitleJson.label = "[Unknown - Blank]";
+								
+								singleProgramJson.starttime = dateJSToISO(dateFromUtc(new Date(isoToJS(singleProgramJson.starttimeutc.replace(" ","T")))));
+								singleProgramJson.endtime = dateJSToISO(dateFromUtc(new Date(isoToJS(singleProgramJson.endtimeutc.replace(" ","T")))));
+								singleProgramJson.recstartts = dateJSToISO(dateFromUtc(new Date(isoToJS(singleProgramJson.recstarttsutc.replace(" ","T")))));
+								singleProgramJson.recendts = dateJSToISO(dateFromUtc(new Date(isoToJS(singleProgramJson.recendtsutc.replace(" ","T")))));
+								
+								this.fullResultList.push(singleProgramJson);
+
+								//this.log("Program json is ", enyo.json.stringify(singleProgramJson));
+									
+								
+							}
+						}
+				}
+			}
+		} catch(e) {
+			this.error(e);
+		}
+		
+		
+		//get conflicting seperately
+		var requestUrl = "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Dvr/GetConflictList";
+		this.$.getConflicting25Service.setUrl(requestUrl);
+		this.$.getConflicting25Service.call();
+		
+	},
+	conflicting25Response: function(inSender, inResponse) {
+		if(debug) this.log("conflicting25Response");
+		
+		var xmlobject = inResponse;
+		
+		//Local variables
+		var topNode, topNodesCount, topSingleNode, programsNode, programsNode;
+		var singleProgramNode, singleProgramJson = {}, singleRecordedGroupJson = {}, singleRecordedTitleJson = {};
+		var singleProgramChildNode, singleProgramChannelChildNode, singleProgramRecordingChildNode;
+		var protoVer;
+		
+		
+		try {
+			//Start parsing
+			topNode = xmlobject.getElementsByTagName("ProgramList")[0];
+			var topNodesCount = topNode.childNodes.length;
+			for(var i = 0; i < topNodesCount; i++) {
+				topSingleNode = topNode.childNodes[i];
+				//if(debug) this.log("topSingleNode.nodeName is "+topSingleNode.nodeName);
+				switch(topSingleNode.nodeName) {
+					case 'ProtoVer':
+						protoVer = topSingleNode.childNodes[0].nodeValue;
+						
+						if(WebMyth.prefsCookie.protoVer != protoVer) WebMyth.prefsCookie.protoVerSubmitted = false;
+						
+						WebMyth.prefsCookie.protoVer = protoVer;
+						
+						break;
+					case 'Programs':
+						//if(debug) this.log('Starting to parse Programs node');
+						//programsNode = topSingleNode.childNodes[0];
+						for(var j = 0; j < topSingleNode.childNodes.length; j++) {
+						//for(var j = 260; j < topSingleNode.childNodes.length; j++) {
+							programsSingleNode = topSingleNode.childNodes[j];
+							//if(debug) this.log("Node name is "+programsSingleNode.nodeName);
+							if(programsSingleNode.nodeName == 'Program') {
+								//if(debug) this.log('Inside Program if');
+								singleProgramNode = programsSingleNode;
+								
+								singleProgramJson = {};
+								singleRecordedGroupJson = {};
+								singleRecordedTitleJson = {};
+								
+								for(var l = 0; l < singleProgramNode.childNodes.length; l++) {
+									//if(debug) this.log('singleProgramChildNode.nodeName: '+singleProgramChildNode.nodeName);
+								
+									singleProgramChildNode = singleProgramNode.childNodes[l];
+									
+									switch(singleProgramChildNode.nodeName) {
+										case "StartTime":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.starttimeutc = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "EndTime":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.endtimeutc = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Title":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.title = singleProgramChildNode.childNodes[0].nodeValue;
+											if(singleProgramChildNode.childNodes[0]) singleRecordedTitleJson.title = singleProgramChildNode.childNodes[0].nodeValue;
+											if(singleProgramChildNode.childNodes[0]) singleRecordedTitleJson.label = singleProgramChildNode.childNodes[0].nodeValue;
+											
+											break;
+										case "SubTitle":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.subtitle = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Category":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.category = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "CatType":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.cattype = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Repeat":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.repeat = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "SeriesId":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.seriesid = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "ProgramId":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.programid = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Stars":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.stars = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "FileSize":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.filesize = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "LastModified":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.lastmodified = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "ProgramFlags":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.programflags = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "HostName":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.hostname = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Airdate":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.airdate = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Description":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.description = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "#text":
+											singleProgramJson.description = singleProgramChildNode.nodeValue;
+											break;
+										case "Inetref":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.inetref = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Season":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.season = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+										case "Episode":
+											if(singleProgramChildNode.childNodes[0]) singleProgramJson.episode = singleProgramChildNode.childNodes[0].nodeValue;
+											break;
+											
+										case "Channel":
+											for(var m = 0; m < singleProgramChildNode.childNodes.length; m++) {
+												singleProgramChannelChildNode = singleProgramChildNode.childNodes[m];
+												//if(debug) this.log('singleProgramChannelChildNode.nodeName: '+singleProgramChannelChildNode.nodeName);
+												
+												switch(singleProgramChannelChildNode.nodeName) {
+													case "ChanId":
+														if(singleProgramChannelChildNode.childNodes[0]) singleProgramJson.chanid = singleProgramChannelChildNode.childNodes[0].nodeValue;
+														break;
+													case "ChanNum":
+														if(singleProgramChannelChildNode.childNodes[0]) singleProgramJson.channum = singleProgramChannelChildNode.childNodes[0].nodeValue;
+														break;
+													case "CallSign":
+														if(singleProgramChannelChildNode.childNodes[0]) singleProgramJson.callsign = singleProgramChannelChildNode.childNodes[0].nodeValue;
+														break;
+													case "ChannelName":
+														if(singleProgramChannelChildNode.childNodes[0]) singleProgramJson.channame = singleProgramChannelChildNode.childNodes[0].nodeValue;
+														break;
+												}
+											}
+											break;
+										case "Recording":
+											for(var m = 0; m < singleProgramChildNode.childNodes.length; m++) {
+												singleProgramRecordingChildNode = singleProgramChildNode.childNodes[m];
+												//if(debug) this.log('singleProgramRecordingChildNode.nodeName: '+singleProgramRecordingChildNode.nodeName);
+												
+												switch(singleProgramRecordingChildNode.nodeName) {
+													case "Status":
+														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.recstatus = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														break;
+													case "StartTs":
+														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.recstarttsutc = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														break;
+													case "EndTs":
+														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.recendtsutc = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														break;
+													case "RecordId":
+														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.recordid = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														break;
+													case "RecGroup":
+														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.recgroup = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														if(singleProgramRecordingChildNode.childNodes[0]) singleRecordedTitleJson.group = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														if(singleProgramRecordingChildNode.childNodes[0]) singleRecordedGroupJson.label = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														if(singleProgramRecordingChildNode.childNodes[0]) singleRecordedGroupJson.caption = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														if(singleProgramRecordingChildNode.childNodes[0]) singleRecordedGroupJson.group = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														break;
+													case "RecType":
+														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.rectype = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														break;
+													case "EncoderId":
+														if(singleProgramRecordingChildNode.childNodes[0]) singleProgramJson.encoderid = singleProgramRecordingChildNode.childNodes[0].nodeValue;
+														break;
+												}
+											}
+											break;
+											
+										default:
+											if(debug) this.log('unknown singleProgramChildNode.nodeName: '+singleProgramChildNode.nodeName);
+											break;
+									}		
+								}
+										
+								
+								if(singleProgramJson.title == null) singleProgramJson.title = "[Unknown - Blank]";
+								if(singleProgramJson.subtitle == null) singleProgramJson.subtitle = "";
+								if(singleProgramJson.description == null) singleProgramJson.description = "";
+								
+								if(singleRecordedTitleJson.title == null) singleRecordedTitleJson.title = "[Unknown - Blank]";
+								if(singleRecordedTitleJson.label == null) singleRecordedTitleJson.label = "[Unknown - Blank]";
+								
+								singleProgramJson.starttime = dateJSToISO(dateFromUtc(new Date(isoToJS(singleProgramJson.starttimeutc.replace(" ","T")))));
+								singleProgramJson.endtime = dateJSToISO(dateFromUtc(new Date(isoToJS(singleProgramJson.endtimeutc.replace(" ","T")))));
+								singleProgramJson.recstartts = dateJSToISO(dateFromUtc(new Date(isoToJS(singleProgramJson.recstarttsutc.replace(" ","T")))));
+								singleProgramJson.recendts = dateJSToISO(dateFromUtc(new Date(isoToJS(singleProgramJson.recendtsutc.replace(" ","T")))));
+								
+								this.fullResultList.push(singleProgramJson);
+
+								//this.log("Program json is ", enyo.json.stringify(singleProgramJson));
+									
+								
+							}
+						}
+				}
+			}
+		} catch(e) {
+			this.error(e);
+		}
+		
+		
+		var conflicts = 0;
+		
+		for(var i = 0; i < this.fullResultList.length; i++) {
+			if(this.fullResultList[i].recstatus == 7) conflicts++;
+		}
+		
+		if(conflicts == 1) {
+			this.bannerMessage("There is 1 conflicting recording");
+		} else if(conflicts > 1) {
+			this.bannerMessage("There are "+conflicts+" conflicting recordings");
+		} else {
+			if(debug) this.log("We don't have any conflicts");
+		}
+		
+		if(debug) this.log("Completed upcoming parsing with "+this.fullResultList.length+" total items");
+		
+		this.$.errorMessage.setContent("");
+		
+		this.leftRevealTop();
+		
+		this.finishedGettingUpcoming();
+		
+	},
+	upcoming25Failure: function(inSender, inResponse) {
+		this.error("upcoming25Failure");
+		
+		var requestUrl = "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Dvr/GetUpcomingList";
+		
+		this.$.errorMessage.setContent("ERROR: Failed to get list of upcoming programs from backend at '"+requestUrl+"'");
+		
+		this.finishedGettingUpcoming();
+	},
+	conflicting25Failure: function(inSender, inResponse) {
+		this.error("conflicting25Failure");
+		
+		var requestUrl = "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Dvr/GetConflictList";
+		
+		this.$.errorMessage.setContent("ERROR: Failed to get list of upcoming programs from backend at '"+requestUrl+"'");
 		
 		this.finishedGettingUpcoming();
 	},
@@ -1111,18 +1577,21 @@ enyo.kind({ name: "upcoming",
 				requestUrl += "http://"+WebMyth.prefsCookie.webserverName+"/mythweb/mythxml/GetProgramDetails?Details=1&MythXMLKey=";
 				requestUrl += WebMyth.prefsCookie.MythXML_key;
 				requestUrl += "&StartTime=";
+				requestUrl += row.starttime;
 					
 			} else if(WebMyth.prefsCookie.DBSchemaVer > 1269) {
 			
 				requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Guide/GetProgramDetails?StartTime=";
+				row.starttimeutc = dateJSToISO(dateToUtc(new Date(isoToJS(row.starttime.replace(" ","T")))));
+				requestUrl += row.starttimeutc;
 				
 			} else {
 				
 				requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Myth/GetProgramDetails?StartTime=";
+				requestUrl += row.starttime;
 				
 			}
 				
-			requestUrl += row.starttime;
 			requestUrl += "&ChanId=";
 			requestUrl += row.chanid;
 
@@ -1361,10 +1830,10 @@ enyo.kind({ name: "upcoming",
 			topSingleNode = topNode.childNodes[i];
 			switch(topSingleNode.nodeName) {
 				case 'StartTime':
-					if(topSingleNode.childNodes[0]) s.starttime = topSingleNode.childNodes[0].nodeValue;
+					if(topSingleNode.childNodes[0]) s.starttimeutc = topSingleNode.childNodes[0].nodeValue;
 					break;
 				case 'EndTime':
-					if(topSingleNode.childNodes[0]) s.endtime = topSingleNode.childNodes[0].nodeValue;
+					if(topSingleNode.childNodes[0]) s.endtimeutc = topSingleNode.childNodes[0].nodeValue;
 					break;
 				case 'Title':
 					if(topSingleNode.childNodes[0]) s.title = topSingleNode.childNodes[0].nodeValue;
@@ -1389,6 +1858,9 @@ enyo.kind({ name: "upcoming",
 					break;
 				case 'Airdate':
 					if(topSingleNode.childNodes[0]) s.airdate = topSingleNode.childNodes[0].nodeValue;
+					break;
+				case 'Description':
+					if(topSingleNode.childNodes[0]) s.description = topSingleNode.childNodes[0].nodeValue;
 					break;
 				case "#text":
 					s.description = topSingleNode.nodeValue;
@@ -1428,13 +1900,16 @@ enyo.kind({ name: "upcoming",
 								if(recordingChildNode.childNodes[0]) s.recpriority = recordingChildNode.childNodes[0].nodeValue;
 								break;
 							case "StartTs":
-								if(recordingChildNode.childNodes[0]) s.recstartts = recordingChildNode.childNodes[0].nodeValue;
+								if(recordingChildNode.childNodes[0]) s.recstarttsutc = recordingChildNode.childNodes[0].nodeValue;
 								break;
 							case "EndTs":
 								if(recordingChildNode.childNodes[0]) s.recendts = recordingChildNode.childNodes[0].nodeValue;
 								break;
 							case "RecordId":
 								if(recordingChildNode.childNodes[0]) s.recordid = recordingChildNode.childNodes[0].nodeValue;
+								break;
+							case "EncoderId":
+								if(recordingChildNode.childNodes[0]) s.cardid = recordingChildNode.childNodes[0].nodeValue;
 								break;
 						}
 					}
@@ -1449,6 +1924,10 @@ enyo.kind({ name: "upcoming",
 		
 		if(s.recstatus == 0) s.recordid = null;
 		if(s.recstatustext == null) s.recstatustext = recstatusDecode(-20);
+		
+		s.starttime = dateJSToISO(dateFromUtc(new Date(isoToJS(s.starttimeutc.replace(" ","T")))));
+		s.endtime = dateJSToISO(dateFromUtc(new Date(isoToJS(s.endtimeutc.replace(" ","T")))));
+		s.recstartts = dateJSToISO(dateFromUtc(new Date(isoToJS(s.recstarttsutc.replace(" ","T")))));
 					
 		
 		
@@ -1499,6 +1978,7 @@ enyo.kind({ name: "upcoming",
 		this.$.detailsDescription.setContent(row.description);
 		this.$.category.setContent(row.category);
 		this.$.recstatus.setContent(recstatusDecode(row.recstatus));
+		this.$.cardid.setContent(row.cardid);
 		
 		this.$.airdate.setContent(row.airdate);
 		this.$.seriesid.setContent(row.seriesid);
