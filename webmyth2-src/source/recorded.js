@@ -1229,7 +1229,12 @@ enyo.kind({ name: "recorded",
 			
 		} else if(WebMyth.prefsCookie.DBSchemaVer > 1269){
 			
-			requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Dvr/GetRecordedList";
+			this.fullResultList.length = 0;
+			this.fullGroupsList.length = 0;
+			this.fullTitlesList.length = 0;
+		
+			requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Dvr/GetFilteredRecordedList?Count=500&TitleRegEx=[A-Za-z0-9_]&StartIndex=";
+			requestUrl += this.fullResultList.length;
 			this.$.getRecorded25Service.setUrl(requestUrl);
 			this.$.getRecorded25Service.call();
 			
@@ -1252,6 +1257,11 @@ enyo.kind({ name: "recorded",
 	recordedResponse: function(inSender, inResponse) {
 		if(debug) this.log("recordedResponse");
 		
+		this.fullResultList.length = 0;
+		this.fullGroupsList.length = 0;
+		this.fullTitlesList.length = 0;
+		
+		
 		var xmlobject = inResponse;
 		
 		//Local variables
@@ -1260,11 +1270,6 @@ enyo.kind({ name: "recorded",
 		var singleProgramChildNode;
 		var protoVer;
 		
-		
-		
-		this.fullResultList.length = 0;
-		this.fullGroupsList.length = 0;
-		this.fullTitlesList.length = 0;
 		
 		try{
 			//Start parsing
@@ -1281,6 +1286,9 @@ enyo.kind({ name: "recorded",
 						
 						WebMyth.prefsCookie.protoVer = protoVer;
 						
+						break;
+					case 'TotalAvailable':
+						totalAvailable = topSingleNode.childNodes[0].nodeValue;
 						break;
 					case 'Recorded':
 						if(debug) this.log('Starting to parse Recorded node');
@@ -1393,7 +1401,6 @@ enyo.kind({ name: "recorded",
 						
 						this.groupsList = cleanTitleList(this.fullGroupsList,"", sameFunction);
 						this.groupsList.splice(0,0,{label: "All", group: "", value: "", caption: "All"});
-		
 						this.titlesList = cleanTitleList(this.fullTitlesList,WebMyth.prefsCookie.recGroup, WebMyth.primer);
 						
 						//if(debug) this.log("fullResultList full json is ", enyo.json.stringify(this.fullResultList));
@@ -1422,6 +1429,7 @@ enyo.kind({ name: "recorded",
 		
 		this.finishedGettingRecorded();
 		
+		
 	},
 	recordedFailure: function(inSender, inResponse) {
 		this.error("recordedFailure");
@@ -1440,11 +1448,9 @@ enyo.kind({ name: "recorded",
 		var singleProgramNode, singleProgramJson = {}, singleRecordedGroupJson = {}, singleRecordedTitleJson = {};
 		var singleProgramChildNode, singleProgramChannelChildNode, singleProgramRecordingChildNode;
 		var protoVer;
+		var totalAvailable = 0;
 		
 		
-		this.fullResultList.length = 0;
-		this.fullGroupsList.length = 0;
-		this.fullTitlesList.length = 0;
 		
 		try {
 			//Start parsing
@@ -1460,6 +1466,10 @@ enyo.kind({ name: "recorded",
 						if(WebMyth.prefsCookie.protoVer != protoVer) WebMyth.prefsCookie.protoVerSubmitted = false;
 						
 						WebMyth.prefsCookie.protoVer = protoVer;
+						
+						break;
+					case 'TotalAvailable':
+						totalAvailable = topSingleNode.childNodes[0].nodeValue;
 						
 						break;
 					case 'Programs':
@@ -1636,18 +1646,32 @@ enyo.kind({ name: "recorded",
 		
 		//this.log("this.fullTitlesList: ",enyo.json.stringify(this.fullTitlesList));
 		
-		this.groupsList = cleanTitleList(this.fullGroupsList,"", sameFunction);
-		this.groupsList.splice(0,0,{label: "All", group: "", value: "", caption: "All"});
-		
-		this.titlesList = cleanTitleList(this.fullTitlesList,WebMyth.prefsCookie.recGroup, WebMyth.primer);
-		
 		if(debug) this.log("completed recorded XML parsing with "+this.fullResultList.length+" total items");
 		
-		this.$.errorMessage.setContent("");
 		
-		this.leftRevealTop();
+		if((this.fullResultList.length >= totalAvailable)||(xmlobject.getElementsByTagName("Program").length == 0))
+		{
 		
-		this.finishedGettingRecorded();
+		
+			this.groupsList = cleanTitleList(this.fullGroupsList,"", sameFunction);
+			this.groupsList.splice(0,0,{label: "All", group: "", value: "", caption: "All"});
+			this.titlesList = cleanTitleList(this.fullTitlesList,WebMyth.prefsCookie.recGroup, WebMyth.primer);
+		
+			this.$.errorMessage.setContent("");
+			
+			this.leftRevealTop();
+			
+			this.finishedGettingRecorded();
+		}
+		else
+		{
+			var requestUrl = "";
+			
+			requestUrl += "http://"+WebMyth.prefsCookie.masterBackendIp+":"+WebMyth.prefsCookie.masterBackendXmlPort+"/Dvr/GetFilteredRecordedList?Count=500&TitleRegEx=[A-Za-z0-9_]&StartIndex=";
+			requestUrl += this.fullResultList.length + 1;
+			this.$.getRecorded25Service.setUrl(requestUrl);
+			this.$.getRecorded25Service.call();
+		}
 	},
 	recorded25Failure: function(inSender, inResponse) {
 		this.error("recorded25Failure");
